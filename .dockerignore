@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+*.swp
+*.log
+.env
+frontend/node_modules
+frontend/.next
+frontend/.pnpm-store
+frontend/package-lock.json
+deploy
+.woodpecker
+.gitignore
+README.md

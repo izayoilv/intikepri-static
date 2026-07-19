@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intikepri-static
+  namespace: intikepri-static
+  labels:
+    app.kubernetes.io/name: intikepri-static
+    app.kubernetes.io/instance: intikepri-static-prod
+    app.kubernetes.io/part-of: intikepri
+    app.kubernetes.io/managed-by: flux
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: intikepri-static
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: intikepri-static
+        app.kubernetes.io/instance: intikepri-static-prod
+        app.kubernetes.io/part-of: intikepri
+        app.kubernetes.io/managed-by: flux
+    spec:
+      securityContext:
+        fsGroup: 101
+      containers:
+        - name: nginx
+          image: docker.io/izayoilv/intikepri-static:latest
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
+            runAsUser: 101
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: "200m"
+            requests:
+              memory: 32Mi
+              cpu: "50m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

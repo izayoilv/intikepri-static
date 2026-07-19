@@ -1,0 +1,45 @@
+when:
+  - event: push
+    branch: main
+  - event: manual
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git
+    settings:
+      depth: 1
+      lfs: false
+
+steps:
+  build-and-push:
+    image: moby/buildkit:v0.19.0-rc1
+    environment:
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - mkdir -p ~/.docker
+      - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"username\":\"izayoilv\",\"password\":\"$DOCKER_PASSWORD\"}}}" > ~/.docker/config.json
+      - |
+        for i in 1 2 3; do
+          buildctl --addr tcp://buildkitd-service.buildkitd.svc:1234 build \
+            --frontend dockerfile.v0 \
+            --local context=. \
+            --local dockerfile=. \
+            --output type=image,name=docker.io/izayoilv/intikepri-static:latest,push=true && break
+          if [ $i -eq 3 ]; then
+            echo "All BuildKit push attempts failed."
+            exit 1
+          fi
+          echo "BuildKit failed (attempt $i/3), retrying in 10s..."
+          sleep 10
+        done
+  verify:
+    image: alpine:3.21
+    commands:
+      - apk add --no-cache curl jq
+      - |
+        TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:izayoilv/intikepri-static:pull" | jq -r .token)
+        STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "https://registry-1.docker.io/v2/izayoilv/intikepri-static/manifests/latest" -H "Accept: application/vnd.oci.image.manifest.v1+json")
+        echo "HTTP status = $STATUS"
+        if [ "$STATUS" != "200" ]; then echo "FAIL"; exit 1; fi
+        echo "OK"

@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: intikepri-ingress
+  namespace: intikepri-static
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: |
+      kube-system-intikepri-rate-limit@kubernetescrd,
+      kube-system-intikepri-security-headers@kubernetescrd
+  labels:
+    app.kubernetes.io/name: intikepri-static
+    app.kubernetes.io/part-of: intikepri
+    app.kubernetes.io/managed-by: flux
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: intikepri.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: intikepri-static
+                port:
+                  number: 80
