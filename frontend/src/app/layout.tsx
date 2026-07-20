@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   },
   description:
     "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau — berdedikasi untuk membangun masyarakat yang rukun, sejahtera, dan berkeadilan.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({

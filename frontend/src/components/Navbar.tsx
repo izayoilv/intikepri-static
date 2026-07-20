@@ -1,18 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-
-const LogoSVG = () => (
-  <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
-    <circle cx="20" cy="20" r="4" fill="white"/>
-    {[0,30,60,90,120,150,180,210,240,270,300,330].map((a,i) => (
-      <line key={i} x1="20" y1="20" x2={20+15*Math.cos(a*Math.PI/180)} y2={20+15*Math.sin(a*Math.PI/180)} stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-    ))}
-  </svg>
-);
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -52,7 +44,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-3 group">
               <div className={`w-10 h-10 flex items-center justify-center transition-colors ${scrolled || !isHome ? "bg-[#A42A28]" : "bg-white/20 backdrop-blur-sm"}`}>
-                <LogoSVG />
+                <Image src="/images/Logo-INTI.png" alt="Logo INTI Kepri" width={40} height={40} className="object-contain" />
               </div>
               <div className="hidden sm:block">
                 <span className={`font-serif font-bold text-sm tracking-wider transition-colors ${scrolled || !isHome ? "text-[#1A1A1A]" : "text-white"}`}>INTI KEPRI</span>
