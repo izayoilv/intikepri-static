@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import IntroSection from "@/components/IntroSection";
 import NewsSection from "@/components/NewsSection";
+import QuoteSection from "@/components/QuoteSection";
 import StructureSection from "@/components/StructureSection";
 import Footer from "@/components/Footer";
 import { fallbackNews } from "@/lib/data";
@@ -29,6 +30,7 @@ export default async function HomePage() {
       <HeroSection />
       <IntroSection />
       <NewsSection initialItems={latestNews} />
+      <QuoteSection />
       <StructureSection />
       <Footer />
     </main>
