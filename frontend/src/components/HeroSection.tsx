@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
@@ -27,12 +28,7 @@ export default function HeroSection() {
 
       <div className="hero-content relative z-10 text-center px-4 max-w-4xl mx-auto">
         <div className="w-20 h-20 bg-[#A42A28] flex items-center justify-center mx-auto mb-8">
-          <svg width="48" height="48" viewBox="0 0 40 40" fill="none">
-            <circle cx="20" cy="20" r="4" fill="white"/>
-            {[0,30,60,90,120,150,180,210,240,270,300,330].map((a,i) => (
-              <line key={i} x1="20" y1="20" x2={20+16*Math.cos(a*Math.PI/180)} y2={20+16*Math.sin(a*Math.PI/180)} stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-            ))}
-          </svg>
+          <Image src="/images/Logo-INTI.png" alt="Logo INTI Kepri" width={80} height={80} className="object-contain" />
         </div>
 
         <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-4">Perhimpunan Indonesia Tionghoa</p>
