@@ -110,9 +110,3 @@ export default function TentangKamiPage() {
   );
 }
 
-        </section>
-      </div>
-      <Footer />
-    </main>
-  );
-}
