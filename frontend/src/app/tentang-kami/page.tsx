@@ -77,7 +77,10 @@ export default function TentangKamiPage() {
                 <p className="text-[#666666] font-sans text-sm leading-relaxed">{visiMisi.misi}</p>
               </div>
             </div>
-          
+            <div className="mt-6 bg-[#A42A28] p-8 text-center">
+              <p className="font-sans text-xs tracking-[0.3em] uppercase text-white/60 mb-2">Motto</p>
+              <p className="font-serif text-2xl md:text-3xl font-bold text-white tracking-wide">{visiMisi.motto}</p>
+            </div>
           </div>
         </section>
 
@@ -100,6 +103,13 @@ export default function TentangKamiPage() {
               ))}
             </div>
           </div>
+        </section>
+      </div>
+      <Footer />
+    </main>
+  );
+}
+
         </section>
       </div>
       <Footer />
