@@ -11,6 +11,13 @@ clone:
       lfs: false
 
 steps:
+  fetch-news:
+    image: alpine:3.24
+    commands:
+      - apk add --no-cache curl jq
+      - mkdir -p src/data
+      - curl -s "https://api.intikepri.com/api/news?limit=1000" | jq '.data.items' > src/data/news.json
+
   build-and-push:
     image: moby/buildkit:v0.31.2
     environment:
@@ -36,7 +43,7 @@ steps:
           sleep 10
         done
   verify:
-    image: alpine:3.24.1
+    image: alpine:3.24
     commands:
       - apk add --no-cache curl jq
       - |

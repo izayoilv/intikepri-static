@@ -1,5 +1,4 @@
 repos:
-  # Commit message linting
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.26.0
     hooks:
@@ -7,7 +6,6 @@ repos:
         stages: [commit-msg]
         additional_dependencies: ["@commitlint/config-conventional"]
 
-  # File checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
@@ -21,8 +19,25 @@ repos:
       - id: check-symlinks
       - id: detect-private-key
 
-  # Secret leaks check
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
     hooks:
       - id: gitleaks
+
+  - repo: local
+    hooks:
+      - id: format
+        name: format
+        entry: pnpm format
+        language: system
+        pass_filenames: false
+      - id: lint
+        name: lint
+        entry: pnpm lint
+        language: system
+        pass_filenames: false
+      - id: typecheck
+        name: typecheck
+        entry: pnpm typecheck
+        language: system
+        pass_filenames: false

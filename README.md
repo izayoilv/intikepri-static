@@ -44,9 +44,11 @@ app/
 ## Prerequisites
 
 ### Frontend (Node.js)
+
 - Node.js 18+ and npm
 
 ### Backend (Rust)
+
 - Rust toolchain (install via [rustup.rs](https://rustup.rs))
 - sqlx CLI: `cargo install sqlx-cli`
 
@@ -65,6 +67,7 @@ cargo run
 ```
 
 The backend will:
+
 - Create `intikepri.db` SQLite database automatically
 - Run migrations automatically
 - Start on `http://localhost:3001`
@@ -93,15 +96,15 @@ npm run build
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/news` | List news (search, category, page, limit) |
-| GET | `/api/news/:id` | Get single news |
-| POST | `/api/news` | Create news |
-| PUT | `/api/news/:id` | Update news |
-| DELETE | `/api/news/:id` | Delete news |
-| POST | `/api/auth/login` | Admin login |
-| POST | `/api/auth/me` | Validate token |
+| Method | Endpoint          | Description                               |
+| ------ | ----------------- | ----------------------------------------- |
+| GET    | `/api/news`       | List news (search, category, page, limit) |
+| GET    | `/api/news/:id`   | Get single news                           |
+| POST   | `/api/news`       | Create news                               |
+| PUT    | `/api/news/:id`   | Update news                               |
+| DELETE | `/api/news/:id`   | Delete news                               |
+| POST   | `/api/auth/login` | Admin login                               |
+| POST   | `/api/auth/me`    | Validate token                            |
 
 ## Default Admin Credentials
 
@@ -127,24 +130,26 @@ CREATE TABLE news (
 
 ## Pages
 
-| Page | Route | Description |
-|------|-------|-------------|
-| Home | `/` | Hero, intro, news, quote, structure sections |
-| About | `/tentang-kami` | Organization profile, history, vision/mission |
-| News | `/berita` | News listing with search, filter, pagination |
-| News Detail | `/berita/:id` | Full article with attachments |
-| Login | `/login` | Admin authentication |
-| Admin | `/admin` | CMS dashboard (CRUD news) |
+| Page        | Route           | Description                                   |
+| ----------- | --------------- | --------------------------------------------- |
+| Home        | `/`             | Hero, intro, news, quote, structure sections  |
+| About       | `/tentang-kami` | Organization profile, history, vision/mission |
+| News        | `/berita`       | News listing with search, filter, pagination  |
+| News Detail | `/berita/:id`   | Full article with attachments                 |
+| Login       | `/login`        | Admin authentication                          |
+| Admin       | `/admin`        | CMS dashboard (CRUD news)                     |
 
 ## Environment Variables
 
 ### Backend (.env)
+
 ```env
 DATABASE_URL=sqlite:/app/data/intikepri.db
 PORT=3001
 ```
 
 ### Frontend (next.config.ts)
+
 ```typescript
 env: {
     API_URL: 'http://localhost:3001',  // Backend URL
@@ -153,15 +158,15 @@ env: {
 
 ## Key Changes from Original
 
-| Aspect | Original | New |
-|--------|----------|-----|
-| Frontend | Vite + React Router | Next.js 15 App Router |
-| Backend | Hono (Node.js) | Axum (Rust) |
-| Database | MySQL | SQLite |
-| ORM | Drizzle | sqlx |
-| API Style | tRPC | REST JSON |
-| Auth | localStorage plain | JWT + localStorage |
-| Rendering | SPA (client-side) | Static Export + client fetch |
+| Aspect    | Original            | New                          |
+| --------- | ------------------- | ---------------------------- |
+| Frontend  | Vite + React Router | Next.js 15 App Router        |
+| Backend   | Hono (Node.js)      | Axum (Rust)                  |
+| Database  | MySQL               | SQLite                       |
+| ORM       | Drizzle             | sqlx                         |
+| API Style | tRPC                | REST JSON                    |
+| Auth      | localStorage plain  | JWT + localStorage           |
+| Rendering | SPA (client-side)   | Static Export + client fetch |
 
 ## Communication Flow
 
@@ -192,10 +197,13 @@ The `deploy/` directory contains Kubernetes manifests synced by Flux from the [i
 Infrastructure configs (cloudflared, ESO, ingress, middleware, network-policy) live in the [intikepri-infra](https://forgejo.kudofools.dev/izayoilv/intikepri-infra) repo.
 
 ### Frontend (Static)
+
 Deploy the `frontend/dist/` folder to any static host (Vercel, Netlify, Cloudflare Pages, etc.)
 
 ### Backend (Rust Binary)
+
 Build the Rust binary and run it on your server:
+
 ```bash
 cd backend
 cargo build --release
@@ -204,6 +212,7 @@ cargo build --release
 ```
 
 Or use Docker:
+
 ```dockerfile
 FROM rust:1.75 as builder
 WORKDIR /app
