@@ -19,7 +19,7 @@ export default function HeroSection() {
   return (
     <section ref={ref} className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden bg-[#1A1A1A]">
       <div className="absolute inset-0 opacity-20" style={{
-        backgroundImage: "url(/images/hero-bg.jpg)",
+        backgroundImage: "url(/images/hero-bg.jpeg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }} />
