@@ -1,22 +1,11 @@
-export interface Attachment {
-  id: string;
-  name: string;
-  type: string;
-  size: number;
-  dataUrl: string;
-  uploadDate: string;
-}
-
 export interface News {
   id: number;
   title: string;
-  summary: string;
   content: string;
   image: string;
-  category: string;
+  location: string;
   author: string;
   date: string;
-  attachments: Attachment[];
   created_at: string;
 }
 

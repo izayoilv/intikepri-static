@@ -16,26 +16,23 @@ const PAGE_SIZE = 6;
 
 export default function BeritaListClient({
   initialItems,
-  categories,
+  locations,
 }: {
   initialItems: News[];
-  categories: string[];
+  locations: string[];
 }) {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("Semua");
+  const [location, setLocation] = useState("Semua");
   const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
     return initialItems.filter((n) => {
-      const matchCat = category === "Semua" || n.category === category;
+      const matchLoc = location === "Semua" || n.location === location;
       const q = search.trim().toLowerCase();
-      const matchSearch =
-        !q ||
-        n.title.toLowerCase().includes(q) ||
-        n.summary.toLowerCase().includes(q);
-      return matchCat && matchSearch;
+      const matchSearch = !q || n.title.toLowerCase().includes(q);
+      return matchLoc && matchSearch;
     });
-  }, [initialItems, search, category]);
+  }, [initialItems, search, location]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -74,16 +71,16 @@ export default function BeritaListClient({
             />
           </div>
           <div className="flex flex-wrap gap-2">
-            {categories.map((c) => (
+            {locations.map((loc) => (
               <button
-                key={c}
+                key={loc}
                 onClick={() => {
-                  setCategory(c);
+                  setLocation(loc);
                   setPage(1);
                 }}
-                className={`px-4 py-2 font-sans text-xs tracking-wide border transition-colors ${category === c ? "bg-[#A42A28] text-white border-[#A42A28]" : "bg-white text-[#666666] border-[#E5E5E5] hover:border-[#A42A28]/40"}`}
+                className={`px-4 py-2 font-sans text-xs tracking-wide border transition-colors ${location === loc ? "bg-[#A42A28] text-white border-[#A42A28]" : "bg-white text-[#666666] border-[#E5E5E5] hover:border-[#A42A28]/40"}`}
               >
-                {c}
+                {loc}
               </button>
             ))}
           </div>
@@ -106,14 +103,11 @@ export default function BeritaListClient({
                   </div>
                   <div className="p-5">
                     <span className="inline-block bg-[#A42A28]/10 text-[#A42A28] text-xs font-sans px-2 py-1 mb-3">
-                      {item.category}
+                      {item.location}
                     </span>
                     <h2 className="font-serif text-lg font-semibold text-[#1A1A1A] mb-2 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                       {item.title}
                     </h2>
-                    <p className="text-[#666666] font-sans text-sm mb-3 line-clamp-2">
-                      {item.summary}
-                    </p>
                     <p className="text-[#999999] font-sans text-xs flex items-center gap-3">
                       <span className="flex items-center gap-1">
                         <Calendar size={12} /> {item.date}

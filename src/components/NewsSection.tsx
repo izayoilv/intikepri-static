@@ -76,7 +76,7 @@ export default function NewsSection({
                 </div>
                 <div className="p-5">
                   <span className="inline-block bg-[#A42A28]/10 text-[#A42A28] text-xs font-sans px-2 py-1 mb-3">
-                    {item.category}
+                    {item.location}
                   </span>
                   <h3 className="font-serif text-lg font-semibold text-[#1A1A1A] mb-3 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                     {item.title}

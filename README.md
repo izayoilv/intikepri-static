@@ -30,7 +30,6 @@ app/
 - **Tailwind CSS** + **shadcn/ui**
 - **GSAP** (scroll animations)
 - **Lucide React** (icons)
-- **react-pdf** (PDF viewer)
 
 ## Backend Stack
 
@@ -98,7 +97,7 @@ npm run build
 
 | Method | Endpoint          | Description                               |
 | ------ | ----------------- | ----------------------------------------- |
-| GET    | `/api/news`       | List news (search, category, page, limit) |
+| GET    | `/api/news`       | List news (search, location, page, limit) |
 | GET    | `/api/news/:id`   | Get single news                           |
 | POST   | `/api/news`       | Create news                               |
 | PUT    | `/api/news/:id`   | Update news                               |
@@ -117,10 +116,11 @@ npm run build
 CREATE TABLE news (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
-    summary TEXT NOT NULL,
     content TEXT NOT NULL,
-    image TEXT NOT NULL DEFAULT '/images/news-1.jpg',
-    category TEXT NOT NULL DEFAULT 'Kegiatan',
+    image_path TEXT,
+    image_name TEXT,
+    image_bytes INTEGER,
+    location TEXT NOT NULL DEFAULT 'Kegiatan',
     author TEXT NOT NULL DEFAULT 'Redaksi INTI Kepri',
     date TEXT NOT NULL,
     attachments TEXT NOT NULL DEFAULT '[]',

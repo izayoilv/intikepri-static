@@ -60,8 +60,8 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-white/40 font-sans text-sm leading-relaxed">
-              Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau —
-              Tulus memberi, ikhlas mengabdi.
+              Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau — Tulus
+              memberi, ikhlas mengabdi.
             </p>
           </div>
 
