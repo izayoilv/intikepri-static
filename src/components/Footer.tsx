@@ -90,7 +90,7 @@ export default function Footer() {
               {[
                 "Kota Batam",
                 "Kab. Karimun",
-                "Kota Tanjungpinang",
+                "Kota Tanjungpinang & Kab. Bintan",
                 "Kab. Lingga",
                 "Kab. Anambas",
                 "Kab. Natuna",
