@@ -60,8 +60,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-white/40 font-sans text-sm leading-relaxed">
-              Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau — Tulus
-              memberi, ikhlas mengabdi.
+              Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau — TULUS MEMBERI IKHLAS MENGABDI.
             </p>
           </div>
 
@@ -113,7 +112,7 @@ export default function Footer() {
                   size={14}
                   className="mt-0.5 flex-shrink-0 text-[#C8956C]"
                 />{" "}
-                Kota Batam, Provinsi Kepulauan Riau, Indonesia.
+                Ruko The Capitol Blok B No. 42, Superblok Imperium, Jl. Jend. Sudirman, Kel. Taman Baloi, Kec. Batam Kota, Kota Batam, Kepulauan Riau, Indonesia.
               </p>
               <p className="text-white/40 font-sans text-sm flex items-center gap-2">
                 <Mail size={14} className="flex-shrink-0 text-[#C8956C]" />{" "}
