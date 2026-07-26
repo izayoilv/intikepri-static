@@ -59,8 +59,8 @@ export default function IntroSection() {
 
           <div className="grid grid-cols-2 gap-4">
             {[
-              { number: "20+", label: "Tahun Mengabdi" },
-              { number: "8", label: "Kota/Kabupaten" },
+              { number: "22", label: "Tahun Mengabdi" },
+              { number: "7", label: "Kota/Kabupaten" },
               { number: "300+", label: "Anggota" },
               { number: "100+", label: "Kegiatan" },
             ].map((stat, i) => (
