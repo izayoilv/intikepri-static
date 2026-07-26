@@ -90,6 +90,7 @@ export const sejarah = [
 
 export const locations = [
   "Semua",
+  "Kepri",
   "Batam",
   "TPI & Bintan",
   "Karimun",
