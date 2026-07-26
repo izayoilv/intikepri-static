@@ -25,7 +25,7 @@ export default function TentangKamiPage() {
               Tentang Kami
             </p>
             <h1 className="font-serif text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">
-              Perhimpunan Indonesia Tionghoa
+              Perhimpunan Indonesia Tionghoa (INTI)
               <br />
               Provinsi Kepulauan Riau
             </h1>
