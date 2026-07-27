@@ -30,7 +30,7 @@ spec:
         fsGroup: 101
       containers:
         - name: nginx
-          image: docker.io/izayoilv/intikepri-static:build-000043-sha-176fc7ca # {"$imagepolicy": "flux-system:intikepri-static"}
+          image: docker.io/izayoilv/intikepri-static:build-000044-sha-6c5e8650 # {"$imagepolicy": "flux-system:intikepri-static"}
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
