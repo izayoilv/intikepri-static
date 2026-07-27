@@ -1,6 +1,18 @@
 when:
   - event: push
     branch: main
+    path:
+      include:
+        - "**"
+      exclude:
+        - "**/*.md"
+        - ".gitignore"
+        - ".pre-commit-config.yaml"
+        - ".prettierrc"
+        - ".repomixignore"
+        - "components.json"
+        - "eslint.config.mjs"
+        - "deploy/**"
   - event: manual
 
 clone:
