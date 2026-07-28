@@ -17,8 +17,8 @@ function getAllNews(): News[] {
 
 export async function generateStaticParams() {
   const items = getAllNews();
-  if (items.length === 0) return [{ id: "0" }];
-  return items.map((n) => ({ id: String(n.id) }));
+  if (items.length === 0) return [{ slug: "untitled" }];
+  return items.map((n) => ({ slug: n.slug }));
 }
 
 export const dynamicParams = false;
@@ -26,10 +26,10 @@ export const dynamicParams = false;
 export default async function BeritaDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { id } = await params;
+  const { slug } = await params;
   const items = getAllNews();
-  const news = items.find((n) => String(n.id) === id) || null;
-  return <BeritaDetailClient news={news} id={Number(id)} />;
+  const news = items.find((n) => n.slug === slug) || null;
+  return <BeritaDetailClient news={news} />;
 }

@@ -63,8 +63,8 @@ export default function NewsSection({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {displayNews.map((item) => (
             <Link
-              key={item.id}
-              href={`/berita/${item.id}`}
+              key={item.slug}
+              href={`/berita/${item.slug}`}
               className="news-reveal group"
             >
               <div className="bg-white border border-[#E5E5E5] overflow-hidden hover:shadow-lg transition-shadow">

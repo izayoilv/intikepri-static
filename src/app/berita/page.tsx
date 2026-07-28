@@ -4,7 +4,7 @@ import path from "path";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { fallbackNews, locations } from "@/lib/data";
+import { fallbackNews, locations, organizations } from "@/lib/data";
 import type { News } from "@/types";
 
 import BeritaListClient from "./BeritaListClient";
@@ -28,7 +28,11 @@ export default async function BeritaPage() {
       <Navbar />
       <div className="pt-24">
         <Breadcrumb items={[{ label: "Berita" }]} />
-        <BeritaListClient initialItems={items} locations={locations} />
+        <BeritaListClient
+          initialItems={items}
+          locations={locations}
+          organizations={organizations}
+        />
       </div>
       <Footer />
     </main>

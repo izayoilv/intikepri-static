@@ -4,16 +4,14 @@ import { ArrowLeft, Calendar, User } from "lucide-react";
 import Link from "next/link";
 
 import Breadcrumb from "@/components/Breadcrumb";
-import { fallbackNews } from "@/lib/data";
 import type { News } from "@/types";
 
 interface Props {
-  id: number;
   news: News | null;
 }
 
-export default function BeritaDetailClient({ id, news }: Props) {
-  const item = news || fallbackNews.find((n) => Number(n.id) === id) || null;
+export default function BeritaDetailClient({ news }: Props) {
+  const item = news || null;
 
   if (!item) {
     return (

@@ -98,6 +98,9 @@ export const locations = [
   "Anambas",
   "Natuna",
 ];
+
+export const organizations = ["Semua", "INTI", "PINTI", "GEMA"];
+
 export const imageOptions = [
   "/images/hero-bg.jpg",
   "/images/news-1.jpg",

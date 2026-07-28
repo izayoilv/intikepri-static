@@ -1,12 +1,12 @@
 export interface News {
-  id: number;
   title: string;
   content: string;
   image: string;
+  slug: string;
   location: string;
+  organization: string;
   author: string;
   date: string;
-  created_at: string;
 }
 
 export interface NewsListResponse {
