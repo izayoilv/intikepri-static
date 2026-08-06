@@ -69,11 +69,11 @@ export default function TentangKamiPage() {
                     <p className="font-serif text-lg font-semibold text-[#1A1A1A]">
                       {k.nama}
                     </p>
-                    <p
+                    {/*<p
                       className={`font-sans text-xs mt-0.5 ${i === 0 ? "text-[#A42A28] font-medium" : "text-[#999999]"}`}
                     >
                       {k.status}
-                    </p>
+                    </p>  */}
                   </li>
                 ))}
               </ol>

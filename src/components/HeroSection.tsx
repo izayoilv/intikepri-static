@@ -56,7 +56,7 @@ export default function HeroSection() {
           KEPULAUAN RIAU
         </h1>
         <p className="text-white/60 font-sans text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-          Tulus memberi, ikhlas mengabdi.
+          Tulus Memberi, Ikhlas Mengabdi.
         </p>
         <p className="text-white/40 font-sans text-xs md:text-sm max-w-xl mx-auto mt-2 italic">
           To give sincerely, to serve selflessly.
