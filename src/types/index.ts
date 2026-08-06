@@ -36,7 +36,6 @@ export interface Branch {
 export interface Ketua {
   periode: string;
   nama: string;
-  status: string;
 }
 
 export interface Bidang {
