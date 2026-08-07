@@ -12,6 +12,7 @@ import {
   Mail,
   User,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import Breadcrumb from "@/components/Breadcrumb";
@@ -48,7 +49,6 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
   const encodedTitle = encodeURIComponent(item.title);
 
   // Semua share pakai anchor <a> biasa — tanpa JavaScript sama sekali.
-  // Link share ini juga bisa dibaca crawler sebagai link biasa.
   const shareLinks = [
     {
       label: "Bagikan ke WhatsApp",
@@ -112,10 +112,9 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
       />
 
       {/* ARTIKEL + FLOATING SHARE */}
-      {/* pb-24 di mobile supaya konten bawah tidak ketutup share bar fixed */}
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-12 pb-24 lg:pb-12">
         <div className="lg:flex lg:gap-10">
-          {/* Floating share — DESKTOP: sticky di samping artikel, murni CSS position: sticky */}
+          {/* Floating share — DESKTOP: sticky di samping artikel */}
           <aside className="hidden lg:block flex-shrink-0">
             <div className="sticky top-28 flex flex-col items-center gap-2">
               <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mb-1 [writing-mode:vertical-rl]">
@@ -139,12 +138,15 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
 
           <div className="flex-1 min-w-0">
             <div className="bg-white border border-[#E5E5E5] overflow-hidden mb-8">
-              <div
-                className="aspect-[16/9] bg-cover bg-center"
-                style={{ backgroundImage: `url(${item.image})` }}
-                role="img"
-                aria-label={item.title}
-              />
+              <div className="relative aspect-[16/9]">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
             </div>
 
             <article className="bg-white border border-[#E5E5E5] p-6 md:p-10">
@@ -198,20 +200,24 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
                   href={`/berita/${rel.slug}`}
                   className="group"
                 >
-                  <div className="bg-white border border-[#E5E5E5] overflow-hidden hover:shadow-lg transition-shadow h-full">
-                    <div className="aspect-[16/10] overflow-hidden bg-[#E5E5E5]">
-                      <div
-                        className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                        style={{ backgroundImage: `url(${rel.image})` }}
+                  <div className="bg-white border border-[#E5E5E5] overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-[#E5E5E5]">
+                      <Image
+                        src={rel.image}
+                        alt={rel.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
-                    <div className="p-5">
-                      <span className="inline-block bg-[#A42A28]/10 text-[#A42A28] text-xs font-sans px-2 py-1 mb-3">
-                        {rel.location}
-                      </span>
-                      <h3 className="font-serif text-base font-semibold text-[#1A1A1A] mb-3 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
-                        {rel.title}
-                      </h3>
+                    <div className="p-5 flex-1 flex flex-col justify-between">
+                      <div>
+                        <span className="inline-block bg-[#A42A28]/10 text-[#A42A28] text-xs font-sans px-2 py-1 mb-3">
+                          {rel.location}
+                        </span>
+                        <h3 className="font-serif text-base font-semibold text-[#1A1A1A] mb-3 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
+                          {rel.title}
+                        </h3>
+                      </div>
                       <p className="text-[#999999] font-sans text-xs flex items-center gap-3">
                         <span className="flex items-center gap-1">
                           <Calendar size={12} /> {rel.date}
@@ -229,7 +235,7 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
         )}
       </div>
 
-      {/* Floating share — MOBILE: bar fixed di bawah layar, murni CSS position: fixed */}
+      {/* Floating share — MOBILE: bar fixed di bawah layar */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-[#E5E5E5]">
         <div className="flex items-center justify-center gap-2 px-4 py-2.5">
           <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mr-2">

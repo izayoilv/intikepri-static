@@ -1,4 +1,4 @@
-import fs from "fs";
+﻿import fs from "fs";
 import path from "path";
 
 import type { Metadata } from "next";
@@ -7,23 +7,23 @@ import type { News } from "@/types";
 
 import BeritaDetailClient from "./BeritaDetailClient";
 
+// Helper untuk membaca data berita (sesuaikan dengan implementasi asli di tokomu jika berbeda)
 function getAllNews(): News[] {
   try {
-    const filePath = path.join(process.cwd(), "src", "data", "news.json");
-    const content = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(content);
+    const filePath = path.join(process.cwd(), "src/data/news.json");
+    const fileData = fs.readFileSync(filePath, "utf-8");
+    return JSON.parse(fileData);
   } catch {
     return [];
   }
 }
 
-export async function generateStaticParams() {
-  const items = getAllNews();
-  if (items.length === 0) return [{ slug: "untitled" }];
-  return items.map((n) => ({ slug: n.slug }));
-}
+const BASE = "https://www.intikepri.com";
 
-export const dynamicParams = false;
+function toISODate(date: string): string | undefined {
+  const d = new Date(date);
+  return isNaN(d.getTime()) ? undefined : d.toISOString();
+}
 
 // SEO: metadata unik per artikel (title, description, Open Graph untuk share preview)
 export async function generateMetadata({
@@ -34,13 +34,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const news = getAllNews().find((n) => n.slug === slug);
 
-  if (!news) return { title: "Berita tidak ditemukan — INTI Kepri" };
+  if (!news) return { title: "Berita tidak ditemukan â€” INTI Kepri" };
 
   const description = news.content.replace(/\s+/g, " ").slice(0, 160);
 
   return {
-    title: `${news.title} — INTI Kepri`,
+    title: `${news.title} â€” INTI Kepri`,
     description,
+    alternates: { canonical: `/berita/${news.slug}/` },
     openGraph: {
       title: news.title,
       description,
@@ -49,6 +50,14 @@ export async function generateMetadata({
     },
   };
 }
+
+export async function generateStaticParams() {
+  const items = getAllNews();
+  if (items.length === 0) return [{ slug: "belum-ada-berita" }];
+  return items.map((n) => ({ slug: n.slug }));
+}
+
+export const dynamicParams = false;
 
 export default async function BeritaDetailPage({
   params,
@@ -60,8 +69,59 @@ export default async function BeritaDetailPage({
   const news = items.find((n) => n.slug === slug) || null;
 
   // Berita lainnya: semua berita selain yang sedang dibuka, ambil 3 teratas
-  // (asumsi news.json sudah terurut dari yang terbaru)
   const relatedNews = items.filter((n) => n.slug !== slug).slice(0, 3);
 
-  return <BeritaDetailClient news={news} relatedNews={relatedNews} />;
+  const isoDate = news ? toISODate(news.date) : undefined;
+
+  const articleLd = news
+    ? {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        headline: news.title,
+        ...(isoDate ? { datePublished: isoDate, dateModified: isoDate } : {}),
+        author: { "@type": "Person", name: news.author },
+        image: news.image?.startsWith("http")
+          ? news.image
+          : `${BASE}${news.image}`,
+        publisher: {
+          "@type": "Organization",
+          name: "INTI Kepri",
+          logo: {
+            "@type": "ImageObject",
+            url: `${BASE}/images/Logo-INTI.png`,
+          },
+        },
+        mainEntityOfPage: `${BASE}/berita/${news.slug}/`,
+      }
+    : null;
+
+  const breadcrumbLd = news
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Beranda", item: `${BASE}/` },
+          { "@type": "ListItem", position: 2, name: "Berita", item: `${BASE}/berita/` },
+          { "@type": "ListItem", position: 3, name: news.title },
+        ],
+      }
+    : null;
+
+  return (
+    <>
+      {articleLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+        />
+      )}
+      {breadcrumbLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        />
+      )}
+      <BeritaDetailClient news={news} relatedNews={relatedNews} />
+    </>
+  );
 }

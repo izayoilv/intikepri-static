@@ -10,6 +10,14 @@ import QuoteSection from "@/components/QuoteSection";
 import StructureSection from "@/components/StructureSection";
 import { fallbackNews } from "@/lib/data";
 import type { News } from "@/types";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Berita & Kegiatan",
+  description:
+    "Berita terbaru seputar kegiatan INTI Kepulauan Riau: bakti sosial, pertemuan, dan program kemasyarakatan.",
+  alternates: { canonical: "/berita" },
+};
 
 function getLatestNews(): News[] {
   try {
@@ -22,11 +30,37 @@ function getLatestNews(): News[] {
   }
 }
 
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau",
+  alternateName: "INTI Kepri",
+  url: "https://www.intikepri.com/",
+  logo: "https://www.intikepri.com/images/Logo-INTI.png",
+  description:
+    "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau — Tulus memberi, ikhlas mengabdi.",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Batam",
+    addressRegion: "Kepulauan Riau",
+    addressCountry: "ID",
+  },
+  areaServed: "Kepulauan Riau",
+  sameAs: [
+    "https://www.facebook.com/groups/perhimpunanintikepri/",
+    "https://www.instagram.com/inti.kepri/",
+  ],
+};
+
 export default async function HomePage() {
   const latestNews = getLatestNews();
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
+      />
       <Navbar />
       <HeroSection />
       <IntroSection />
