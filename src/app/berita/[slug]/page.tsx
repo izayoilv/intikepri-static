@@ -18,7 +18,7 @@ function getAllNews(): News[] {
   }
 }
 
-const BASE = "https://www.intikepri.com";
+const BASE = "https://intikepri.com";
 
 function toISODate(date: string): string | undefined {
   const d = new Date(date);

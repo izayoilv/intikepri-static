@@ -1,4 +1,4 @@
-import fs from "fs";
+﻿import fs from "fs";
 import path from "path";
 
 import Footer from "@/components/Footer";
@@ -35,10 +35,10 @@ const organizationLd = {
   "@type": "Organization",
   name: "Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau",
   alternateName: "INTI Kepri",
-  url: "https://www.intikepri.com/",
-  logo: "https://www.intikepri.com/images/Logo-INTI.png",
+  url: "https://intikepri.com/",
+  logo: "https://intikepri.com/images/Logo-INTI.png",
   description:
-    "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau — Tulus memberi, ikhlas mengabdi.",
+    "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau â€” Tulus memberi, ikhlas mengabdi.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Batam",

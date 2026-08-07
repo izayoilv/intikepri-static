@@ -1,4 +1,4 @@
-import "./globals.css";
+﻿import "./globals.css";
 
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s | INTI Kepri",
   },
   description:
-    "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau — Tulus memberi, ikhlas mengabdi.",
+    "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau â€” Tulus memberi, ikhlas mengabdi.",
   robots: {
     index: false,
     follow: false,
