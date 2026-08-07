@@ -16,16 +16,23 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://intikepri.com"),
   title: {
     default:
       "INTI Kepri | Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau",
     template: "%s | INTI Kepri",
   },
   description:
-    "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau â€” Tulus memberi, ikhlas mengabdi.",
+    "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau - Tulus memberi, ikhlas mengabdi.",
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    siteName: "INTI Kepri",
+    images: [{ url: "/images/Logo-INTI.png", width: 1200, height: 630 }],
+  },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
   },
 };
 

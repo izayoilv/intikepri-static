@@ -1,5 +1,7 @@
-import fs from "fs";
+﻿import fs from "fs";
 import path from "path";
+
+import type { Metadata } from "next";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
@@ -8,6 +10,13 @@ import { fallbackNews, locations, organizations } from "@/lib/data";
 import type { News } from "@/types";
 
 import BeritaListClient from "./BeritaListClient";
+
+export const metadata: Metadata = {
+  title: "Berita & Kegiatan",
+  description:
+    "Berita terbaru seputar kegiatan INTI Kepulauan Riau: bakti sosial, pertemuan, dan program kemasyarakatan.",
+  alternates: { canonical: "/berita/" },
+};
 
 function getNews(): News[] {
   try {

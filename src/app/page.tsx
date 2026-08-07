@@ -10,14 +10,6 @@ import QuoteSection from "@/components/QuoteSection";
 import StructureSection from "@/components/StructureSection";
 import { fallbackNews } from "@/lib/data";
 import type { News } from "@/types";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Berita & Kegiatan",
-  description:
-    "Berita terbaru seputar kegiatan INTI Kepulauan Riau: bakti sosial, pertemuan, dan program kemasyarakatan.",
-  alternates: { canonical: "/berita" },
-};
 
 function getLatestNews(): News[] {
   try {
@@ -38,7 +30,7 @@ const organizationLd = {
   url: "https://intikepri.com/",
   logo: "https://intikepri.com/images/Logo-INTI.png",
   description:
-    "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau â€” Tulus memberi, ikhlas mengabdi.",
+    "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau - Tulus memberi, ikhlas mengabdi.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Batam",
