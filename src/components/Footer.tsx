@@ -1,3 +1,9 @@
+import {
+  SiFacebook,
+  SiInstagram,
+  SiX,
+  SiYoutube,
+} from "@icons-pack/react-simple-icons";
 import { ChevronRight, Mail, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,6 +13,30 @@ export default function Footer() {
     { to: "/", label: "Beranda" },
     { to: "/tentang-kami", label: "Tentang Kami" },
     { to: "/berita", label: "Berita" },
+  ];
+
+  // DUMMY — ganti href dengan URL akun resmi INTI Kepri
+  const socials = [
+    {
+      label: "Facebook INTI Kepri",
+      href: "https://www.facebook.com/intikepri",
+      Icon: SiFacebook,
+    },
+    {
+      label: "Instagram INTI Kepri",
+      href: "https://www.instagram.com/intikepri",
+      Icon: SiInstagram,
+    },
+    {
+      label: "X (Twitter) INTI Kepri",
+      href: "https://x.com/intikepri",
+      Icon: SiX,
+    },
+    {
+      label: "YouTube INTI Kepri",
+      href: "https://www.youtube.com/@intikepri",
+      Icon: SiYoutube,
+    },
   ];
 
   return (
@@ -63,6 +93,23 @@ export default function Footer() {
               Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau — TULUS
               MEMBERI IKHLAS MENGABDI.
             </p>
+
+            {/* MEDIA SOSIAL — pure <a> HTML, tanpa JavaScript */}
+            <div className="flex items-center gap-2 mt-5">
+              {socials.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  title={label}
+                  className="w-9 h-9 flex items-center justify-center border border-white/15 text-white/50 hover:bg-[#A42A28] hover:border-[#A42A28] hover:text-white transition-colors"
+                >
+                  <Icon size={16} />
+                </a>
+              ))}
+            </div>
           </div>
 
           <div>
