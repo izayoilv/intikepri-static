@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
@@ -11,12 +11,21 @@ export const metadata: Metadata = {
     "Profil, sejarah, visi misi, dan jaringan Perhimpunan INTI Provinsi Kepulauan Riau.",
 };
 
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Beranda", item: "https://intikepri.com/" },
+    { "@type": "ListItem", position: 2, name: "Tentang Kami", item: "https://intikepri.com/tentang-kami/" },
+  ],
+};
 export default function TentangKamiPage() {
   return (
     <main>
       <Navbar />
       <div className="pt-24">
         <Breadcrumb items={[{ label: "Tentang Kami" }]} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
         {/* Header */}
         <section className="bg-[#1A1A1A] py-16 md:py-24">
@@ -156,3 +165,4 @@ export default function TentangKamiPage() {
     </main>
   );
 }
+

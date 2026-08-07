@@ -29,6 +29,14 @@ function getNews(): News[] {
   }
 }
 
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Beranda", item: "https://intikepri.com/" },
+    { "@type": "ListItem", position: 2, name: "Berita", item: "https://intikepri.com/berita/" },
+  ],
+};
 export default async function BeritaPage() {
   const items = getNews();
 
@@ -37,6 +45,7 @@ export default async function BeritaPage() {
       <Navbar />
       <div className="pt-24">
         <Breadcrumb items={[{ label: "Berita" }]} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
         <BeritaListClient
           initialItems={items}
           locations={locations}
@@ -47,3 +56,4 @@ export default async function BeritaPage() {
     </main>
   );
 }
+
