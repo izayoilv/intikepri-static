@@ -5,7 +5,7 @@ import type { News } from "@/types";
 
 export const dynamic = "force-static";
 
-const BASE = "https://intikepri.or.id";
+const BASE = "https://intikepri.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   let news: News[] = [];
