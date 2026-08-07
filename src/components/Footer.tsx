@@ -15,7 +15,6 @@ export default function Footer() {
     { to: "/berita", label: "Berita" },
   ];
 
-  // DUMMY — ganti href dengan URL akun resmi INTI Kepri
   const socials = [
     {
       label: "Facebook INTI Kepri",
@@ -27,16 +26,6 @@ export default function Footer() {
       href: "https://www.instagram.com/inti.kepri/",
       Icon: SiInstagram,
     },
-    {/*
-      label: "X (Twitter) INTI Kepri",
-      href: "https://x.com/intikepri",
-      Icon: SiX,
-    },
-    {
-      label: "YouTube INTI Kepri",
-      href: "https://www.youtube.com/@intikepri",
-      Icon: SiYoutube,
-    */},
   ];
 
   return (
@@ -94,9 +83,9 @@ export default function Footer() {
               MEMBERI IKHLAS MENGABDI.
             </p>
 
-            {/* MEDIA SOSIAL — pure <a> HTML, tanpa JavaScript */}
+            {/* MEDIA SOSIAL — menggunakan SocialIcon dengan huruf kapital */}
             <div className="flex items-center gap-2 mt-5">
-              {socials.map(({ label, href, Icon }) => (
+              {socials.map(({ label, href, Icon: SocialIcon }) => (
                 <a
                   key={label}
                   href={href}
@@ -106,7 +95,7 @@ export default function Footer() {
                   title={label}
                   className="w-9 h-9 flex items-center justify-center border border-white/15 text-white/50 hover:bg-[#A42A28] hover:border-[#A42A28] hover:text-white transition-colors"
                 >
-                  <Icon size={16} />
+                  <SocialIcon size={16} />
                 </a>
               ))}
             </div>
