@@ -19,15 +19,15 @@ export default function Footer() {
   const socials = [
     {
       label: "Facebook INTI Kepri",
-      href: "https://www.facebook.com/intikepri",
+      href: "https://www.facebook.com/groups/perhimpunanintikepri/",
       Icon: SiFacebook,
     },
     {
       label: "Instagram INTI Kepri",
-      href: "https://www.instagram.com/intikepri",
+      href: "https://www.instagram.com/inti.kepri/",
       Icon: SiInstagram,
     },
-    {
+    {/*
       label: "X (Twitter) INTI Kepri",
       href: "https://x.com/intikepri",
       Icon: SiX,
@@ -36,7 +36,7 @@ export default function Footer() {
       label: "YouTube INTI Kepri",
       href: "https://www.youtube.com/@intikepri",
       Icon: SiYoutube,
-    },
+    */},
   ];
 
   return (
