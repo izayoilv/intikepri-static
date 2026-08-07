@@ -46,7 +46,7 @@ export async function generateMetadata({
       title: news.title,
       description,
       type: "article",
-      images: [{ url: news.image, width: 1200, height: 630 }],,
+      images: [{ url: news.image, width: 1200, height: 630 }],
     },
   };
 }
