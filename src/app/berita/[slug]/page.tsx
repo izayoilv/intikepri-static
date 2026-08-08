@@ -1,4 +1,4 @@
-﻿import fs from "fs";
+import fs from "fs";
 import path from "path";
 
 import type { Metadata } from "next";
@@ -34,12 +34,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const news = getAllNews().find((n) => n.slug === slug);
 
-  if (!news) return { title: "Berita tidak ditemukan â€” INTI Kepri" };
+  if (!news) return { title: "Berita tidak ditemukan — INTI Kepri" };
 
   const description = news.content.replace(/\s+/g, " ").slice(0, 160);
 
   return {
-    title: `${news.title} â€” INTI Kepri`,
+    title: `${news.title} — INTI Kepri`,
     description,
     alternates: { canonical: `/berita/${news.slug}/` },
     openGraph: {
@@ -95,18 +95,6 @@ export default async function BeritaDetailPage({
       }
     : null;
 
-  const breadcrumbLd = news
-    ? {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Beranda", item: `${BASE}/` },
-          { "@type": "ListItem", position: 2, name: "Berita", item: `${BASE}/berita/` },
-          { "@type": "ListItem", position: 3, name: news.title },
-        ],
-      }
-    : null;
-
   return (
     <>
       {articleLd && (
@@ -115,14 +103,7 @@ export default async function BeritaDetailPage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
         />
       )}
-      {breadcrumbLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
-        />
-      )}
       <BeritaDetailClient news={news} relatedNews={relatedNews} />
     </>
   );
 }
-

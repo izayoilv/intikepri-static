@@ -22,6 +22,8 @@ export default function Navbar() {
     { to: "/", label: "Beranda" },
     { to: "/tentang-kami", label: "Tentang Kami" },
     { to: "/berita", label: "Berita" },
+    { to: "/galeri", label: "Galeri" },
+    { to: "/direktori", label: "Direktori" },
   ];
 
   const isActive = (p: string) => pathname === p;

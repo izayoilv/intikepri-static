@@ -1,16 +1,40 @@
-﻿import fs from "fs";
+import fs from "fs";
 import path from "path";
 
+import DirektoriSection from "@/components/DirektoriSection";
 import Footer from "@/components/Footer";
+import GaleriSection from "@/components/GaleriSection";
 import HeroSection from "@/components/HeroSection";
 import IntroSection from "@/components/IntroSection";
 import Navbar from "@/components/Navbar";
 import NewsSection from "@/components/NewsSection";
 import QuoteSection from "@/components/QuoteSection";
 import StructureSection from "@/components/StructureSection";
-import { fallbackNews } from "@/lib/data";
-import type { News } from "@/types";
+import { fallbackBusinesses, fallbackGallery, fallbackNews } from "@/lib/data";
+import type { Business, GalleryPhoto, News } from "@/types";
 import type { Metadata } from "next";
+
+function getLatestGallery(): GalleryPhoto[] {
+  try {
+    const filePath = path.join(process.cwd(), "src", "data", "galeri.json");
+    const content = fs.readFileSync(filePath, "utf-8");
+    const parsed: GalleryPhoto[] = JSON.parse(content);
+    return parsed.length > 0 ? parsed.slice(0, 8) : fallbackGallery;
+  } catch {
+    return fallbackGallery;
+  }
+}
+
+function getLatestBusinesses(): Business[] {
+  try {
+    const filePath = path.join(process.cwd(), "src", "data", "direktori.json");
+    const content = fs.readFileSync(filePath, "utf-8");
+    const parsed: Business[] = JSON.parse(content);
+    return parsed.length > 0 ? parsed.slice(0, 3) : fallbackBusinesses;
+  } catch {
+    return fallbackBusinesses;
+  }
+}
 
 function getLatestNews(): News[] {
   try {
@@ -53,6 +77,8 @@ const organizationLd = {
 
 export default async function HomePage() {
   const latestNews = getLatestNews();
+  const latestGallery = getLatestGallery();
+  const latestBusinesses = getLatestBusinesses();
 
   return (
     <main>
@@ -64,11 +90,11 @@ export default async function HomePage() {
       <HeroSection />
       <IntroSection />
       <NewsSection initialItems={latestNews} />
+      <GaleriSection initialItems={latestGallery} />
       <QuoteSection />
+      <DirektoriSection initialItems={latestBusinesses} />
       <StructureSection />
       <Footer />
     </main>
   );
 }
-
-

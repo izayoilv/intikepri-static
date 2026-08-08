@@ -1,4 +1,4 @@
-﻿import fs from "fs";
+import fs from "fs";
 import path from "path";
 import type { MetadataRoute } from "next";
 import type { News } from "@/types";
@@ -24,6 +24,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${BASE}/tentang-kami/`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/berita/`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/galeri/`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/direktori/`, changeFrequency: "weekly", priority: 0.8 },
     ...news.map((n) => ({
       url: `${BASE}/berita/${n.slug}/`,
       lastModified: toISODate(n.date),

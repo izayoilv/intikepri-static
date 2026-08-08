@@ -1,4 +1,13 @@
-import type { Bidang, Branch, Ketua, News, Pengurus, VisiMisi } from "@/types";
+import type {
+  Bidang,
+  Branch,
+  Business,
+  GalleryPhoto,
+  Ketua,
+  News,
+  Pengurus,
+  VisiMisi,
+} from "@/types";
 
 export const visiMisi: VisiMisi = {
   visi: "Menjadi organisasi yang maju, modern, bercitra internasional, berorientasi pada Kebangsaan Indonesia, menghargai hak asasi manusia, egaliter, pluralis, inklusif, demokratis, dan transparan.",
@@ -107,3 +116,7 @@ export const imageOptions = [
 ];
 
 export const fallbackNews: News[] = [];
+
+export const fallbackGallery: GalleryPhoto[] = [];
+
+export const fallbackBusinesses: Business[] = [];

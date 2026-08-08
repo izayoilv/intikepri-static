@@ -8,9 +8,34 @@ interface Item {
   to?: string;
 }
 
+const SITE_URL = "https://intikepri.com";
+
 export default function Breadcrumb({ items }: { items: Item[] }) {
+  // SEO: BreadcrumbList JSON-LD dibangun otomatis dari props,
+  // jadi setiap halaman yang memakai komponen ini langsung dapat
+  // structured data tanpa menulis JSON-LD manual per halaman.
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Beranda", item: `${SITE_URL}/` },
+      ...items.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 2,
+        name: item.label,
+        ...(item.to
+          ? { item: `${SITE_URL}${item.to.endsWith("/") ? item.to : `${item.to}/`}` }
+          : {}),
+      })),
+    ],
+  };
+
   return (
-    <nav className="bg-white border-b border-[#E5E5E5]">
+    <nav className="bg-white border-b border-[#E5E5E5]" aria-label="Breadcrumb">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-3">
         <ol className="flex items-center gap-2 text-sm font-sans">
           <li>
@@ -23,8 +48,8 @@ export default function Breadcrumb({ items }: { items: Item[] }) {
             </Link>
           </li>
           {items.map((item, i) => (
-            <li key={i} className="flex items-center gap-2">
-              <ChevronRight size={14} className="text-[#CCCCCC]" />
+            <li key={i} className="flex items-center gap-2 min-w-0">
+              <ChevronRight size={14} className="text-[#CCCCCC] flex-shrink-0" />
               {item.to ? (
                 <Link
                   href={item.to}
@@ -33,7 +58,9 @@ export default function Breadcrumb({ items }: { items: Item[] }) {
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-[#A42A28] font-medium">{item.label}</span>
+                <span className="text-[#A42A28] font-medium truncate max-w-[180px] sm:max-w-xs md:max-w-md inline-block align-middle">
+                  {item.label}
+                </span>
               )}
             </li>
           ))}

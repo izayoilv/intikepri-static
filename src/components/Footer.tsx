@@ -13,6 +13,8 @@ export default function Footer() {
     { to: "/", label: "Beranda" },
     { to: "/tentang-kami", label: "Tentang Kami" },
     { to: "/berita", label: "Berita" },
+    { to: "/galeri", label: "Galeri" },
+    { to: "/direktori", label: "Direktori Bisnis" },
   ];
 
   const socials = [
@@ -83,7 +85,7 @@ export default function Footer() {
               MEMBERI IKHLAS MENGABDI.
             </p>
 
-            {/* MEDIA SOSIAL — menggunakan SocialIcon dengan huruf kapital */}
+            {/* MEDIA SOSIAL â€” menggunakan SocialIcon dengan huruf kapital */}
             <div className="flex items-center gap-2 mt-5">
               {socials.map(({ label, href, Icon: SocialIcon }) => (
                 <a

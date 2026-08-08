@@ -58,3 +58,36 @@ export interface LoginResponse {
   token: string;
   user: UserInfo;
 }
+
+export interface GalleryPhoto {
+  title: string;
+  image: string;
+  /** Nama kegiatan / sumber upload — otomatis jadi filter di halaman galeri */
+  category: string;
+  /** Format ISO: YYYY-MM-DD */
+  date: string;
+  location?: string;
+  organization?: string;
+}
+
+export interface Business {
+  name: string;
+  category: string;
+  description: string;
+  owner?: string;
+  /** Kota/Kabupaten, mis. Batam, Karimun, TPI & Bintan */
+  location: string;
+  address?: string;
+  phone?: string;
+  /** Format internasional tanpa +, mis. 6281234567890 */
+  whatsapp?: string;
+  email?: string;
+  /** URL lengkap, mis. https://example.com */
+  website?: string;
+  /** Username tanpa @, mis. toko.saya */
+  instagram?: string;
+  /** Logo atau foto usaha (URL absolut) */
+  image?: string;
+  /** Tahun berdiri, mis. 2015 */
+  since?: string;
+}
