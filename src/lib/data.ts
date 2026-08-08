@@ -29,9 +29,9 @@ export const branches: Branch[] = [
 export const ketuaPeriode: Ketua[] = [
   {
     periode: "2026-2030",
-    nama: "Piter Tanjaya S.H."
+    nama: "Piter Tanjaya S.E."
   },
-  { periode: "2024-2026", nama: "Piter Tanjaya S.H."},
+  { periode: "2024-2026", nama: "Piter Tanjaya S.E."},
   {
     periode: "2010-2018",
     nama: "Beny Suwandi S.H., M.H."

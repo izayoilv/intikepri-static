@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Restoran Sari Rasa Nusantara",
+    "category": "Kuliner",
+    "description": "Restoran keluarga dengan menu masakan Padang, seafood, dan Chinese food. Menerima pesanan catering untuk acara kantor dan keluarga hingga 500 pax.",
+    "owner": "Linda Wijaya",
+    "location": "Batam",
+    "address": "Komplek Nagoya Business Centre Blok V No. 12, Batam",
+    "phone": "+62 778 456789",
+    "whatsapp": "6281277001122",
+    "instagram": "sarirasa.batam",
+    "since": "2010",
+    "featured": true,
+    "banner": "https://s3.intikepri.com/assets/news/8ebb3294-b732-49eb-af3e-ae3e9fbeb2b0/sebuah-akhir-masa-bakti-sebuah-awal-perjalanan-baru-muscab-v-inti-batam-serahkan-mandat-kepada-inti.jpg",
+    "website": "https://sarirasa.example.com",
+    "image": "https://s3.intikepri.com/assets/news/8ebb3294-b732-49eb-af3e-ae3e9fbeb2b0/sebuah-akhir-masa-bakti-sebuah-awal-perjalanan-baru-muscab-v-inti-batam-serahkan-mandat-kepada-inti.jpg",
+    "photos": [
+      "https://s3.intikepri.com/assets/news/446ba751-3e4b-4b9e-abcd-3d22ffe2f3c1/inti-karimun-gelar-baksos-sembako-sambut-hut-kodam-xix-tt.jpg",
+      "https://s3.intikepri.com/assets/news/8ebb3294-b732-49eb-af3e-ae3e9fbeb2b0/sebuah-akhir-masa-bakti-sebuah-awal-perjalanan-baru-muscab-v-inti-batam-serahkan-mandat-kepada-inti.jpg"
+    ]
+  },
+  {
+    "name": "Bengkel Maju Jaya Motor",
+    "category": "Otomotif",
+    "description": "Bengkel servis ringan dan tune-up semua merk mobil. Sparepart original bergaransi, free konsultasi, dan layanan antar-jemput kendaraan area Batam Centre.",
+    "owner": "Andre Tan",
+    "location": "Batam",
+    "address": "Jl. Raja H. Fisabilillah No. 88, Batam Centre",
+    "phone": "+62 778 789012",
+    "whatsapp": "6281377665544",
+    "since": "2015"
+  },
+  {
+    "name": "Toko Kain & Tailor Anggrek",
+    "category": "Fashion",
+    "description": "Toko kain lengkap sekaligus jasa jahit kebaya, cheongsam, dan busana formal. Pengerjaan rapi 3-7 hari, menerima order seragam kantor dan komunitas.",
+    "owner": "Mei Chen",
+    "location": "TPI & Bintan",
+    "address": "Jl. Merdeka No. 45, Tanjungpinang",
+    "whatsapp": "6285299887766",
+    "email": "anggrek.tailor@gmail.com",
+    "since": "2008",
+    "banner": "https://s3.intikepri.com/assets/news/446ba751-3e4b-4b9e-abcd-3d22ffe2f3c1/inti-karimun-gelar-baksos-sembako-sambut-hut-kodam-xix-tt.jpg",
+    "photos": [
+      "https://s3.intikepri.com/assets/news/446ba751-3e4b-4b9e-abcd-3d22ffe2f3c1/inti-karimun-gelar-baksos-sembako-sambut-hut-kodam-xix-tt.jpg"
+    ]
+  }
+]

@@ -42,6 +42,11 @@ Deskripsi singkat:
 Terima kasih.`,
 )}`;
 
+// Foto utama kartu: banner (foto tempat usaha) -> logo -> placeholder
+function businessPhoto(biz: Business): string | null {
+  return biz.banner || biz.image || null;
+}
+
 export default function DirektoriListClient({
   initialItems,
 }: {
@@ -108,7 +113,7 @@ export default function DirektoriListClient({
 
   return (
     <section className="py-16 md:py-24 bg-white min-h-[60vh]">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <div className="max-w-5xl mx-auto px-4 md:px-8">
         <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
             <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
@@ -217,98 +222,120 @@ export default function DirektoriListClient({
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {items.map((biz, i) => (
-              <div
-                key={`${biz.name}-${i}`}
-                role="button"
-                tabIndex={0}
-                onClick={() => setSelected(biz)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") setSelected(biz);
-                }}
-                className="group bg-white border border-[#E5E5E5] border-t-2 border-t-[#A42A28] hover:shadow-lg transition-shadow flex flex-col cursor-pointer"
-                aria-label={`Lihat detail ${biz.name}`}
-              >
-                {/* Logo + identitas */}
-                <div className="p-5 pb-0 flex items-start gap-4">
-                  <div className="w-14 h-14 flex-shrink-0 bg-[#F7F7F7] border border-[#E5E5E5] overflow-hidden flex items-center justify-center">
-                    {biz.image ? (
+          /* SATU BISNIS = SATU ROW: foto besar di kiri + shade gradient, konten di kanan */
+          <div className="space-y-5">
+            {items.map((biz, i) => {
+              const photo = businessPhoto(biz);
+              return (
+                <div
+                  key={`${biz.name}-${i}`}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelected(biz)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") setSelected(biz);
+                  }}
+                  className="group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex flex-col sm:flex-row cursor-pointer overflow-hidden"
+                  aria-label={`Lihat detail ${biz.name}`}
+                >
+                  {/* Foto + shade gradient (kategori & lencana menempel di atas foto) */}
+                  <div className="relative sm:w-60 md:w-72 flex-shrink-0 aspect-[16/9] sm:aspect-auto sm:min-h-[180px] bg-[#1A1A1A] overflow-hidden">
+                    {photo ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={biz.image}
-                        alt={`Logo ${biz.name}`}
-                        className="w-full h-full object-cover"
+                        src={photo}
+                        alt={`Foto ${biz.name}`}
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <Store size={22} className="text-[#CCCCCC]" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-[#F7F7F7]">
+                        <Store size={36} className="text-[#DDDDDD]" />
+                      </div>
                     )}
-                  </div>
-                  <div className="min-w-0">
-                    <h2 className="font-serif text-lg font-semibold text-[#1A1A1A] leading-snug line-clamp-2 group-hover:text-[#A42A28] transition-colors">
-                      {biz.name}
-                    </h2>
-                    <p className="font-sans text-xs mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span className="bg-[#A42A28]/10 text-[#A42A28] px-2 py-0.5">
-                        {biz.category || "Lainnya"}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                    <div className="absolute bottom-0 inset-x-0 p-3 flex items-end justify-between gap-2">
+                      <span className="font-sans text-[11px] text-white/90 flex items-center gap-1">
+                        <MapPin size={11} className="text-[#C8956C]" />
+                        {biz.location}
                       </span>
-                      <span className="text-[#999999]">{biz.location}</span>
                       {biz.featured && (
-                        <span className="bg-[#C8956C]/15 text-[#C8956C] px-2 py-0.5 font-medium">
+                        <span className="bg-[#C8956C] text-white font-sans text-[10px] tracking-wider uppercase px-2 py-0.5">
                           Unggulan
                         </span>
                       )}
+                    </div>
+                  </div>
+
+                  {/* Konten */}
+                  <div className="flex-1 min-w-0 p-5 md:p-6 flex flex-col">
+                    <div className="flex items-start gap-3">
+                      <div className="min-w-0">
+                        <h2 className="font-serif text-xl md:text-2xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
+                          {biz.name}
+                        </h2>
+                        <p className="font-sans text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+                          <span className="bg-[#A42A28]/10 text-[#A42A28] px-2 py-0.5">
+                            {biz.category || "Lainnya"}
+                          </span>
+                          {biz.owner && (
+                            <span className="text-[#999999] flex items-center gap-1">
+                              <User size={11} /> {biz.owner}
+                            </span>
+                          )}
+                          {biz.since && (
+                            <span className="text-[#BBBBBB]">Berdiri {biz.since}</span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="mt-3 font-sans text-sm text-[#666666] leading-relaxed line-clamp-2">
+                      {biz.description}
                     </p>
+
+                    <div className="mt-3 space-y-1.5">
+                      {biz.address && (
+                        <p className="font-sans text-xs text-[#999999] flex items-start gap-1.5">
+                          <MapPin size={12} className="mt-0.5 flex-shrink-0 text-[#C8956C]" />
+                          <span className="line-clamp-1">{biz.address}</span>
+                        </p>
+                      )}
+                    </div>
+
+                    {/* CTA website — elemen paling menonjol di row */}
+                    <div className="mt-auto pt-4 border-t border-[#F0F0F0] flex flex-wrap items-center gap-2">
+                      {biz.website ? (
+                        <a
+                          href={biz.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
+                        >
+                          <Globe size={14} /> Kunjungi Website
+                        </a>
+                      ) : (
+                        <span className="inline-flex items-center gap-2 border border-dashed border-[#DDDDDD] text-[#BBBBBB] px-4 py-2 font-sans text-xs">
+                          <Globe size={14} /> Website belum tersedia
+                        </span>
+                      )}
+                      {biz.email && (
+                        <span className="font-sans text-xs text-[#999999] flex items-center gap-1.5 truncate">
+                          <Mail size={12} className="flex-shrink-0 text-[#C8956C]" />
+                          {biz.email}
+                        </span>
+                      )}
+                      {biz.phone && (
+                        <span className="font-sans text-xs text-[#999999] flex items-center gap-1.5">
+                          <Phone size={12} className="flex-shrink-0 text-[#C8956C]" />
+                          {biz.phone}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-
-                {/* Deskripsi */}
-                <p className="px-5 mt-4 font-sans text-sm text-[#666666] leading-relaxed line-clamp-2">
-                  {biz.description}
-                </p>
-
-                {/* Meta */}
-                <div className="px-5 mt-3 space-y-1.5">
-                  {biz.address && (
-                    <p className="font-sans text-xs text-[#999999] flex items-start gap-1.5">
-                      <MapPin size={12} className="mt-0.5 flex-shrink-0 text-[#C8956C]" />
-                      <span className="line-clamp-1">{biz.address}</span>
-                    </p>
-                  )}
-                  {biz.email && (
-                    <p className="font-sans text-xs text-[#999999] flex items-center gap-1.5">
-                      <Mail size={12} className="flex-shrink-0 text-[#C8956C]" />
-                      <span className="truncate">{biz.email}</span>
-                    </p>
-                  )}
-                  {biz.phone && (
-                    <p className="font-sans text-xs text-[#999999] flex items-center gap-1.5">
-                      <Phone size={12} className="flex-shrink-0 text-[#C8956C]" />
-                      {biz.phone}
-                    </p>
-                  )}
-                </div>
-
-                {/* CTA website — elemen paling menonjol di kartu */}
-                <div className="p-5 mt-auto">
-                  {biz.website ? (
-                    <a
-                      href={biz.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
-                    >
-                      <Globe size={14} /> Kunjungi Website
-                    </a>
-                  ) : (
-                    <span className="inline-flex items-center gap-2 border border-dashed border-[#DDDDDD] text-[#BBBBBB] px-4 py-2 font-sans text-xs">
-                      <Globe size={14} /> Website belum tersedia
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -337,7 +364,7 @@ export default function DirektoriListClient({
         )}
       </div>
 
-      {/* MODAL DETAIL BISNIS */}
+      {/* MODAL DETAIL BISNIS — hero foto dengan shade, identitas menempel di bawah */}
       {selected && (
         <div
           className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
@@ -347,62 +374,84 @@ export default function DirektoriListClient({
           onClick={() => setSelected(null)}
         >
           <div
-            className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto border-t-2 border-t-[#A42A28]"
+            className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {selected.banner && (
-              <div
-                className="aspect-[16/7] bg-cover bg-center bg-[#1A1A1A]"
-                style={{ backgroundImage: `url(${selected.banner})` }}
-                role="img"
-                aria-label={`Foto ${selected.name}`}
-              />
-            )}
-            <div className="p-6 md:p-8">
-              <div className="flex items-start justify-between gap-4 mb-5">
-                <div className="flex items-start gap-4 min-w-0">
-                  <div className="w-16 h-16 flex-shrink-0 bg-[#F7F7F7] border border-[#E5E5E5] overflow-hidden flex items-center justify-center">
-                    {selected.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={selected.image}
-                        alt={`Logo ${selected.name}`}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Store size={26} className="text-[#CCCCCC]" />
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] leading-snug">
-                      {selected.name}
-                    </h2>
-                    <p className="font-sans text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span className="bg-[#A42A28]/10 text-[#A42A28] px-2 py-0.5">
-                        {selected.category || "Lainnya"}
-                      </span>
-                      <span className="text-[#999999]">{selected.location}</span>
-                    </p>
-                    {selected.owner && (
-                      <p className="font-sans text-xs text-[#999999] mt-1.5 flex items-center gap-1">
-                        <User size={12} /> {selected.owner}
-                        {selected.since ? ` • Berdiri ${selected.since}` : ""}
-                      </p>
-                    )}
-                  </div>
+            {/* Hero: banner + shade gradient + identitas overlay */}
+            <div className="relative aspect-[16/8] bg-[#1A1A1A] overflow-hidden">
+              {selected.banner || selected.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={selected.banner || selected.image}
+                  alt={`Foto ${selected.name}`}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-[#F7F7F7]">
+                  <Store size={48} className="text-[#DDDDDD]" />
                 </div>
-                <button
-                  onClick={() => setSelected(null)}
-                  className="p-2 text-[#999999] hover:text-[#1A1A1A] transition-colors flex-shrink-0"
-                  aria-label="Tutup detail"
-                >
-                  <X size={20} />
-                </button>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+              <button
+                onClick={() => setSelected(null)}
+                className="absolute top-3 right-3 p-2 bg-black/40 text-white hover:bg-black/60 transition-colors"
+                aria-label="Tutup detail"
+              >
+                <X size={18} />
+              </button>
+              <div className="absolute bottom-0 inset-x-0 p-5 md:p-6">
+                <p className="font-sans text-[11px] flex flex-wrap items-center gap-x-2 gap-y-1 mb-2">
+                  <span className="bg-[#A42A28] text-white px-2 py-0.5">
+                    {selected.category || "Lainnya"}
+                  </span>
+                  <span className="text-white/80 flex items-center gap-1">
+                    <MapPin size={11} className="text-[#C8956C]" />
+                    {selected.location}
+                  </span>
+                  {selected.featured && (
+                    <span className="bg-[#C8956C] text-white px-2 py-0.5 tracking-wider uppercase text-[10px]">
+                      Unggulan
+                    </span>
+                  )}
+                </p>
+                <h2 className="font-serif text-2xl md:text-3xl font-bold text-white leading-snug">
+                  {selected.name}
+                </h2>
+                {(selected.owner || selected.since) && (
+                  <p className="font-sans text-xs text-white/70 mt-1.5 flex items-center gap-1">
+                    <User size={12} />
+                    {selected.owner}
+                    {selected.since ? ` • Berdiri ${selected.since}` : ""}
+                  </p>
+                )}
               </div>
+            </div>
 
+            <div className="p-6 md:p-8">
               <p className="font-sans text-sm text-[#444444] leading-relaxed whitespace-pre-line mb-5">
                 {selected.description}
               </p>
+
+              {/* Strip foto tambahan — interaktif, scroll horizontal */}
+              {selected.photos && selected.photos.length > 0 && (
+                <div className="mb-6">
+                  <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mb-2">
+                    Galeri Bisnis
+                  </p>
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {selected.photos.map((photo, idx) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={`${photo}-${idx}`}
+                        src={photo}
+                        alt={`Foto ${selected.name} ${idx + 1}`}
+                        className="flex-none w-40 aspect-[4/3] object-cover border border-[#E5E5E5]"
+                        loading="lazy"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {selected.address && (
                 <p className="font-sans text-sm text-[#666666] flex items-start gap-2 mb-6">

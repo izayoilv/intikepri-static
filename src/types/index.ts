@@ -88,8 +88,10 @@ export interface Business {
   instagram?: string;
   /** Logo atau foto usaha (URL absolut) */
   image?: string;
-  /** Foto wide/banner untuk halaman detail (URL absolut) */
+  /** Foto wide/banner untuk kartu & popup detail (URL absolut) */
   banner?: string;
+  /** Foto tambahan untuk strip galeri di popup detail (URL absolut) */
+  photos?: string[];
   /** true = tampil di urutan teratas dengan lencana Unggulan */
   featured?: boolean;
   /** Tahun berdiri, mis. 2015 */

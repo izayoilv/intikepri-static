@@ -110,8 +110,8 @@ export default async function HomePage() {
       <Navbar />
       <HeroSection />
       <IntroSection />
-      <NewsSection initialItems={latestNews} />
       <AgendaSection initialItems={upcomingAgenda} />
+      <NewsSection initialItems={latestNews} />
       <GaleriSection initialItems={latestGallery} />
       <DirektoriSection initialItems={latestBusinesses} />
       <StructureSection />

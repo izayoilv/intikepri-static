@@ -79,22 +79,24 @@ export default function IntroSection() {
             </Link>
           </div>
 
-          {/* Komposisi foto + kartu motto (rumah baru motto setelah blok gelap dihapus) */}
-          <div className="intro-reveal relative">
+          {/* Komposisi foto + kartu motto (rumah baru motto setelah blok gelap dihapus).
+              Tampil penuh di SEMUA ukuran layar — di mobile offset diperkecil agar tidak
+              terpotong, plus ruang napas bawah supaya foto tumpuk tidak menabrak section berikutnya. */}
+          <div className="intro-reveal relative mt-10 lg:mt-0 mb-12 md:mb-14 lg:mb-0">
             <div className="aspect-[4/3] bg-[#E5E5E5] overflow-hidden">
               <div
                 className="w-full h-full bg-cover bg-center"
                 style={{ backgroundImage: "url('/images/hero-bg-2.jpeg')" }}
               />
             </div>
-            <div className="hidden md:block absolute -bottom-10 -left-10 w-56 aspect-[4/3] border-8 border-white bg-[#E5E5E5] overflow-hidden shadow-lg">
+            <div className="absolute -bottom-8 -left-3 md:-bottom-10 md:-left-10 w-36 md:w-56 aspect-[4/3] border-4 md:border-8 border-white bg-[#E5E5E5] overflow-hidden shadow-lg">
               <div
                 className="w-full h-full bg-cover bg-center"
                 style={{ backgroundImage: "url('/images/hero-bg-3.jpeg')" }}
               />
             </div>
-            <div className="hidden md:block absolute -top-6 -right-6 bg-white border-l-2 border-[#A42A28] shadow-lg px-6 py-5 max-w-[240px]">
-              <p className="font-serif italic text-base text-[#1A1A1A] leading-snug">
+            <div className="absolute -top-5 -right-2 md:-top-6 md:-right-6 bg-white border-l-2 border-[#A42A28] shadow-lg px-4 py-3 md:px-6 md:py-5 max-w-[180px] md:max-w-[240px]">
+              <p className="font-serif italic text-sm md:text-base text-[#1A1A1A] leading-snug">
                 &ldquo;{visiMisi.motto}&rdquo;
               </p>
               <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mt-2">

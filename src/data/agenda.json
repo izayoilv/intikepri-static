@@ -1,0 +1,59 @@
+[
+  {
+    "title": "Bakti Sosial & Pengobatan Gratis INTI Kepri 2026",
+    "slug": "baksos-pengobatan-gratis-2026",
+    "description": "INTI Kepri kembali menggelar bakti sosial dan pengobatan gratis untuk masyarakat umum. Kegiatan meliputi pemeriksaan kesehatan, pemberian obat, dan pembagian paket sembako.\n\nTerbuka untuk umum, tanpa dipungut biaya. Peserta cukup mendaftar melalui tautan berikut agar panitia dapat memperkirakan jumlah kehadiran.",
+    "date": "2026-09-12",
+    "time": "08:00 - 13:00 WIB",
+    "location": "Batam",
+    "venue": "Aula Sekolah Cahaya Batam, Batam Centre",
+    "organization": "INTI",
+    "category": "Bakti Sosial",
+    "image": "https://s3.intikepri.com/assets/news/17315381-e340-4e68-a4ac-6e902629ebdf/baksos-pembagian-sembako-bakkes-pemeriksaan-kesehatan-gratis-di-durai-kab-karimun.jpg",
+    "ctaLabel": "Daftar via Google Form",
+    "ctaType": "link",
+    "ctaUrl": "https://forms.google.com/contoh-formulir-pendaftaran"
+  },
+  {
+    "title": "Festival Kuliner & UMKM Merdeka",
+    "slug": "festival-kuliner-umkm-merdeka-2026",
+    "description": "Festival kuliner dan pameran produk UMKM komunitas selama dua hari penuh. Puluhan tenant dari anggota Direktori Bisnis INTI Kepri akan hadir.\n\nIngin membuka tenant? Hubungi panitia via WhatsApp — kuota tenant terbatas.",
+    "date": "2026-08-17",
+    "endDate": "2026-08-18",
+    "time": "10:00 - 21:00 WIB",
+    "location": "Batam",
+    "venue": "Atrium Mega Mall Batam Centre",
+    "organization": "PINTI",
+    "category": "Perayaan",
+    "image": "https://s3.intikepri.com/assets/news/6e092f0a-a8a6-40bb-8f82-63107b6df05b/kogabwilhan-i-bersama-perhimpunan-indonesia-tionghoa-kepri-gelar-bakti-sosial-dan-kesehatan.jpg",
+    "ctaLabel": "Daftar Tenant via WhatsApp",
+    "ctaType": "whatsapp",
+    "ctaUrl": "6281234567890"
+  },
+  {
+    "title": "Rapat Koordinasi Pengurus Daerah se-Kepri",
+    "slug": "rakor-pengurus-daerah-se-kepri-2026",
+    "description": "Rapat koordinasi pengurus daerah INTI se-Kepulauan Riau: evaluasi program kerja semester II dan persiapan musyawarah wilayah.\n\nKehadiran wajib untuk pengurus KSB dan ketua bidang. Konfirmasi kehadiran melalui email sekretariat.",
+    "date": "2026-09-26",
+    "time": "14:00 - 17:00 WIB",
+    "location": "TPI & Bintan",
+    "venue": "Hotel Comforta, Tanjungpinang",
+    "organization": "INTI",
+    "category": "Rapat",
+    "ctaLabel": "Konfirmasi via Email",
+    "ctaType": "email",
+    "ctaUrl": "perhimpunanintikepri@gmail.com"
+  },
+  {
+    "title": "Donor Darah Bersama LANAL & PMI Karimun",
+    "slug": "donor-darah-lanal-pmi-karimun-2026",
+    "description": "Kegiatan donor darah dalam rangka menyambut HUT RI ke-81 bersama LANAL dan PMI Karimun. Terima kasih kepada seluruh pendonor dan relawan yang telah berpartisipasi.",
+    "date": "2026-07-29",
+    "time": "09:00 - 12:00 WIB",
+    "location": "Karimun",
+    "venue": "Gedung Nasional, Tanjung Balai Karimun",
+    "organization": "INTI",
+    "category": "Bakti Sosial",
+    "image": "https://s3.intikepri.com/assets/news/97f14d16-1935-4829-821b-23aae5cc71a9/inti-lanal-pmi-karimun-menggelar-donor-darah-menyambut-hut-ke-81-ri.jpg"
+  }
+]

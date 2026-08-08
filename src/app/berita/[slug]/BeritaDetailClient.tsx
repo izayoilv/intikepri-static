@@ -15,6 +15,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
+import type { CSSProperties } from "react";
+
 import Breadcrumb from "@/components/Breadcrumb";
 import type { News } from "@/types";
 
@@ -54,21 +56,25 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
       label: "Bagikan ke WhatsApp",
       href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
       Icon: SiWhatsapp,
+      color: "#25D366",
     },
     {
       label: "Bagikan ke Facebook",
       href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
       Icon: SiFacebook,
+      color: "#1877F2",
     },
     {
       label: "Bagikan ke X",
       href: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
       Icon: SiX,
+      color: "#000000",
     },
     {
       label: "Bagikan via Email",
       href: `mailto:?subject=${encodedTitle}&body=${encodedUrl}`,
       Icon: Mail,
+      color: "#A42A28",
     },
   ];
 
@@ -120,7 +126,7 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
               <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mb-1 [writing-mode:vertical-rl]">
                 Bagikan
               </span>
-              {shareLinks.map(({ label, href, Icon }) => (
+              {shareLinks.map(({ label, href, Icon, color }) => (
                 <a
                   key={label}
                   href={href}
@@ -128,9 +134,10 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
                   rel="noopener noreferrer"
                   aria-label={label}
                   title={label}
-                  className="w-11 h-11 flex items-center justify-center bg-white border border-[#E5E5E5] text-[#666666] hover:bg-[#A42A28] hover:border-[#A42A28] hover:text-white transition-colors"
+                  style={{ "--brand": color } as CSSProperties}
+                  className="w-11 h-11 flex items-center justify-center bg-white border border-[#E5E5E5] hover:border-(--brand) hover:bg-[#F7F7F7] transition-colors"
                 >
-                  <Icon size={18} />
+                  <Icon size={18} color={color} />
                 </a>
               ))}
             </div>
@@ -241,16 +248,17 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
           <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mr-2">
             Bagikan
           </span>
-          {shareLinks.map(({ label, href, Icon }) => (
+          {shareLinks.map(({ label, href, Icon, color }) => (
             <a
               key={label}
               href={href}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={label}
-              className="w-10 h-10 flex items-center justify-center border border-[#E5E5E5] text-[#666666] active:bg-[#A42A28] active:border-[#A42A28] active:text-white transition-colors"
+              style={{ "--brand": color } as CSSProperties}
+              className="w-10 h-10 flex items-center justify-center border border-[#E5E5E5] active:border-(--brand) active:bg-[#F7F7F7] transition-colors"
             >
-              <Icon size={17} />
+              <Icon size={17} color={color} />
             </a>
           ))}
         </div>

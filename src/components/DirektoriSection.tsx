@@ -2,7 +2,7 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight, Globe, Mail, MapPin, Store } from "lucide-react";
+import { ArrowRight, Globe, MapPin, Store, User } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
@@ -47,7 +47,7 @@ export default function DirektoriSection({
 
   return (
     <section ref={ref} className="py-20 md:py-32 bg-[#F7F7F7]">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <div className="max-w-5xl mx-auto px-4 md:px-8">
         <div className="flex items-end justify-between mb-12 direktori-reveal">
           <div>
             <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
@@ -65,84 +65,77 @@ export default function DirektoriSection({
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {businesses.map((biz, i) => (
-            <div
-              key={`${biz.name}-${i}`}
-              className="direktori-reveal group bg-white border border-[#E5E5E5] border-t-2 border-t-[#A42A28] hover:shadow-lg transition-shadow flex flex-col"
-            >
-              {/* Logo + identitas */}
-              <div className="p-5 pb-0 flex items-start gap-4">
-                <div className="w-14 h-14 flex-shrink-0 bg-[#F7F7F7] border border-[#E5E5E5] overflow-hidden flex items-center justify-center">
-                  {biz.image ? (
+        {/* Row horizontal: foto + shade di kiri, ringkasan di kanan */}
+        <div className="space-y-5">
+          {businesses.map((biz, i) => {
+            const photo = biz.banner || biz.image;
+            return (
+              <Link
+                key={`${biz.name}-${i}`}
+                href="/direktori"
+                className="direktori-reveal group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex flex-col sm:flex-row overflow-hidden"
+              >
+                {/* Foto + shade gradient */}
+                <div className="relative sm:w-52 md:w-64 flex-shrink-0 aspect-[16/9] sm:aspect-auto sm:min-h-[160px] bg-[#1A1A1A] overflow-hidden">
+                  {photo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={biz.image}
-                      alt={`Logo ${biz.name}`}
-                      className="w-full h-full object-cover"
+                      src={photo}
+                      alt={`Foto ${biz.name}`}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <Store size={22} className="text-[#CCCCCC]" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-white">
+                      <Store size={32} className="text-[#DDDDDD]" />
+                    </div>
                   )}
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-serif text-lg font-semibold text-[#1A1A1A] leading-snug line-clamp-2 group-hover:text-[#A42A28] transition-colors">
-                    {biz.name}
-                  </h3>
-                  <p className="font-sans text-xs mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span className="bg-[#A42A28]/10 text-[#A42A28] px-2 py-0.5">
-                      {biz.category || "Lainnya"}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <div className="absolute bottom-0 inset-x-0 p-3 flex items-end justify-between gap-2">
+                    <span className="font-sans text-[11px] text-white/90 flex items-center gap-1">
+                      <MapPin size={11} className="text-[#C8956C]" />
+                      {biz.location}
                     </span>
-                    <span className="text-[#999999]">{biz.location}</span>
                     {biz.featured && (
-                      <span className="bg-[#C8956C]/15 text-[#C8956C] px-2 py-0.5 font-medium">
+                      <span className="bg-[#C8956C] text-white font-sans text-[10px] tracking-wider uppercase px-2 py-0.5">
                         Unggulan
                       </span>
                     )}
-                  </p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Deskripsi */}
-              <p className="px-5 mt-4 font-sans text-sm text-[#666666] leading-relaxed line-clamp-2">
-                {biz.description}
-              </p>
-
-              {/* Meta */}
-              <div className="px-5 mt-3 space-y-1.5">
-                {biz.address && (
-                  <p className="font-sans text-xs text-[#999999] flex items-start gap-1.5">
-                    <MapPin size={12} className="mt-0.5 flex-shrink-0 text-[#C8956C]" />
-                    <span className="line-clamp-1">{biz.address}</span>
+                {/* Konten */}
+                <div className="flex-1 min-w-0 p-5 md:p-6 flex flex-col">
+                  <h3 className="font-serif text-xl md:text-2xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
+                    {biz.name}
+                  </h3>
+                  <p className="font-sans text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="bg-[#A42A28]/10 text-[#A42A28] px-2 py-0.5">
+                      {biz.category || "Lainnya"}
+                    </span>
+                    {biz.owner && (
+                      <span className="text-[#999999] flex items-center gap-1">
+                        <User size={11} /> {biz.owner}
+                      </span>
+                    )}
                   </p>
-                )}
-                {biz.email && (
-                  <p className="font-sans text-xs text-[#999999] flex items-center gap-1.5">
-                    <Mail size={12} className="flex-shrink-0 text-[#C8956C]" />
-                    <span className="truncate">{biz.email}</span>
+                  <p className="mt-3 font-sans text-sm text-[#666666] leading-relaxed line-clamp-2">
+                    {biz.description}
                   </p>
-                )}
-              </div>
-
-              {/* CTA website — elemen paling menonjol di kartu */}
-              <div className="p-5 mt-auto">
-                {biz.website ? (
-                  <a
-                    href={biz.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
-                  >
-                    <Globe size={14} /> Kunjungi Website
-                  </a>
-                ) : (
-                  <span className="inline-flex items-center gap-2 border border-dashed border-[#DDDDDD] text-[#BBBBBB] px-4 py-2 font-sans text-xs">
-                    <Globe size={14} /> Website belum tersedia
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
+                  <div className="mt-auto pt-4 flex items-center gap-2">
+                    {biz.website ? (
+                      <span className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2 font-sans text-xs font-medium group-hover:bg-[#8a2320] transition-colors">
+                        <Globe size={14} /> Kunjungi Website
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-2 border border-dashed border-[#DDDDDD] text-[#BBBBBB] px-4 py-2 font-sans text-xs">
+                        <Globe size={14} /> Website belum tersedia
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
         <div className="mt-8 text-center md:hidden">

@@ -5,7 +5,11 @@ RUN npm install -g pnpm@11
 COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --link . .
-RUN mkdir -p src/data && (test -f src/data/news.json || echo '[]' > src/data/news.json)
+RUN mkdir -p src/data && \
+    (test -f src/data/news.json || echo '[]' > src/data/news.json) && \
+    (test -f src/data/galeri.json || echo '[]' > src/data/galeri.json) && \
+    (test -f src/data/direktori.json || echo '[]' > src/data/direktori.json) && \
+    (test -f src/data/agenda.json || echo '[]' > src/data/agenda.json)
 RUN pnpm build
 
 FROM nginx:1.31-alpine
