@@ -8,7 +8,7 @@ import HeroSection from "@/components/HeroSection";
 import IntroSection from "@/components/IntroSection";
 import Navbar from "@/components/Navbar";
 import NewsSection from "@/components/NewsSection";
-import QuoteSection from "@/components/QuoteSection";
+import StatsSection from "@/components/StatsSection";
 import StructureSection from "@/components/StructureSection";
 import { fallbackBusinesses, fallbackGallery, fallbackNews } from "@/lib/data";
 import type { Business, GalleryPhoto, News } from "@/types";
@@ -89,9 +89,9 @@ export default async function HomePage() {
       <Navbar />
       <HeroSection />
       <IntroSection />
+      <StatsSection />
       <NewsSection initialItems={latestNews} />
       <GaleriSection initialItems={latestGallery} />
-      <QuoteSection />
       <DirektoriSection initialItems={latestBusinesses} />
       <StructureSection />
       <Footer />

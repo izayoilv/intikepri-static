@@ -2,6 +2,7 @@
 
 import {
   Calendar,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Search,
@@ -60,74 +61,70 @@ export default function BeritaListClient({
           </h1>
         </div>
 
-        {/* Search */}
-        <div className="relative md:w-80 mb-6">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
-          />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              resetPage();
-            }}
-            placeholder="Cari berita..."
-            className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
-          />
-        </div>
-
-        {/* Filter groups */}
-        <div className="flex flex-col gap-4 mb-10">
-          <div>
-            <p className="font-sans text-[11px] tracking-[0.2em] uppercase text-[#999999] mb-2">
-              Lokasi
-            </p>
-            <div className="flex flex-wrap gap-2">
+        {/* Toolbar: search + dropdown filter, satu baris ramping */}
+        <div className="flex flex-col md:flex-row gap-3 mb-3">
+          <div className="relative flex-1">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                resetPage();
+              }}
+              placeholder="Cari berita..."
+              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
+            />
+          </div>
+          <div className="relative">
+            <select
+              value={location}
+              onChange={(e) => {
+                setLocation(e.target.value);
+                resetPage();
+              }}
+              className="w-full md:w-48 appearance-none border border-[#E5E5E5] bg-white pl-3 pr-8 py-2.5 font-sans text-sm text-[#666666] focus:outline-none focus:border-[#A42A28] cursor-pointer"
+              aria-label="Filter lokasi"
+            >
               {locations.map((loc) => (
-                <button
-                  key={loc}
-                  onClick={() => {
-                    setLocation(loc);
-                    resetPage();
-                  }}
-                  className={`px-4 py-2 font-sans text-xs tracking-wide border transition-colors ${
-                    location === loc
-                      ? "bg-[#A42A28] text-white border-[#A42A28]"
-                      : "bg-white text-[#666666] border-[#E5E5E5] hover:border-[#A42A28]/40"
-                  }`}
-                >
-                  {loc}
-                </button>
+                <option key={loc} value={loc}>
+                  {loc === "Semua" ? "Semua Lokasi" : loc}
+                </option>
               ))}
-            </div>
+            </select>
+            <ChevronDown
+              size={14}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
+            />
           </div>
-
-          <div>
-            <p className="font-sans text-[11px] tracking-[0.2em] uppercase text-[#999999] mb-2">
-              Organisasi
-            </p>
-            <div className="flex flex-wrap gap-2">
+          <div className="relative">
+            <select
+              value={organization}
+              onChange={(e) => {
+                setOrganization(e.target.value);
+                resetPage();
+              }}
+              className="w-full md:w-48 appearance-none border border-[#E5E5E5] bg-white pl-3 pr-8 py-2.5 font-sans text-sm text-[#666666] focus:outline-none focus:border-[#A42A28] cursor-pointer"
+              aria-label="Filter organisasi"
+            >
               {organizations.map((org) => (
-                <button
-                  key={org}
-                  onClick={() => {
-                    setOrganization(org);
-                    resetPage();
-                  }}
-                  className={`px-4 py-2 font-sans text-xs tracking-wide border transition-colors ${
-                    organization === org
-                      ? "bg-[#1A1A1A] text-white border-[#1A1A1A]"
-                      : "bg-white text-[#666666] border-[#E5E5E5] hover:border-[#1A1A1A]/40"
-                  }`}
-                >
-                  {org}
-                </button>
+                <option key={org} value={org}>
+                  {org === "Semua" ? "Semua Organisasi" : org}
+                </option>
               ))}
-            </div>
+            </select>
+            <ChevronDown
+              size={14}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
+            />
           </div>
         </div>
+        <p className="font-sans text-xs text-[#BBBBBB] mb-8">
+          {filtered.length} berita ditemukan
+        </p>
 
         {items.length === 0 ? (
           <p className="text-center text-[#999999] font-sans py-20">

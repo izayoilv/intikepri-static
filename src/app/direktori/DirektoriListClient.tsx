@@ -2,6 +2,7 @@
 
 import { SiInstagram, SiWhatsapp } from "@icons-pack/react-simple-icons";
 import {
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Globe,
@@ -120,77 +121,74 @@ export default function DirektoriListClient({
           </a>
         </div>
 
-        {/* Search */}
-        <div className="relative md:w-80 mb-6">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
-          />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Cari bisnis..."
-            className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
-          />
-        </div>
-
-        {/* Filter */}
-        <div className="flex flex-col gap-4 mb-10">
+        {/* Toolbar: search + dropdown filter, satu baris ramping */}
+        <div className="flex flex-col md:flex-row gap-3 mb-3">
+          <div className="relative flex-1">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Cari bisnis..."
+              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
+            />
+          </div>
           {categories.length > 2 && (
-            <div>
-              <p className="font-sans text-[11px] tracking-[0.2em] uppercase text-[#999999] mb-2">
-                Kategori
-              </p>
-              <div className="flex flex-wrap gap-2">
+            <div className="relative">
+              <select
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full md:w-52 appearance-none border border-[#E5E5E5] bg-white pl-3 pr-8 py-2.5 font-sans text-sm text-[#666666] focus:outline-none focus:border-[#A42A28] cursor-pointer"
+                aria-label="Filter kategori"
+              >
                 {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => {
-                      setCategory(cat);
-                      setPage(1);
-                    }}
-                    className={`px-4 py-2 font-sans text-xs tracking-wide border transition-colors ${
-                      category === cat
-                        ? "bg-[#A42A28] text-white border-[#A42A28]"
-                        : "bg-white text-[#666666] border-[#E5E5E5] hover:border-[#A42A28]/40"
-                    }`}
-                  >
-                    {cat}
-                  </button>
+                  <option key={cat} value={cat}>
+                    {cat === "Semua" ? "Semua Kategori" : cat}
+                  </option>
                 ))}
-              </div>
+              </select>
+              <ChevronDown
+                size={14}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
+              />
             </div>
           )}
           {locations.length > 2 && (
-            <div>
-              <p className="font-sans text-[11px] tracking-[0.2em] uppercase text-[#999999] mb-2">
-                Lokasi
-              </p>
-              <div className="flex flex-wrap gap-2">
+            <div className="relative">
+              <select
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full md:w-52 appearance-none border border-[#E5E5E5] bg-white pl-3 pr-8 py-2.5 font-sans text-sm text-[#666666] focus:outline-none focus:border-[#A42A28] cursor-pointer"
+                aria-label="Filter lokasi"
+              >
                 {locations.map((loc) => (
-                  <button
-                    key={loc}
-                    onClick={() => {
-                      setLocation(loc);
-                      setPage(1);
-                    }}
-                    className={`px-4 py-2 font-sans text-xs tracking-wide border transition-colors ${
-                      location === loc
-                        ? "bg-[#1A1A1A] text-white border-[#1A1A1A]"
-                        : "bg-white text-[#666666] border-[#E5E5E5] hover:border-[#1A1A1A]/40"
-                    }`}
-                  >
-                    {loc}
-                  </button>
+                  <option key={loc} value={loc}>
+                    {loc === "Semua" ? "Semua Lokasi" : loc}
+                  </option>
                 ))}
-              </div>
+              </select>
+              <ChevronDown
+                size={14}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
+              />
             </div>
           )}
         </div>
+        <p className="font-sans text-xs text-[#BBBBBB] mb-8">
+          {filtered.length} bisnis ditemukan
+        </p>
 
         {items.length === 0 ? (
           <div className="text-center py-20">
@@ -212,48 +210,90 @@ export default function DirektoriListClient({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map((biz, i) => (
-              <button
+              <div
                 key={`${biz.name}-${i}`}
+                role="button"
+                tabIndex={0}
                 onClick={() => setSelected(biz)}
-                className="group text-left"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") setSelected(biz);
+                }}
+                className="group bg-white border border-[#E5E5E5] border-t-2 border-t-[#A42A28] hover:shadow-lg transition-shadow flex flex-col cursor-pointer"
                 aria-label={`Lihat detail ${biz.name}`}
               >
-                <div className="bg-white border border-[#E5E5E5] overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
-                  {biz.image ? (
-                    <div className="aspect-[16/10] overflow-hidden bg-[#E5E5E5]">
-                      <div
-                        className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                        style={{ backgroundImage: `url(${biz.image})` }}
+                {/* Logo + identitas */}
+                <div className="p-5 pb-0 flex items-start gap-4">
+                  <div className="w-14 h-14 flex-shrink-0 bg-[#F7F7F7] border border-[#E5E5E5] overflow-hidden flex items-center justify-center">
+                    {biz.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={biz.image}
+                        alt={`Logo ${biz.name}`}
+                        className="w-full h-full object-cover"
                       />
-                    </div>
-                  ) : (
-                    <div className="aspect-[16/10] bg-[#F7F7F7] flex items-center justify-center">
-                      <Store size={40} className="text-[#E5E5E5]" />
-                    </div>
-                  )}
-                  <div className="p-5 flex-1 flex flex-col">
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      <span className="inline-block bg-[#A42A28]/10 text-[#A42A28] text-xs font-sans px-2 py-1">
-                        {biz.category || "Lainnya"}
-                      </span>
-                      {biz.location && (
-                        <span className="inline-block bg-[#1A1A1A]/5 text-[#1A1A1A] text-xs font-sans px-2 py-1">
-                          {biz.location}
-                        </span>
-                      )}
-                    </div>
-                    <h2 className="font-serif text-lg font-semibold text-[#1A1A1A] mb-2 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
+                    ) : (
+                      <Store size={22} className="text-[#CCCCCC]" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="font-serif text-lg font-semibold text-[#1A1A1A] leading-snug line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                       {biz.name}
                     </h2>
-                    <p className="font-sans text-sm text-[#666666] leading-relaxed line-clamp-3 flex-1">
-                      {biz.description}
-                    </p>
-                    <p className="font-sans text-xs text-[#A42A28] font-medium mt-4">
-                      Lihat Detail &rarr;
+                    <p className="font-sans text-xs mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="bg-[#A42A28]/10 text-[#A42A28] px-2 py-0.5">
+                        {biz.category || "Lainnya"}
+                      </span>
+                      <span className="text-[#999999]">{biz.location}</span>
                     </p>
                   </div>
                 </div>
-              </button>
+
+                {/* Deskripsi */}
+                <p className="px-5 mt-4 font-sans text-sm text-[#666666] leading-relaxed line-clamp-2">
+                  {biz.description}
+                </p>
+
+                {/* Meta */}
+                <div className="px-5 mt-3 space-y-1.5">
+                  {biz.address && (
+                    <p className="font-sans text-xs text-[#999999] flex items-start gap-1.5">
+                      <MapPin size={12} className="mt-0.5 flex-shrink-0 text-[#C8956C]" />
+                      <span className="line-clamp-1">{biz.address}</span>
+                    </p>
+                  )}
+                  {biz.email && (
+                    <p className="font-sans text-xs text-[#999999] flex items-center gap-1.5">
+                      <Mail size={12} className="flex-shrink-0 text-[#C8956C]" />
+                      <span className="truncate">{biz.email}</span>
+                    </p>
+                  )}
+                  {biz.phone && (
+                    <p className="font-sans text-xs text-[#999999] flex items-center gap-1.5">
+                      <Phone size={12} className="flex-shrink-0 text-[#C8956C]" />
+                      {biz.phone}
+                    </p>
+                  )}
+                </div>
+
+                {/* CTA website — elemen paling menonjol di kartu */}
+                <div className="p-5 mt-auto">
+                  {biz.website ? (
+                    <a
+                      href={biz.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
+                    >
+                      <Globe size={14} /> Kunjungi Website
+                    </a>
+                  ) : (
+                    <span className="inline-flex items-center gap-2 border border-dashed border-[#DDDDDD] text-[#BBBBBB] px-4 py-2 font-sans text-xs">
+                      <Globe size={14} /> Website belum tersedia
+                    </span>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -293,42 +333,41 @@ export default function DirektoriListClient({
           onClick={() => setSelected(null)}
         >
           <div
-            className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto border-t-2 border-t-[#A42A28]"
             onClick={(e) => e.stopPropagation()}
           >
-            {selected.image ? (
-              <div
-                className="aspect-[16/9] bg-cover bg-center"
-                style={{ backgroundImage: `url(${selected.image})` }}
-              />
-            ) : (
-              <div className="aspect-[16/9] bg-[#F7F7F7] flex items-center justify-center">
-                <Store size={48} className="text-[#E5E5E5]" />
-              </div>
-            )}
-
             <div className="p-6 md:p-8">
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    <span className="inline-block bg-[#A42A28]/10 text-[#A42A28] text-xs font-sans px-2 py-1">
-                      {selected.category || "Lainnya"}
-                    </span>
-                    {selected.location && (
-                      <span className="inline-block bg-[#1A1A1A]/5 text-[#1A1A1A] text-xs font-sans px-2 py-1">
-                        {selected.location}
-                      </span>
+              <div className="flex items-start justify-between gap-4 mb-5">
+                <div className="flex items-start gap-4 min-w-0">
+                  <div className="w-16 h-16 flex-shrink-0 bg-[#F7F7F7] border border-[#E5E5E5] overflow-hidden flex items-center justify-center">
+                    {selected.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={selected.image}
+                        alt={`Logo ${selected.name}`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Store size={26} className="text-[#CCCCCC]" />
                     )}
                   </div>
-                  <h2 className="font-serif text-2xl font-bold text-[#1A1A1A]">
-                    {selected.name}
-                  </h2>
-                  {selected.owner && (
-                    <p className="font-sans text-xs text-[#999999] mt-1 flex items-center gap-1">
-                      <User size={12} /> {selected.owner}
-                      {selected.since ? ` • Berdiri ${selected.since}` : ""}
+                  <div className="min-w-0">
+                    <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] leading-snug">
+                      {selected.name}
+                    </h2>
+                    <p className="font-sans text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="bg-[#A42A28]/10 text-[#A42A28] px-2 py-0.5">
+                        {selected.category || "Lainnya"}
+                      </span>
+                      <span className="text-[#999999]">{selected.location}</span>
                     </p>
-                  )}
+                    {selected.owner && (
+                      <p className="font-sans text-xs text-[#999999] mt-1.5 flex items-center gap-1">
+                        <User size={12} /> {selected.owner}
+                        {selected.since ? ` • Berdiri ${selected.since}` : ""}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <button
                   onClick={() => setSelected(null)}
@@ -339,7 +378,7 @@ export default function DirektoriListClient({
                 </button>
               </div>
 
-              <p className="font-sans text-sm text-[#444444] leading-relaxed whitespace-pre-line mb-6">
+              <p className="font-sans text-sm text-[#444444] leading-relaxed whitespace-pre-line mb-5">
                 {selected.description}
               </p>
 
@@ -350,14 +389,24 @@ export default function DirektoriListClient({
                 </p>
               )}
 
-              {/* Kontak — hanya tampil yang diisi admin */}
+              {/* Kontak — Website paling menonjol, sisanya sekunder */}
               <div className="flex flex-wrap gap-2">
+                {selected.website && (
+                  <a
+                    href={selected.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2.5 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
+                  >
+                    <Globe size={14} /> Kunjungi Website
+                  </a>
+                )}
                 {selected.whatsapp && (
                   <a
                     href={`https://wa.me/${selected.whatsapp.replace(/\D/g, "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2.5 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
+                    className="inline-flex items-center gap-2 border border-[#E5E5E5] text-[#666666] px-4 py-2.5 font-sans text-xs font-medium hover:border-[#A42A28]/40 hover:text-[#A42A28] transition-colors"
                   >
                     <SiWhatsapp size={14} /> WhatsApp
                   </a>
@@ -376,16 +425,6 @@ export default function DirektoriListClient({
                     className="inline-flex items-center gap-2 border border-[#E5E5E5] text-[#666666] px-4 py-2.5 font-sans text-xs font-medium hover:border-[#A42A28]/40 hover:text-[#A42A28] transition-colors"
                   >
                     <Mail size={14} /> Email
-                  </a>
-                )}
-                {selected.website && (
-                  <a
-                    href={selected.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 border border-[#E5E5E5] text-[#666666] px-4 py-2.5 font-sans text-xs font-medium hover:border-[#A42A28]/40 hover:text-[#A42A28] transition-colors"
-                  >
-                    <Globe size={14} /> Website
                   </a>
                 )}
                 {selected.instagram && (

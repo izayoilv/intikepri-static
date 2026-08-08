@@ -78,3 +78,43 @@ body {
     opacity: 1;
   }
 }
+
+/* ===== Marquee galeri (homepage) =====
+   Tempo sengaja tidak konstan: jarak antar keyframe bervariasi supaya
+   gerakan terasa organik (pelan -> cepat -> pelan), bukan conveyor kaku.
+   Track berisi 2x duplikat foto; -50% membuat loop mulus. */
+@keyframes galeri-drift {
+  0% {
+    transform: translateX(0);
+  }
+  18% {
+    transform: translateX(-7%);
+  }
+  42% {
+    transform: translateX(-26%);
+  }
+  58% {
+    transform: translateX(-33%);
+  }
+  78% {
+    transform: translateX(-45%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: galeri-drift 48s linear infinite;
+  will-change: transform;
+}
+
+.marquee-pause:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

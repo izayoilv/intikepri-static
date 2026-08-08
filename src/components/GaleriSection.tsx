@@ -16,7 +16,7 @@ export default function GaleriSection({
   initialItems: GalleryPhoto[];
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const photos = initialItems.slice(0, 8);
+  const photos = initialItems.slice(0, 10);
 
   useEffect(() => {
     if (!ref.current || photos.length === 0) return;
@@ -42,8 +42,11 @@ export default function GaleriSection({
   // Data kosong (CMS belum mengisi) -> section disembunyikan dari homepage
   if (photos.length === 0) return null;
 
+  // Track diduplikat supaya loop marquee mulus (CSS -50%)
+  const track = [...photos, ...photos];
+
   return (
-    <section ref={ref} className="py-20 md:py-32 bg-white">
+    <section ref={ref} className="py-20 md:py-32 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex items-end justify-between mb-12 galeri-reveal">
           <div>
@@ -61,14 +64,22 @@ export default function GaleriSection({
             Lihat Semua <ArrowRight size={16} />
           </Link>
         </div>
+      </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {photos.map((photo, i) => (
+      {/* Marquee full-width, tempo organik (lihat keyframes galeri-drift di globals.css) */}
+      <div className="marquee-pause relative">
+        {/* Fade di tepi kiri-kanan */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10" />
+
+        <div className="marquee-track flex gap-3 w-max pr-3">
+          {track.map((photo, i) => (
             <Link
               key={`${photo.image}-${i}`}
               href="/galeri"
-              className="galeri-reveal group relative aspect-square overflow-hidden bg-[#E5E5E5]"
+              className="group relative flex-none w-56 md:w-72 aspect-[4/3] overflow-hidden bg-[#E5E5E5]"
               aria-label={`Buka galeri: ${photo.title}`}
+              tabIndex={i >= photos.length ? -1 : 0}
             >
               <div
                 className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
@@ -81,15 +92,15 @@ export default function GaleriSection({
             </Link>
           ))}
         </div>
+      </div>
 
-        <div className="mt-8 text-center md:hidden">
-          <Link
-            href="/galeri"
-            className="inline-flex items-center gap-2 text-[#A42A28] font-sans text-sm font-medium"
-          >
-            Lihat Semua Foto <ArrowRight size={16} />
-          </Link>
-        </div>
+      <div className="mt-8 text-center md:hidden">
+        <Link
+          href="/galeri"
+          className="inline-flex items-center gap-2 text-[#A42A28] font-sans text-sm font-medium"
+        >
+          Lihat Semua Foto <ArrowRight size={16} />
+        </Link>
       </div>
     </section>
   );
