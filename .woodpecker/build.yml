@@ -3,16 +3,21 @@ when:
     branch: main
     path:
       include:
-        - "**"
-      exclude:
-        - "**/*.md"
-        - ".gitignore"
-        - ".pre-commit-config.yaml"
-        - ".prettierrc"
-        - ".repomixignore"
-        - "components.json"
-        - "eslint.config.mjs"
-        - "deploy/**"
+        - deploy/*
+        - src/**/*
+        - public/**/*
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - next.config.ts
+        - tsconfig.json
+        - eslint.config.mjs
+        - postcss.config.mjs
+        - components.json
+        - nginx.conf
+        - Dockerfile
+        - .dockerignore
+        - .woodpecker/*
   - event: manual
 
 clone:
@@ -29,82 +34,6 @@ steps:
       - apk add --no-cache curl jq
       - mkdir -p src/data
       - curl -s "https://api.intikepri.com/api/news?limit=1000" | jq '.data.items' > src/data/news.json
-
-  # Galeri + Direktori Bisnis dari CMS (endpoint disiapkan tim intikepri-cms).
-  # Kalau CMS berhasil -> file dioverwrite dengan data CMS.
-  # Kalau endpoint belum ada/gagal -> tetap pakai file yang ada di repo
-  # (fallback terakhir: array kosong). Build tidak pernah gagal.
-  fetch-gallery:
-    image: alpine:3.24
-    commands:
-      - apk add --no-cache curl jq
-      - mkdir -p src/data
-      - |
-        if curl -sf "https://api.intikepri.com/api/gallery?limit=1000" | jq -e '.data.items' > src/data/galeri.json.tmp; then
-          mv src/data/galeri.json.tmp src/data/galeri.json
-          echo "galeri.json: data dari CMS"
-        else
-          rm -f src/data/galeri.json.tmp
-          test -f src/data/galeri.json || echo '[]' > src/data/galeri.json
-          echo "galeri.json: endpoint CMS belum tersedia, pakai file dari repo"
-        fi
-
-  fetch-businesses:
-    image: alpine:3.24
-    commands:
-      - apk add --no-cache curl jq
-      - mkdir -p src/data
-      - |
-        if curl -sf "https://api.intikepri.com/api/businesses?limit=1000" | jq -e '.data.items' > src/data/direktori.json.tmp; then
-          mv src/data/direktori.json.tmp src/data/direktori.json
-          echo "direktori.json: data dari CMS"
-        else
-          rm -f src/data/direktori.json.tmp
-          test -f src/data/direktori.json || echo '[]' > src/data/direktori.json
-          echo "direktori.json: endpoint CMS belum tersedia, pakai file dari repo"
-        fi
-
-  fetch-agenda:
-    image: alpine:3.24
-    commands:
-      - apk add --no-cache curl jq
-      - mkdir -p src/data
-      - |
-        if curl -sf "https://api.intikepri.com/api/events?limit=1000" | jq -e '.data.items' > src/data/agenda.json.tmp; then
-          mv src/data/agenda.json.tmp src/data/agenda.json
-          echo "agenda.json: data dari CMS"
-        else
-          rm -f src/data/agenda.json.tmp
-          test -f src/data/agenda.json || echo '[]' > src/data/agenda.json
-          echo "agenda.json: endpoint CMS belum tersedia, pakai file dari repo"
-        fi
-
-
-  fetch-videos:
-    image: alpine:3.24
-    commands:
-      - apk add --no-cache curl jq
-      - mkdir -p src/data
-      - |
-        if curl -sf "https://api.intikepri.com/api/videos?limit=1000" | jq -e '.data.items' > src/data/video.json.tmp; then
-          mv src/data/video.json.tmp src/data/video.json
-        else
-          rm -f src/data/video.json.tmp
-          test -f src/data/video.json || echo '[]' > src/data/video.json
-        fi
-
-  fetch-dokumen:
-    image: alpine:3.24
-    commands:
-      - apk add --no-cache curl jq
-      - mkdir -p src/data
-      - |
-        if curl -sf "https://api.intikepri.com/api/documents?limit=1000" | jq -e '.data.items' > src/data/dokumen.json.tmp; then
-          mv src/data/dokumen.json.tmp src/data/dokumen.json
-        else
-          rm -f src/data/dokumen.json.tmp
-          test -f src/data/dokumen.json || echo '[]' > src/data/dokumen.json
-        fi
 
   build-and-push:
     image: moby/buildkit:v0.31.2

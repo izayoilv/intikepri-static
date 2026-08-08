@@ -1,9 +1,4 @@
-import {
-  SiFacebook,
-  SiInstagram,
-  SiX,
-  SiYoutube,
-} from "@icons-pack/react-simple-icons";
+import { SiFacebook, SiInstagram } from "@icons-pack/react-simple-icons";
 import { ChevronRight, Mail, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,12 +28,10 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#0F0F0F] text-white">
-      {/* BAGIAN BACKGROUND YANG DI-UPDATE */}
       <div
         className="relative py-16 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/images/footer-bg.jpeg')" }}
       >
-        {/* Opsional: Overlay merah transparan supaya teks tetap gampang dibaca kalau gambarnya terlalu terang */}
         <div className="absolute inset-0 bg-[#A42A28]/40" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 text-center">
@@ -65,7 +58,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      {/* AKHIR BAGIAN BACKGROUND */}
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -94,7 +86,6 @@ export default function Footer() {
               MEMBERI IKHLAS MENGABDI.
             </p>
 
-            {/* MEDIA SOSIAL â€” menggunakan SocialIcon dengan huruf kapital */}
             <div className="flex items-center gap-2 mt-5">
               {socials.map(({ label, href, Icon: SocialIcon }) => (
                 <a

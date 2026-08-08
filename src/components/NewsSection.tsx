@@ -40,7 +40,6 @@ export default function NewsSection({
     return () => ctx.revert();
   }, [initialItems]);
 
-  // Data kosong -> section disembunyikan dari homepage
   if (initialItems.length === 0 || !featured) return null;
 
   return (
@@ -64,7 +63,6 @@ export default function NewsSection({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Featured: artikel terbaru, besar */}
           <Link
             href={`/berita/${featured.slug}`}
             className="news-reveal group lg:col-span-3"
@@ -99,7 +97,6 @@ export default function NewsSection({
             </div>
           </Link>
 
-          {/* Dua berita berikutnya: baris horizontal */}
           <div className="lg:col-span-2 flex flex-col gap-6">
             {sideNews.map((item) => (
               <Link

@@ -61,7 +61,6 @@ export default function BeritaListClient({
           </h1>
         </div>
 
-        {/* Toolbar: search + dropdown filter, satu baris ramping */}
         <div className="flex flex-col md:flex-row gap-3 mb-3">
           <div className="relative flex-1">
             <Search

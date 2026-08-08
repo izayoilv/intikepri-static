@@ -15,6 +15,7 @@ import {
   User,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import type { Business } from "@/types";
@@ -43,7 +44,6 @@ Deskripsi singkat:
 Terima kasih.`,
 )}`;
 
-// Foto utama kartu: banner (foto tempat usaha) -> logo -> placeholder
 function businessPhoto(biz: Business): string | null {
   return biz.banner || biz.image || null;
 }
@@ -59,29 +59,23 @@ export default function DirektoriListClient({
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<Business | null>(null);
 
-  // Kategori & lokasi diturunkan otomatis dari data CMS
   const categories = useMemo(() => {
-    const cats = new Set(initialItems.map((b) => (b.category || "Lainnya").trim()));
+    const cats = new Set(initialItems.map((b) => b.category.trim()));
     return ["Semua", ...Array.from(cats).sort((a, b) => a.localeCompare(b))];
   }, [initialItems]);
 
   const locations = useMemo(() => {
-    const locs = new Set(initialItems.map((b) => (b.location || "").trim()).filter(Boolean));
+    const locs = new Set(
+      initialItems.map((b) => (b.location || "").trim()).filter(Boolean),
+    );
     return ["Semua", ...Array.from(locs).sort((a, b) => a.localeCompare(b))];
   }, [initialItems]);
 
-  // Urutan: unggulan selalu di atas, sisanya mengikuti urutan CMS
-  const sorted = useMemo(
-    () =>
-      [...initialItems].sort(
-        (a, b) => Number(b.featured || false) - Number(a.featured || false),
-      ),
-    [initialItems],
-  );
+  const sorted = useMemo(() => [...initialItems], [initialItems]);
 
   const filtered = useMemo(() => {
     return sorted.filter((b) => {
-      const matchCat = category === "Semua" || (b.category || "Lainnya") === category;
+      const matchCat = category === "Semua" || b.category === category;
       const matchLoc = location === "Semua" || b.location === location;
       const q = search.trim().toLowerCase();
       const matchSearch =
@@ -96,9 +90,13 @@ export default function DirektoriListClient({
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
-  const items = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const items = filtered.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
 
-  // Kunci scroll body + Esc untuk modal
+  const heroPhoto = selected ? selected.banner || selected.image : null;
+
   useEffect(() => {
     if (!selected) return;
     const onKey = (e: KeyboardEvent) => {
@@ -136,7 +134,6 @@ export default function DirektoriListClient({
           </a>
         </div>
 
-        {/* Toolbar: search + dropdown filter, satu baris ramping */}
         <div className="flex flex-col md:flex-row gap-3 mb-3">
           <div className="relative flex-1">
             <Search
@@ -223,7 +220,6 @@ export default function DirektoriListClient({
             )}
           </div>
         ) : (
-          /* SATU BISNIS = SATU ROW: foto besar di kiri + shade gradient, konten di kanan */
           <div className="space-y-4">
             {items.map((biz, i) => {
               const photo = businessPhoto(biz);
@@ -239,15 +235,14 @@ export default function DirektoriListClient({
                   className="group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex flex-col sm:flex-row cursor-pointer overflow-hidden"
                   aria-label={`Lihat detail ${biz.name}`}
                 >
-                  {/* Foto dominan tapi ramping — nge-blend ke putih ke arah konten
-                      (ke kanan di desktop, ke bawah di mobile) */}
                   <div className="relative sm:w-56 md:w-64 flex-shrink-0 aspect-[16/9] sm:aspect-auto sm:min-h-[132px] bg-[#F7F7F7] overflow-hidden">
                     {photo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
                         src={photo}
                         alt={`Foto ${biz.name}`}
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 256px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -258,24 +253,23 @@ export default function DirektoriListClient({
                     <div className="sm:hidden absolute inset-0 bg-gradient-to-b from-transparent from-55% to-white" />
                   </div>
 
-                  {/* Konten — slim, satu alur rapat */}
                   <div className="flex-1 min-w-0 px-4 py-3.5 md:px-5 flex flex-col">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <h2 className="font-serif text-lg md:text-xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
                         {biz.name}
                       </h2>
-                      {biz.featured && (
-                        <span className="bg-[#C8956C]/15 text-[#C8956C] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
-                          Unggulan
-                        </span>
-                      )}
                     </div>
                     <p className="font-sans text-xs text-[#999999] mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                      <span className="text-[#A42A28]">{biz.category || "Lainnya"}</span>
-                      <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
-                      <span className="flex items-center gap-1">
-                        <MapPin size={11} className="text-[#C8956C]" /> {biz.location}
-                      </span>
+                      <span className="text-[#A42A28]">{biz.category}</span>
+                      {biz.location && (
+                        <>
+                          <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
+                          <span className="flex items-center gap-1">
+                            <MapPin size={11} className="text-[#C8956C]" />{" "}
+                            {biz.location}
+                          </span>
+                        </>
+                      )}
                       {biz.owner && (
                         <>
                           <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
@@ -289,23 +283,21 @@ export default function DirektoriListClient({
                       {biz.description}
                     </p>
                     <div className="mt-auto pt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                      {biz.website ? (
+                      {biz.website && (
                         <a
                           href={biz.website}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1.5 text-[#A42A28] font-sans text-xs font-semibold hover:gap-2.5 transition-all"
+                          className="inline-flex items-center gap-1.5 text-[#A42A28] font-sans text-xs font-semibold underline-offset-4 hover:underline"
                         >
-                          <Globe size={13} /> Kunjungi Website <ArrowRight size={12} />
+                          <Globe size={13} /> Kunjungi Website{" "}
+                          <ArrowRight size={12} />
                         </a>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 text-[#CCCCCC] font-sans text-xs">
-                          <Globe size={13} /> Website belum tersedia
-                        </span>
                       )}
                       {biz.address && (
-                        <span className="font-sans text-[11px] text-[#BBBBBB] truncate hidden md:inline">
+                        <span className="hidden md:inline-flex font-sans text-[11px] text-[#BBBBBB] truncate items-center gap-1">
+                          <MapPin size={11} className="text-[#C8956C]" />{" "}
                           {biz.address}
                         </span>
                       )}
@@ -342,7 +334,6 @@ export default function DirektoriListClient({
         )}
       </div>
 
-      {/* MODAL DETAIL BISNIS — hero foto dengan shade, identitas menempel di bawah */}
       {selected && (
         <div
           className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
@@ -355,14 +346,14 @@ export default function DirektoriListClient({
             className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Hero: banner + shade gradient + identitas overlay */}
             <div className="relative aspect-[16/8] bg-[#1A1A1A] overflow-hidden">
-              {selected.banner || selected.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={selected.banner || selected.image}
+              {heroPhoto ? (
+                <Image
+                  src={heroPhoto}
                   alt={`Foto ${selected.name}`}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center bg-[#F7F7F7]">
@@ -380,15 +371,12 @@ export default function DirektoriListClient({
               <div className="absolute bottom-0 inset-x-0 p-5 md:p-6">
                 <p className="font-sans text-[11px] flex flex-wrap items-center gap-x-2 gap-y-1 mb-2">
                   <span className="bg-[#A42A28] text-white px-2 py-0.5">
-                    {selected.category || "Lainnya"}
+                    {selected.category}
                   </span>
-                  <span className="text-white/80 flex items-center gap-1">
-                    <MapPin size={11} className="text-[#C8956C]" />
-                    {selected.location}
-                  </span>
-                  {selected.featured && (
-                    <span className="bg-[#C8956C] text-white px-2 py-0.5 tracking-wider uppercase text-[10px]">
-                      Unggulan
+                  {selected.location && (
+                    <span className="text-white/80 flex items-center gap-1">
+                      <MapPin size={11} className="text-[#C8956C]" />
+                      {selected.location}
                     </span>
                   )}
                 </p>
@@ -410,21 +398,17 @@ export default function DirektoriListClient({
                 {selected.description}
               </p>
 
-              {/* Strip foto tambahan — interaktif, scroll horizontal */}
               {selected.photos && selected.photos.length > 0 && (
                 <div className="mb-6">
-                  <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mb-2">
-                    Galeri Bisnis
-                  </p>
                   <div className="flex gap-2 overflow-x-auto pb-1">
                     {selected.photos.map((photo, idx) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
                         key={`${photo}-${idx}`}
                         src={photo}
                         alt={`Foto ${selected.name} ${idx + 1}`}
+                        width={400}
+                        height={300}
                         className="flex-none w-40 aspect-[4/3] object-cover border border-[#E5E5E5]"
-                        loading="lazy"
                       />
                     ))}
                   </div>
@@ -433,12 +417,14 @@ export default function DirektoriListClient({
 
               {selected.address && (
                 <p className="font-sans text-sm text-[#666666] flex items-start gap-2 mb-6">
-                  <MapPin size={14} className="mt-0.5 flex-shrink-0 text-[#C8956C]" />
+                  <MapPin
+                    size={14}
+                    className="mt-0.5 flex-shrink-0 text-[#C8956C]"
+                  />
                   {selected.address}
                 </p>
               )}
 
-              {/* Kontak — Website paling menonjol, sisanya sekunder */}
               <div className="flex flex-wrap gap-2">
                 {selected.website && (
                   <a

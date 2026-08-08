@@ -1,4 +1,5 @@
 import fs from "fs";
+import type { Metadata } from "next";
 import path from "path";
 
 import AgendaSection from "@/components/AgendaSection";
@@ -15,8 +16,8 @@ import {
   fallbackGallery,
   fallbackNews,
 } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 import type { AgendaEvent, Business, GalleryPhoto, News } from "@/types";
-import type { Metadata } from "next";
 
 function getLatestGallery(): GalleryPhoto[] {
   try {
@@ -75,13 +76,14 @@ const organizationLd = {
   "@type": "Organization",
   name: "Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau",
   alternateName: "INTI Kepri",
-  url: "https://intikepri.com/",
-  logo: "https://intikepri.com/images/Logo-INTI-512.png",
+  url: `${SITE_URL}/`,
+  logo: `${SITE_URL}/images/Logo-INTI-512.png`,
   description:
     "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau - Tulus memberi, ikhlas mengabdi.",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Ruko The Capitol Blok B No. 42, Superblok Imperium, Jl. Jend. Sudirman, Kel. Taman Baloi, Kec. Batam Kota",
+    streetAddress:
+      "Ruko The Capitol Blok B No. 42, Superblok Imperium, Jl. Jend. Sudirman, Kel. Taman Baloi, Kec. Batam Kota",
     addressLocality: "Kota Batam",
     postalCode: "29432",
     addressRegion: "Kepulauan Riau",

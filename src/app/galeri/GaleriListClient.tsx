@@ -8,6 +8,7 @@ import {
   MapPin,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
 import type { GalleryPhoto } from "@/types";
@@ -22,7 +23,6 @@ export default function GaleriListClient({
   const [page, setPage] = useState(1);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
-  // Album murni: semua foto tampil apa adanya, tanpa search/filter
   const totalPages = Math.max(1, Math.ceil(initialItems.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const items = initialItems.slice(
@@ -40,7 +40,6 @@ export default function GaleriListClient({
     [items.length],
   );
 
-  // Keyboard: Esc tutup, panah kiri/kanan pindah foto; kunci scroll body
   useEffect(() => {
     if (lightbox === null) return;
     const onKey = (e: KeyboardEvent) => {
@@ -88,12 +87,12 @@ export default function GaleriListClient({
                 className="group relative aspect-[4/3] bg-[#F7F7F7] overflow-hidden text-left"
                 aria-label={`Perbesar foto: ${photo.title}`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={photo.image}
                   alt={photo.title}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="absolute bottom-0 inset-x-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
@@ -134,7 +133,6 @@ export default function GaleriListClient({
         )}
       </div>
 
-      {/* LIGHTBOX */}
       {lightbox !== null && items[lightbox] && (
         <div
           className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4"
@@ -178,10 +176,11 @@ export default function GaleriListClient({
             className="max-w-5xl w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={items[lightbox].image}
               alt={items[lightbox].title}
+              width={1600}
+              height={900}
               className="w-full max-h-[75vh] object-contain"
             />
             <div className="mt-4 flex items-start justify-between gap-4">

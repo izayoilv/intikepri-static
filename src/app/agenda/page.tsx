@@ -1,7 +1,6 @@
 import fs from "fs";
-import path from "path";
-
 import type { Metadata } from "next";
+import path from "path";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
@@ -53,8 +52,8 @@ export default async function AgendaPage() {
   return (
     <main>
       <Navbar />
-      <div className="pt-24">
-        <Breadcrumb items={[{ label: "Agenda" }]} />
+      <div className="pt-16">
+        <Breadcrumb items={[{ label: "Agenda" }]} hideNav />
         <AgendaListClient upcoming={upcoming} past={past} />
       </div>
       <Footer />

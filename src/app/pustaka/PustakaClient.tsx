@@ -12,6 +12,7 @@ import {
   User,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import type { DocumentItem, VideoItem } from "@/types";
@@ -19,8 +20,18 @@ import type { DocumentItem, VideoItem } from "@/types";
 const DOC_PAGE_SIZE = 8;
 
 const MONTHS_ID = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
 ];
 
 function formatDate(iso: string): string {
@@ -29,7 +40,6 @@ function formatDate(iso: string): string {
   return `${Number(d)} ${MONTHS_ID[Number(m) - 1]} ${y}`;
 }
 
-// Thumbnail YouTube gratis tanpa API key; maxres kadang tidak ada -> fallback hq
 function ytThumb(id: string, quality: "maxres" | "hq"): string {
   return `https://img.youtube.com/vi/${id}/${quality === "maxres" ? "maxresdefault" : "hqdefault"}.jpg`;
 }
@@ -45,6 +55,7 @@ export default function PustakaClient({
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [playing, setPlaying] = useState<VideoItem | null>(null);
+  const [previewing, setPreviewing] = useState<DocumentItem | null>(null);
 
   const filteredVideos = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -70,8 +81,11 @@ export default function PustakaClient({
   }, [documents, search]);
 
   const isVideo = tab === "video";
-  // Paginasi hanya dipakai tab dokumen; video tampil semua (featured + grid)
-  const totalPages = Math.max(1, Math.ceil(filteredDocs.length / DOC_PAGE_SIZE));
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredDocs.length / DOC_PAGE_SIZE),
+  );
   const currentPage = Math.min(page, totalPages);
   const pageDocs = filteredDocs.slice(
     (currentPage - 1) * DOC_PAGE_SIZE,
@@ -80,11 +94,13 @@ export default function PustakaClient({
   const featured = isVideo ? filteredVideos[0] : null;
   const gridVideos = isVideo ? filteredVideos.slice(1) : [];
 
-  // Modal player: kunci scroll + Esc
   useEffect(() => {
-    if (!playing) return;
+    if (!playing && !previewing) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setPlaying(null);
+      if (e.key === "Escape") {
+        setPlaying(null);
+        setPreviewing(null);
+      }
     };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
@@ -92,7 +108,7 @@ export default function PustakaClient({
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [playing]);
+  }, [playing, previewing]);
 
   return (
     <section className="py-16 md:py-24 bg-white min-h-[60vh]">
@@ -110,7 +126,6 @@ export default function PustakaClient({
           </p>
         </div>
 
-        {/* Tab + search, satu baris ramping */}
         <div className="flex flex-col md:flex-row md:items-center gap-3 mb-8">
           <div className="inline-flex border border-[#E5E5E5] flex-shrink-0">
             <button
@@ -160,13 +175,14 @@ export default function PustakaClient({
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder={isVideo ? "Cari video..." : "Cari dokumen, penulis..."}
+              placeholder={
+                isVideo ? "Cari video..." : "Cari dokumen, penulis..."
+              }
               className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
             />
           </div>
         </div>
 
-        {/* ══════════ TAB VIDEO ══════════ */}
         {isVideo && (
           <>
             {filteredVideos.length === 0 ? (
@@ -180,21 +196,21 @@ export default function PustakaClient({
               </div>
             ) : (
               <>
-                {/* Featured: video terbaru, besar */}
                 {featured && (
                   <button
                     onClick={() => setPlaying(featured)}
                     className="group relative w-full aspect-video max-h-[480px] bg-[#1A1A1A] overflow-hidden mb-6 text-left"
                     aria-label={`Putar video: ${featured.title}`}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={ytThumb(featured.youtubeId, "maxres")}
                       onError={(e) => {
                         e.currentTarget.src = ytThumb(featured.youtubeId, "hq");
                       }}
                       alt={featured.title}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      sizes="100vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
                     <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[#A42A28] text-white flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -221,7 +237,6 @@ export default function PustakaClient({
                   </button>
                 )}
 
-                {/* Grid sisanya */}
                 {gridVideos.length > 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {gridVideos.map((v) => (
@@ -232,12 +247,12 @@ export default function PustakaClient({
                         aria-label={`Putar video: ${v.title}`}
                       >
                         <div className="relative aspect-video bg-[#1A1A1A] overflow-hidden">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
+                          <Image
                             src={ytThumb(v.youtubeId, "hq")}
                             alt={v.title}
-                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            loading="lazy"
+                            fill
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                           <span className="absolute inset-0 flex items-center justify-center">
                             <span className="w-11 h-11 bg-[#A42A28]/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all">
@@ -265,7 +280,6 @@ export default function PustakaClient({
           </>
         )}
 
-        {/* ══════════ TAB DOKUMEN ══════════ */}
         {!isVideo && (
           <>
             {filteredDocs.length === 0 ? (
@@ -280,31 +294,16 @@ export default function PustakaClient({
             ) : (
               <div className="max-w-5xl space-y-4">
                 {pageDocs.map((doc, i) => (
-                  <a
+                  <button
                     key={`${doc.title}-${i}`}
-                    href={doc.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex gap-4 md:gap-5 p-4 md:p-5"
+                    onClick={() => setPreviewing(doc)}
+                    className="group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex gap-4 md:gap-5 p-4 md:p-5 w-full text-left"
                   >
-                    {/* Cover dokumen: border tipis elegan, bukan fade */}
                     <div className="flex-shrink-0 w-24 sm:w-28 aspect-[3/4] bg-[#F7F7F7] border border-[#DDDDDD] overflow-hidden flex flex-col items-center justify-center">
-                      {doc.thumbnail ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={doc.thumbnail}
-                          alt={`Sampul ${doc.title}`}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <>
-                          <FileText size={28} className="text-[#C8956C]" />
-                          <span className="font-sans text-[9px] tracking-widest uppercase text-[#BBBBBB] mt-1">
-                            PDF
-                          </span>
-                        </>
-                      )}
+                      <FileText size={28} className="text-[#C8956C]" />
+                      <span className="font-sans text-[9px] tracking-widest uppercase text-[#BBBBBB] mt-1">
+                        PDF
+                      </span>
                     </div>
 
                     <div className="min-w-0 flex-1 flex flex-col">
@@ -348,7 +347,7 @@ export default function PustakaClient({
                         <FileText size={13} /> Baca PDF <ArrowRight size={12} />
                       </span>
                     </div>
-                  </a>
+                  </button>
                 ))}
               </div>
             )}
@@ -380,7 +379,6 @@ export default function PustakaClient({
         )}
       </div>
 
-      {/* MODAL PLAYER — iframe YouTube baru dimuat saat diklik (halaman tetap ringan) */}
       {playing && (
         <div
           className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
@@ -414,6 +412,48 @@ export default function PustakaClient({
                 className="w-full h-full"
               />
             </div>
+          </div>
+        </div>
+      )}
+      {previewing && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Pratinjau dokumen: ${previewing.title}`}
+          onClick={() => setPreviewing(null)}
+        >
+          <div
+            className="w-full max-w-4xl bg-white flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-4 px-4 py-2.5 bg-[#1A1A1A]">
+              <p className="font-sans text-sm text-white/80 truncate">
+                {previewing.title}
+              </p>
+              <div className="flex items-center gap-4 flex-shrink-0">
+                <a
+                  href={previewing.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-sans text-xs text-white/60 hover:text-white transition-colors"
+                >
+                  Buka di tab baru
+                </a>
+                <button
+                  onClick={() => setPreviewing(null)}
+                  className="p-1.5 text-white/60 hover:text-white transition-colors"
+                  aria-label="Tutup pratinjau"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            </div>
+            <iframe
+              src={previewing.fileUrl}
+              title={previewing.title}
+              className="w-full h-[70vh] bg-white"
+            />
           </div>
         </div>
       )}

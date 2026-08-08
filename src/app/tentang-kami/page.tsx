@@ -13,23 +13,13 @@ export const metadata: Metadata = {
     "Profil, sejarah, visi misi, dan jaringan Perhimpunan INTI Provinsi Kepulauan Riau.",
 };
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Beranda", item: "https://intikepri.com/" },
-    { "@type": "ListItem", position: 2, name: "Tentang Kami", item: "https://intikepri.com/tentang-kami/" },
-  ],
-};
 export default function TentangKamiPage() {
   return (
     <main>
       <Navbar />
-      <div className="pt-24">
-        <Breadcrumb items={[{ label: "Tentang Kami" }]} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <div className="pt-16">
+        <Breadcrumb items={[{ label: "Tentang Kami" }]} hideNav />
 
-        {/* Header */}
         <section className="bg-[#1A1A1A] py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
@@ -43,7 +33,6 @@ export default function TentangKamiPage() {
           </div>
         </section>
 
-        {/* Sejarah */}
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
@@ -60,7 +49,6 @@ export default function TentangKamiPage() {
               </div>
             </div>
 
-            {/* Ketua dari masa ke masa */}
             <div>
               <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
                 Kepemimpinan
@@ -80,11 +68,6 @@ export default function TentangKamiPage() {
                     <p className="font-serif text-lg font-semibold text-[#1A1A1A]">
                       {k.nama}
                     </p>
-                    {/*<p
-                      className={`font-sans text-xs mt-0.5 ${i === 0 ? "text-[#A42A28] font-medium" : "text-[#999999]"}`}
-                    >
-                      {k.status}
-                    </p>  */}
                   </li>
                 ))}
               </ol>
@@ -92,7 +75,6 @@ export default function TentangKamiPage() {
           </div>
         </section>
 
-        {/* Visi Misi */}
         <section className="py-16 md:py-24 bg-[#F7F7F7]">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="text-center mb-12">
@@ -129,11 +111,8 @@ export default function TentangKamiPage() {
           </div>
         </section>
 
-        {/* Struktur Pengurus & Bidang (dipindah dari homepage: konten referensi,
-            bukan promosi, jadi rumahnya di sini) */}
         <StructureSection />
 
-        {/* Jaringan */}
         <section className="py-16 md:py-24 bg-[#F7F7F7]">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="text-center mb-12">
@@ -171,5 +150,3 @@ export default function TentangKamiPage() {
     </main>
   );
 }
-
-

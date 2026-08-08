@@ -1,32 +1,19 @@
 "use client";
 
-import {
-  SiFacebook,
-  SiWhatsapp,
-  SiX,
-} from "@icons-pack/react-simple-icons";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Calendar,
-  Mail,
-  User,
-} from "lucide-react";
+import { SiFacebook, SiWhatsapp, SiX } from "@icons-pack/react-simple-icons";
+import { ArrowLeft, ArrowRight, Calendar, Mail, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
 import type { CSSProperties } from "react";
 
 import Breadcrumb from "@/components/Breadcrumb";
+import { SITE_URL } from "@/lib/site";
 import type { News } from "@/types";
 
 interface Props {
   news: News | null;
   relatedNews?: News[];
 }
-
-// Ganti dengan domain final website kamu (dipakai untuk URL share)
-const SITE_URL = "https://intikepri.com";
 
 export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
   const item = news || null;
@@ -50,7 +37,6 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
   const encodedUrl = encodeURIComponent(articleUrl);
   const encodedTitle = encodeURIComponent(item.title);
 
-  // Semua share pakai anchor <a> biasa — tanpa JavaScript sama sekali.
   const shareLinks = [
     {
       label: "Bagikan ke WhatsApp",
@@ -80,7 +66,10 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
 
   return (
     <div className="min-h-screen bg-[#F7F7F7]">
-      {/* HERO */}
+      <Breadcrumb
+        items={[{ label: "Berita", to: "/berita" }, { label: item.title }]}
+      />
+
       <div className="bg-[#1A1A1A] py-16 md:py-24">
         <div className="max-w-4xl mx-auto px-4 md:px-8">
           <Link
@@ -113,14 +102,9 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
           </div>
         </div>
       </div>
-      <Breadcrumb
-        items={[{ label: "Berita", to: "/berita" }, { label: item.title }]}
-      />
 
-      {/* ARTIKEL + FLOATING SHARE */}
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-12 pb-24 lg:pb-12">
         <div className="lg:flex lg:gap-10">
-          {/* Floating share — DESKTOP: sticky di samping artikel */}
           <aside className="hidden lg:block flex-shrink-0">
             <div className="sticky top-28 flex flex-col items-center gap-2">
               <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mb-1 [writing-mode:vertical-rl]">
@@ -180,7 +164,6 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
           </div>
         </div>
 
-        {/* BERITA LAINNYA */}
         {relatedNews.length > 0 && (
           <section className="mt-16">
             <div className="flex items-end justify-between mb-8">
@@ -242,7 +225,6 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
         )}
       </div>
 
-      {/* Floating share — MOBILE: bar fixed di bawah layar */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-[#E5E5E5]">
         <div className="flex items-center justify-center gap-2 px-4 py-2.5">
           <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mr-2">

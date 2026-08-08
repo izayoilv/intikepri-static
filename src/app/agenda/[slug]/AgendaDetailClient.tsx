@@ -14,8 +14,18 @@ import Breadcrumb from "@/components/Breadcrumb";
 import type { AgendaEvent } from "@/types";
 
 const MONTHS_ID = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
 ];
 
 function formatDate(iso: string): string {
@@ -23,8 +33,9 @@ function formatDate(iso: string): string {
   return `${d} ${MONTHS_ID[m - 1] ?? ""} ${y}`;
 }
 
-// CTA partisipasi — bentuk tombol ditentukan field ctaType dari CMS
-function resolveCta(e: AgendaEvent): { href: string; external: boolean } | null {
+function resolveCta(
+  e: AgendaEvent,
+): { href: string; external: boolean } | null {
   if (!e.ctaType || !e.ctaUrl) return null;
   if (e.ctaType === "link") return { href: e.ctaUrl, external: true };
   if (e.ctaType === "whatsapp") {
@@ -84,7 +95,10 @@ export default function AgendaDetailClient({
 
   return (
     <div className="min-h-screen bg-[#F7F7F7]">
-      {/* HERO */}
+      <Breadcrumb
+        items={[{ label: "Agenda", to: "/agenda" }, { label: event.title }]}
+      />
+
       <div className="bg-[#1A1A1A] py-16 md:py-24">
         <div className="max-w-4xl mx-auto px-4 md:px-8">
           <Link
@@ -118,12 +132,8 @@ export default function AgendaDetailClient({
           </div>
         </div>
       </div>
-      <Breadcrumb
-        items={[{ label: "Agenda", to: "/agenda" }, { label: event.title }]}
-      />
 
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-12">
-        {/* INFO + CTA */}
         <div className="bg-white border border-[#E5E5E5] border-t-2 border-t-[#A42A28] p-6 md:p-8 mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
             {infoGrid.map(({ Icon, label, value }) => (
@@ -151,14 +161,13 @@ export default function AgendaDetailClient({
                   : {})}
                 className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-6 py-3 font-sans text-sm font-semibold hover:bg-[#8a2320] transition-colors"
               >
-                {event.ctaLabel || "Daftar / Partisipasi"} <ArrowRight size={16} />
+                {event.ctaLabel || "Daftar / Partisipasi"}{" "}
+                <ArrowRight size={16} />
               </a>
             </div>
           )}
         </div>
 
-        {/* FOTO + DESKRIPSI: satu blok menyatu, foto flush ke tepi kartu
-            (bukan foto yang "dimasukkan" ke dalam kotak) */}
         <article className="bg-white border border-[#E5E5E5] overflow-hidden">
           {event.image && (
             <div
@@ -175,7 +184,6 @@ export default function AgendaDetailClient({
           </div>
         </article>
 
-        {/* AGENDA LAINNYA */}
         {related.length > 0 && (
           <section className="mt-16">
             <div className="flex items-end justify-between mb-8">
@@ -196,7 +204,11 @@ export default function AgendaDetailClient({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {related.map((rel) => (
-                <Link key={rel.slug} href={`/agenda/${rel.slug}`} className="group">
+                <Link
+                  key={rel.slug}
+                  href={`/agenda/${rel.slug}`}
+                  className="group"
+                >
                   <div className="bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow h-full p-5">
                     <p className="font-sans text-xs text-[#999999] flex items-center gap-1.5 mb-3">
                       <Calendar size={12} className="text-[#C8956C]" />

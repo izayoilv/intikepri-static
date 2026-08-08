@@ -3,6 +3,7 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, Globe, MapPin, Store, User } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
@@ -16,10 +17,8 @@ export default function DirektoriSection({
   initialItems: Business[];
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  // Urutan: unggulan selalu di atas
-  const businesses = [...initialItems]
-    .sort((a, b) => Number(b.featured || false) - Number(a.featured || false))
-    .slice(0, 3);
+
+  const businesses = initialItems.slice(0, 3);
 
   useEffect(() => {
     if (!ref.current || businesses.length === 0) return;
@@ -42,7 +41,6 @@ export default function DirektoriSection({
     return () => ctx.revert();
   }, [businesses.length]);
 
-  // Data kosong (CMS belum mengisi) -> section disembunyikan dari homepage
   if (businesses.length === 0) return null;
 
   return (
@@ -65,7 +63,6 @@ export default function DirektoriSection({
           </Link>
         </div>
 
-        {/* Row horizontal: foto + shade di kiri, ringkasan di kanan */}
         <div className="space-y-4">
           {businesses.map((biz, i) => {
             const photo = biz.banner || biz.image;
@@ -75,14 +72,14 @@ export default function DirektoriSection({
                 href="/direktori"
                 className="direktori-reveal group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex flex-col sm:flex-row overflow-hidden"
               >
-                {/* Foto nge-blend ke putih ke arah konten */}
                 <div className="relative sm:w-52 md:w-60 flex-shrink-0 aspect-[16/9] sm:aspect-auto sm:min-h-[120px] bg-[#F7F7F7] overflow-hidden">
                   {photo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={photo}
                       alt={`Foto ${biz.name}`}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 240px"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -93,24 +90,23 @@ export default function DirektoriSection({
                   <div className="sm:hidden absolute inset-0 bg-gradient-to-b from-transparent from-55% to-white" />
                 </div>
 
-                {/* Konten slim */}
                 <div className="flex-1 min-w-0 px-4 py-3 md:px-5 flex flex-col">
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <h3 className="font-serif text-lg md:text-xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
                       {biz.name}
                     </h3>
-                    {biz.featured && (
-                      <span className="bg-[#C8956C]/15 text-[#C8956C] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
-                        Unggulan
-                      </span>
-                    )}
                   </div>
                   <p className="font-sans text-xs text-[#999999] mt-1 flex items-center gap-x-2">
-                    <span className="text-[#A42A28]">{biz.category || "Lainnya"}</span>
-                    <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
-                    <span className="flex items-center gap-1">
-                      <MapPin size={11} className="text-[#C8956C]" /> {biz.location}
-                    </span>
+                    <span className="text-[#A42A28]">{biz.category}</span>
+                    {biz.location && (
+                      <>
+                        <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
+                        <span className="flex items-center gap-1">
+                          <MapPin size={11} className="text-[#C8956C]" />{" "}
+                          {biz.location}
+                        </span>
+                      </>
+                    )}
                     {biz.owner && (
                       <>
                         <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
@@ -124,13 +120,10 @@ export default function DirektoriSection({
                     {biz.description}
                   </p>
                   <p className="mt-auto pt-2">
-                    {biz.website ? (
-                      <span className="inline-flex items-center gap-1.5 text-[#A42A28] font-sans text-xs font-semibold group-hover:gap-2.5 transition-all">
-                        <Globe size={13} /> Kunjungi Website <ArrowRight size={12} />
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 text-[#CCCCCC] font-sans text-xs">
-                        <Globe size={13} /> Website belum tersedia
+                    {biz.website && (
+                      <span className="inline-flex items-center gap-1.5 text-[#A42A28] font-sans text-xs font-semibold underline-offset-4 group-hover:underline">
+                        <Globe size={13} /> Kunjungi Website{" "}
+                        <ArrowRight size={12} />
                       </span>
                     )}
                   </p>

@@ -1,12 +1,12 @@
 import fs from "fs";
-import path from "path";
-
 import type { Metadata } from "next";
+import path from "path";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { fallbackBusinesses } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 import type { Business } from "@/types";
 
 import DirektoriListClient from "./DirektoriListClient";
@@ -35,19 +35,16 @@ function getBusinesses(): Business[] {
   }
 }
 
-const BASE = "https://intikepri.com";
-
 export default async function DirektoriPage() {
   const items = getBusinesses();
 
-  // SEO: setiap bisnis terdaftar sebagai LocalBusiness dalam ItemList
   const itemListLd =
     items.length > 0
       ? {
           "@context": "https://schema.org",
           "@type": "ItemList",
           name: "Direktori Bisnis INTI Kepri",
-          url: `${BASE}/direktori/`,
+          url: `${SITE_URL}/direktori/`,
           itemListElement: items.map((b, i) => ({
             "@type": "ListItem",
             position: i + 1,
@@ -73,8 +70,8 @@ export default async function DirektoriPage() {
   return (
     <main>
       <Navbar />
-      <div className="pt-24">
-        <Breadcrumb items={[{ label: "Direktori Bisnis" }]} />
+      <div className="pt-16">
+        <Breadcrumb items={[{ label: "Direktori Bisnis" }]} hideNav />
         {itemListLd && (
           <script
             type="application/ld+json"

@@ -11,8 +11,18 @@ import type { AgendaEvent } from "@/types";
 gsap.registerPlugin(ScrollTrigger);
 
 const MONTHS_ID = [
-  "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-  "Jul", "Agu", "Sep", "Okt", "Nov", "Des",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Mei",
+  "Jun",
+  "Jul",
+  "Agu",
+  "Sep",
+  "Okt",
+  "Nov",
+  "Des",
 ];
 
 export default function AgendaSection({
@@ -44,13 +54,11 @@ export default function AgendaSection({
     return () => ctx.revert();
   }, [events.length]);
 
-  // Tidak ada agenda mendatang -> section disembunyikan dari homepage
   if (events.length === 0) return null;
 
   return (
     <section ref={ref} className="py-14 md:py-20 bg-[#F7F7F7]">
       <div className="max-w-4xl mx-auto px-4 md:px-8">
-        {/* Header ramping satu baris */}
         <div className="agenda-reveal flex items-end justify-between mb-8">
           <div>
             <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-2">
@@ -68,20 +76,17 @@ export default function AgendaSection({
           </Link>
         </div>
 
-        {/* Timeline pinpoint: garis tipis + titik merah, tanpa kartu */}
         <div className="relative border-l border-[#DDDDDD] ml-1.5">
           {events.map((e) => {
-            const [y, m, d] = e.date.split("-");
+            const [, m, d] = e.date.split("-");
             return (
               <Link
                 key={e.slug}
                 href={`/agenda/${e.slug}`}
                 className="agenda-reveal group relative flex items-center gap-4 md:gap-5 pl-5 md:pl-6 py-3.5"
               >
-                {/* Pinpoint */}
                 <span className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#A42A28] rounded-full ring-4 ring-[#F7F7F7] group-hover:scale-125 transition-transform" />
 
-                {/* Tile tanggal kecil */}
                 <div className="flex-shrink-0 w-12 bg-white border border-[#E5E5E5] group-hover:border-[#A42A28]/40 transition-colors text-center py-1.5">
                   <p className="font-serif text-lg font-bold text-[#A42A28] leading-none">
                     {Number(d)}
@@ -91,7 +96,6 @@ export default function AgendaSection({
                   </p>
                 </div>
 
-                {/* Judul + meta satu baris, rapi terpotong kalau panjang */}
                 <div className="min-w-0 flex-1">
                   <h3 className="font-serif text-base md:text-lg font-semibold text-[#1A1A1A] truncate group-hover:text-[#A42A28] transition-colors">
                     {e.title}

@@ -10,6 +10,7 @@ import {
   Search,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import type { GalleryPhoto } from "@/types";
@@ -26,8 +27,6 @@ export default function GaleriListClient({
   const [page, setPage] = useState(1);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
-  // Kategori diturunkan otomatis dari data — apapun nama kegiatan/sumber
-  // yang diisi admin di CMS langsung jadi filter tanpa ubah kode.
   const categories = useMemo(() => {
     const cats = new Set(
       initialItems.map((p) => (p.category || "Lainnya").trim()),
@@ -60,15 +59,12 @@ export default function GaleriListClient({
   const stepLightbox = useCallback(
     (dir: 1 | -1) => {
       setLightbox((cur) =>
-        cur === null
-          ? null
-          : (cur + dir + filtered.length) % filtered.length,
+        cur === null ? null : (cur + dir + filtered.length) % filtered.length,
       );
     },
     [filtered.length],
   );
 
-  // Keyboard: Esc tutup, panah kiri/kanan navigasi + kunci scroll body
   useEffect(() => {
     if (lightbox === null) return;
     const onKey = (e: KeyboardEvent) => {
@@ -102,7 +98,6 @@ export default function GaleriListClient({
           </p>
         </div>
 
-        {/* Toolbar: search + dropdown filter, satu baris ramping */}
         <div className="flex flex-col md:flex-row gap-3 mb-3">
           <div className="relative flex-1">
             <Search
@@ -212,7 +207,6 @@ export default function GaleriListClient({
         )}
       </div>
 
-      {/* LIGHTBOX */}
       {active && (
         <div
           className="fixed inset-0 z-[60] bg-black/95 flex flex-col"
@@ -247,10 +241,11 @@ export default function GaleriListClient({
                 <ChevronLeft size={32} />
               </button>
             )}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={active.image}
               alt={active.title}
+              width={1600}
+              height={900}
               className="max-h-full max-w-full object-contain"
             />
             {filtered.length > 1 && (

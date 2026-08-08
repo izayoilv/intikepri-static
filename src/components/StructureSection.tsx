@@ -2,6 +2,7 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 import { bidangPengurus, pengurusKSB } from "@/lib/data";
@@ -62,20 +63,20 @@ export default function StructureSection() {
           </p>
         </div>
 
-        {/* KSB: Ketua, Sekretaris, Bendahara */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
           {pengurusKSB.map((p, i) => (
             <div
               key={i}
               className="struct-reveal flex items-center gap-4 bg-[#F7F7F7] border border-[#E5E5E5] p-4 hover:border-[#A42A28]/30 transition-colors"
             >
-              <div className="w-14 h-14 flex-shrink-0 overflow-hidden bg-[#F0E6DC]">
+              <div className="relative w-14 h-14 flex-shrink-0 overflow-hidden bg-[#F0E6DC]">
                 {p.foto ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={p.foto}
                     alt={p.jabatan}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="56px"
+                    className="object-cover"
                   />
                 ) : (
                   <PortraitPlaceholder />

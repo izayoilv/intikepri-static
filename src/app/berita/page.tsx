@@ -1,7 +1,6 @@
 import fs from "fs";
-import path from "path";
-
 import type { Metadata } from "next";
+import path from "path";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
@@ -35,8 +34,8 @@ export default async function BeritaPage() {
   return (
     <main>
       <Navbar />
-      <div className="pt-24">
-        <Breadcrumb items={[{ label: "Berita" }]} />
+      <div className="pt-16">
+        <Breadcrumb items={[{ label: "Berita" }]} hideNav />
         <BeritaListClient
           initialItems={items}
           locations={locations}

@@ -3,6 +3,8 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 
+import { SITE_URL } from "@/lib/site";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -16,7 +18,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://intikepri.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default:
       "INTI Kepri | Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau",

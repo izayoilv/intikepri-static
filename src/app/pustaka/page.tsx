@@ -1,12 +1,13 @@
 import fs from "fs";
+import type { Metadata } from "next";
 import path from "path";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { fallbackDocuments, fallbackVideos } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 import type { DocumentItem, VideoItem } from "@/types";
-import type { Metadata } from "next";
 
 import PustakaClient from "./PustakaClient";
 
@@ -14,17 +15,15 @@ export const metadata: Metadata = {
   title: "Pustaka & Media",
   description:
     "Rekaman kegiatan dan dokumen resmi Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau : makalah, laporan, dan publikasi.",
-  alternates: { canonical: "https://intikepri.com/pustaka/" },
+  alternates: { canonical: `${SITE_URL}/pustaka/` },
   openGraph: {
     title: "Pustaka & Media | INTI Kepri",
     description:
       "Rekaman kegiatan dan dokumen resmi INTI Kepulauan Riau : makalah, laporan, dan publikasi.",
-    url: "https://intikepri.com/pustaka/",
+    url: `${SITE_URL}/pustaka/`,
   },
 };
 
-// Kontrak data sama seperti berita: CI mengisi src/data/video.json & dokumen.json
-// dari endpoint CMS saat build; bila file belum ada -> array kosong.
 function getVideos(): VideoItem[] {
   try {
     const raw = fs.readFileSync(
@@ -53,13 +52,12 @@ export default function PustakaPage() {
   const videos = getVideos();
   const documents = getDocuments();
 
-  // SEO: CollectionPage + ItemList video (VideoObject bisa muncul di hasil pencarian Google)
   const collectionLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Pustaka & Media INTI Kepri",
-    url: "https://intikepri.com/pustaka/",
-    isPartOf: { "@type": "WebSite", url: "https://intikepri.com/" },
+    url: `${SITE_URL}/pustaka/`,
+    isPartOf: { "@type": "WebSite", url: `${SITE_URL}/` },
   };
   const videoLd = {
     "@context": "https://schema.org",
@@ -91,8 +89,8 @@ export default function PustakaPage() {
         />
       )}
       <Navbar />
-      <main className="pt-24">
-        <Breadcrumb items={[{ label: "Pustaka" }]} />
+      <main className="pt-16">
+        <Breadcrumb items={[{ label: "Pustaka" }]} hideNav />
         <PustakaClient videos={videos} documents={documents} />
       </main>
       <Footer />

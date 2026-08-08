@@ -6,9 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
-// Foto-foto slideshow. Tambah/kurangi sesuai file di public/images.
-// CATATAN: kalau jumlah foto diubah, sesuaikan juga durasi 18s di globals.css
-// (total durasi = jumlah foto x 6 detik).
 const SLIDES = [
   "/images/hero-bg.jpeg",
   "/images/hero-bg-2.jpeg",
@@ -37,7 +34,6 @@ export default function HeroSection() {
       ref={ref}
       className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden bg-[#1A1A1A]"
     >
-      {/* SLIDESHOW — crossfade + ken burns, murni CSS animation (lihat globals.css) */}
       <div className="absolute inset-0" aria-hidden="true">
         {SLIDES.map((src, i) => (
           <div
@@ -58,7 +54,6 @@ export default function HeroSection() {
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
 
-      {/* FRAME — hairline border emas + corner bracket, khas desain heritage */}
       <div
         className="absolute inset-3 md:inset-5 border border-[#C8956C]/25 pointer-events-none z-10"
         aria-hidden="true"
@@ -69,7 +64,6 @@ export default function HeroSection() {
         <span className="absolute -bottom-px -right-px w-6 h-6 md:w-8 md:h-8 border-b-2 border-r-2 border-[#C8956C]" />
       </div>
 
-      {/* TEKS VERTIKAL — pengisi sisi kosong di layar besar */}
       <p
         className="hidden lg:block absolute left-10 top-1/2 -translate-y-1/2 z-10 font-sans text-[11px] tracking-[0.5em] text-white/25 [writing-mode:vertical-rl] rotate-180 select-none"
         aria-hidden="true"
@@ -127,7 +121,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* PROGRESS BAR SLIDE — sinkron dengan slideshow via timing CSS yang sama */}
       <div
         className="absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2"
         aria-hidden="true"

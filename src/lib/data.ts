@@ -31,15 +31,15 @@ export const branches: Branch[] = [
 export const ketuaPeriode: Ketua[] = [
   {
     periode: "2026-2030",
-    nama: "Piter Tanjaya S.E."
+    nama: "Piter Tanjaya S.E.",
   },
-  { periode: "2024-2026", nama: "Piter Tanjaya S.E."},
+  { periode: "2024-2026", nama: "Piter Tanjaya S.E." },
   {
     periode: "2010-2018",
-    nama: "Beny Suwandi S.H., M.H."
+    nama: "Beny Suwandi S.H., M.H.",
   },
-  { periode: "2006-2010", nama: "Dato Harsono"},
-  { periode: "2002-2006", nama: "Eddy C Lummawie"},
+  { periode: "2006-2010", nama: "Dato Harsono" },
+  { periode: "2002-2006", nama: "Eddy C Lummawie" },
 ];
 
 export const pengurusKSB: Pengurus[] = [
@@ -126,6 +126,5 @@ export const fallbackBusinesses: Business[] = [];
 
 export const fallbackAgenda: AgendaEvent[] = [];
 
-// Fallback kosong: dipakai bila src/data/video.json / dokumen.json belum ada
 export const fallbackVideos: VideoItem[] = [];
 export const fallbackDocuments: DocumentItem[] = [];

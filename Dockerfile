@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:26.5-alpine3.24 AS builder
+FROM node:26.7-alpine3.24 AS builder
 WORKDIR /app
 RUN npm install -g pnpm@11
 COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./

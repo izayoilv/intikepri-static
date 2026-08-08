@@ -39,14 +39,15 @@ export default function GaleriSection({
     return () => ctx.revert();
   }, [photos.length]);
 
-  // Data kosong (CMS belum mengisi) -> section disembunyikan dari homepage
   if (photos.length === 0) return null;
 
-  // Track diduplikat supaya loop marquee mulus (CSS -50%)
   const track = [...photos, ...photos];
 
   return (
-    <section ref={ref} className="pt-10 md:pt-14 pb-20 md:pb-32 bg-white overflow-hidden">
+    <section
+      ref={ref}
+      className="pt-10 md:pt-14 pb-20 md:pb-32 bg-white overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex items-end justify-between mb-12 galeri-reveal">
           <div>
@@ -66,9 +67,7 @@ export default function GaleriSection({
         </div>
       </div>
 
-      {/* Marquee full-width, tempo organik (lihat keyframes galeri-drift di globals.css) */}
       <div className="marquee-pause relative">
-        {/* Fade di tepi kiri-kanan */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10" />
 

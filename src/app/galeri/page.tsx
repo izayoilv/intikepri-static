@@ -1,12 +1,12 @@
 import fs from "fs";
-import path from "path";
-
 import type { Metadata } from "next";
+import path from "path";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { fallbackGallery } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 import type { GalleryPhoto } from "@/types";
 
 import GaleriListClient from "./GaleriListClient";
@@ -39,10 +39,10 @@ const collectionPageLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   name: "Galeri & Dokumentasi INTI Kepri",
-  url: "https://intikepri.com/galeri/",
+  url: `${SITE_URL}/galeri/`,
   description:
     "Dokumentasi kegiatan INTI Kepulauan Riau dalam foto: bakti sosial, pertemuan, perayaan budaya, dan program kemasyarakatan.",
-  isPartOf: { "@type": "WebSite", url: "https://intikepri.com/" },
+  isPartOf: { "@type": "WebSite", url: `${SITE_URL}/` },
 };
 
 export default async function GaleriPage() {
@@ -51,8 +51,8 @@ export default async function GaleriPage() {
   return (
     <main>
       <Navbar />
-      <div className="pt-24">
-        <Breadcrumb items={[{ label: "Galeri" }]} />
+      <div className="pt-16">
+        <Breadcrumb items={[{ label: "Galeri" }]} hideNav />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageLd) }}

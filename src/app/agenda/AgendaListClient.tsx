@@ -14,8 +14,18 @@ import { useMemo, useState } from "react";
 import type { AgendaEvent } from "@/types";
 
 const MONTHS_ID = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
 ];
 
 function monthLabel(iso: string): string {
@@ -30,7 +40,7 @@ function dayNum(iso: string): string {
 function groupByMonth(items: AgendaEvent[]): [string, AgendaEvent[]][] {
   const map = new Map<string, AgendaEvent[]>();
   items.forEach((e) => {
-    const key = e.date.slice(0, 7); // YYYY-MM
+    const key = e.date.slice(0, 7);
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(e);
   });
@@ -49,12 +59,16 @@ export default function AgendaListClient({
 }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Semua");
-  const [status, setStatus] = useState<"Semua" | "Akan Datang" | "Sudah Berlangsung">("Semua");
+  const [status, setStatus] = useState<
+    "Semua" | "Akan Datang" | "Sudah Berlangsung"
+  >("Semua");
 
   const all = useMemo(() => [...upcoming, ...past], [upcoming, past]);
 
   const categories = useMemo(() => {
-    const cats = new Set(all.map((e) => (e.category || "").trim()).filter(Boolean));
+    const cats = new Set(
+      all.map((e) => (e.category || "").trim()).filter(Boolean),
+    );
     return ["Semua", ...Array.from(cats).sort((a, b) => a.localeCompare(b))];
   }, [all]);
 
@@ -70,7 +84,8 @@ export default function AgendaListClient({
       return matchCat && matchSearch;
     });
 
-  const showUpcoming = status !== "Sudah Berlangsung" ? applyFilters(upcoming) : [];
+  const showUpcoming =
+    status !== "Sudah Berlangsung" ? applyFilters(upcoming) : [];
   const showPast = status !== "Akan Datang" ? applyFilters(past) : [];
   const total = showUpcoming.length + showPast.length;
 
@@ -93,7 +108,6 @@ export default function AgendaListClient({
                   dimmed ? "opacity-60 hover:opacity-100" : ""
                 }`}
               >
-                {/* Blok tanggal */}
                 <div className="flex-shrink-0 w-14 text-center border-r border-[#E5E5E5] pr-4">
                   <p className="font-serif text-2xl md:text-3xl font-bold text-[#A42A28] leading-none">
                     {dayNum(e.date)}
@@ -156,7 +170,6 @@ export default function AgendaListClient({
           </p>
         </div>
 
-        {/* Toolbar */}
         <div className="flex flex-col md:flex-row gap-3 mb-3">
           <div className="relative flex-1">
             <Search

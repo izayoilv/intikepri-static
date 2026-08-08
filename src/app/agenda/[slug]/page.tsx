@@ -1,8 +1,8 @@
 import fs from "fs";
+import type { Metadata } from "next";
 import path from "path";
 
-import type { Metadata } from "next";
-
+import { SITE_URL } from "@/lib/site";
 import type { AgendaEvent } from "@/types";
 
 import AgendaDetailClient from "./AgendaDetailClient";
@@ -16,8 +16,6 @@ function getAllAgenda(): AgendaEvent[] {
     return [];
   }
 }
-
-const BASE = "https://intikepri.com";
 
 export async function generateMetadata({
   params,
@@ -39,7 +37,9 @@ export async function generateMetadata({
       title: event.title,
       description,
       type: "website",
-      ...(event.image ? { images: [{ url: event.image, width: 1200, height: 630 }] } : {}),
+      ...(event.image
+        ? { images: [{ url: event.image, width: 1200, height: 630 }] }
+        : {}),
     },
   };
 }
@@ -71,7 +71,6 @@ export default async function AgendaDetailPage({
     })
     .slice(0, 3);
 
-  // SEO: structured data Event — agenda bisa tampil sebagai rich result di Google
   const eventLd = event
     ? {
         "@context": "https://schema.org",
@@ -95,9 +94,9 @@ export default async function AgendaDetailPage({
         organizer: {
           "@type": "Organization",
           name: "INTI Kepri",
-          url: `${BASE}/`,
+          url: `${SITE_URL}/`,
         },
-        url: `${BASE}/agenda/${event.slug}/`,
+        url: `${SITE_URL}/agenda/${event.slug}/`,
       }
     : null;
 

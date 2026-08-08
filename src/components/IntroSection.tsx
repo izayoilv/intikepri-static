@@ -50,7 +50,6 @@ export default function IntroSection() {
               <p>{visiMisi.misi}</p>
             </div>
 
-            {/* Fakta singkat: informatif tanpa kotak-kotak angka */}
             <p className="mt-8 pt-6 border-t border-[#E5E5E5] font-sans text-xs tracking-wide text-[#999999] flex flex-wrap items-center gap-x-3 gap-y-1">
               <span>
                 Berdiri <span className="text-[#1A1A1A] font-medium">2004</span>
@@ -79,9 +78,6 @@ export default function IntroSection() {
             </Link>
           </div>
 
-          {/* Komposisi foto + kartu motto (rumah baru motto setelah blok gelap dihapus).
-              Tampil penuh di SEMUA ukuran layar — di mobile offset diperkecil agar tidak
-              terpotong, plus ruang napas bawah supaya foto tumpuk tidak menabrak section berikutnya. */}
           <div className="intro-reveal relative mt-10 lg:mt-0 mb-12 md:mb-14 lg:mb-0">
             <div className="aspect-[4/3] bg-[#E5E5E5] overflow-hidden">
               <div
