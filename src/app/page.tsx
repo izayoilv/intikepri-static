@@ -10,6 +10,7 @@ import QuoteSection from "@/components/QuoteSection";
 import StructureSection from "@/components/StructureSection";
 import { fallbackNews } from "@/lib/data";
 import type { News } from "@/types";
+import type { Metadata } from "next";
 
 function getLatestNews(): News[] {
   try {
@@ -22,6 +23,10 @@ function getLatestNews(): News[] {
   }
 }
 
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
 const organizationLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -33,7 +38,9 @@ const organizationLd = {
     "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau - Tulus memberi, ikhlas mengabdi.",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Batam",
+    streetAddress: "Ruko The Capitol Blok B No. 42, Superblok Imperium, Jl. Jend. Sudirman, Kel. Taman Baloi, Kec. Batam Kota",
+    addressLocality: "Kota Batam",
+    postalCode: "29432",
     addressRegion: "Kepulauan Riau",
     addressCountry: "ID",
   },
@@ -63,3 +70,5 @@ export default async function HomePage() {
     </main>
   );
 }
+
+

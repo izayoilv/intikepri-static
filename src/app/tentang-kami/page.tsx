@@ -7,6 +7,7 @@ import { branches, ketuaPeriode, sejarah, visiMisi } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Tentang Kami",
+  alternates: { canonical: "/tentang-kami/" },
   description:
     "Profil, sejarah, visi misi, dan jaringan Perhimpunan INTI Provinsi Kepulauan Riau.",
 };
@@ -165,4 +166,5 @@ export default function TentangKamiPage() {
     </main>
   );
 }
+
 
