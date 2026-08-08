@@ -31,22 +31,8 @@ export default function Navbar() {
 
   return (
     <>
-      <div
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isHome && !scrolled ? "bg-black/30 backdrop-blur-sm" : "bg-[#1A1A1A]"} ${scrolled ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"}`}
-      >
-        <div className="max-w-7xl mx-auto px-4 md:px-8 flex items-center justify-between h-8">
-          <span className="text-white/50 text-xs font-sans flex items-center gap-1">
-            <span className="w-1 h-1 bg-[#A42A28] rounded-full" /> INTI Provinsi
-            Kepri
-          </span>
-          <span className="text-white/30 text-xs font-sans">
-            perhimpunanintikepri@gmail.com
-          </span>
-        </div>
-      </div>
-
       <nav
-        className={`fixed left-0 right-0 z-40 transition-all duration-500 ${scrolled ? "top-0 bg-white/95 backdrop-blur-md shadow-sm" : isHome ? "top-8 bg-transparent" : "top-8 bg-white/95 backdrop-blur-sm shadow-sm"}`}
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-sm" : isHome ? "bg-transparent" : "bg-white/95 backdrop-blur-sm shadow-sm"}`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between h-16">

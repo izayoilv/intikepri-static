@@ -66,7 +66,7 @@ export default function DirektoriSection({
         </div>
 
         {/* Row horizontal: foto + shade di kiri, ringkasan di kanan */}
-        <div className="space-y-5">
+        <div className="space-y-4">
           {businesses.map((biz, i) => {
             const photo = biz.banner || biz.image;
             return (
@@ -75,8 +75,8 @@ export default function DirektoriSection({
                 href="/direktori"
                 className="direktori-reveal group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex flex-col sm:flex-row overflow-hidden"
               >
-                {/* Foto + shade gradient */}
-                <div className="relative sm:w-52 md:w-64 flex-shrink-0 aspect-[16/9] sm:aspect-auto sm:min-h-[160px] bg-[#1A1A1A] overflow-hidden">
+                {/* Foto nge-blend ke putih ke arah konten */}
+                <div className="relative sm:w-52 md:w-60 flex-shrink-0 aspect-[16/9] sm:aspect-auto sm:min-h-[120px] bg-[#F7F7F7] overflow-hidden">
                   {photo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -85,53 +85,55 @@ export default function DirektoriSection({
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white">
-                      <Store size={32} className="text-[#DDDDDD]" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Store size={28} className="text-[#DDDDDD]" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute bottom-0 inset-x-0 p-3 flex items-end justify-between gap-2">
-                    <span className="font-sans text-[11px] text-white/90 flex items-center gap-1">
-                      <MapPin size={11} className="text-[#C8956C]" />
-                      {biz.location}
-                    </span>
+                  <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-transparent from-45% to-white" />
+                  <div className="sm:hidden absolute inset-0 bg-gradient-to-b from-transparent from-55% to-white" />
+                </div>
+
+                {/* Konten slim */}
+                <div className="flex-1 min-w-0 px-4 py-3 md:px-5 flex flex-col">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <h3 className="font-serif text-lg md:text-xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
+                      {biz.name}
+                    </h3>
                     {biz.featured && (
-                      <span className="bg-[#C8956C] text-white font-sans text-[10px] tracking-wider uppercase px-2 py-0.5">
+                      <span className="bg-[#C8956C]/15 text-[#C8956C] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
                         Unggulan
                       </span>
                     )}
                   </div>
-                </div>
-
-                {/* Konten */}
-                <div className="flex-1 min-w-0 p-5 md:p-6 flex flex-col">
-                  <h3 className="font-serif text-xl md:text-2xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
-                    {biz.name}
-                  </h3>
-                  <p className="font-sans text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <span className="bg-[#A42A28]/10 text-[#A42A28] px-2 py-0.5">
-                      {biz.category || "Lainnya"}
+                  <p className="font-sans text-xs text-[#999999] mt-1 flex items-center gap-x-2">
+                    <span className="text-[#A42A28]">{biz.category || "Lainnya"}</span>
+                    <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
+                    <span className="flex items-center gap-1">
+                      <MapPin size={11} className="text-[#C8956C]" /> {biz.location}
                     </span>
                     {biz.owner && (
-                      <span className="text-[#999999] flex items-center gap-1">
-                        <User size={11} /> {biz.owner}
-                      </span>
+                      <>
+                        <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
+                        <span className="flex items-center gap-1">
+                          <User size={11} /> {biz.owner}
+                        </span>
+                      </>
                     )}
                   </p>
-                  <p className="mt-3 font-sans text-sm text-[#666666] leading-relaxed line-clamp-2">
+                  <p className="mt-1.5 font-sans text-sm text-[#666666] leading-relaxed line-clamp-1">
                     {biz.description}
                   </p>
-                  <div className="mt-auto pt-4 flex items-center gap-2">
+                  <p className="mt-auto pt-2">
                     {biz.website ? (
-                      <span className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2 font-sans text-xs font-medium group-hover:bg-[#8a2320] transition-colors">
-                        <Globe size={14} /> Kunjungi Website
+                      <span className="inline-flex items-center gap-1.5 text-[#A42A28] font-sans text-xs font-semibold group-hover:gap-2.5 transition-all">
+                        <Globe size={13} /> Kunjungi Website <ArrowRight size={12} />
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-2 border border-dashed border-[#DDDDDD] text-[#BBBBBB] px-4 py-2 font-sans text-xs">
-                        <Globe size={14} /> Website belum tersedia
+                      <span className="inline-flex items-center gap-1.5 text-[#CCCCCC] font-sans text-xs">
+                        <Globe size={13} /> Website belum tersedia
                       </span>
                     )}
-                  </div>
+                  </p>
                 </div>
               </Link>
             );

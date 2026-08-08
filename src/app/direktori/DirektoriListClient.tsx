@@ -2,6 +2,7 @@
 
 import { SiInstagram, SiWhatsapp } from "@icons-pack/react-simple-icons";
 import {
+  ArrowRight,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -223,7 +224,7 @@ export default function DirektoriListClient({
           </div>
         ) : (
           /* SATU BISNIS = SATU ROW: foto besar di kiri + shade gradient, konten di kanan */
-          <div className="space-y-5">
+          <div className="space-y-4">
             {items.map((biz, i) => {
               const photo = businessPhoto(biz);
               return (
@@ -238,8 +239,9 @@ export default function DirektoriListClient({
                   className="group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex flex-col sm:flex-row cursor-pointer overflow-hidden"
                   aria-label={`Lihat detail ${biz.name}`}
                 >
-                  {/* Foto + shade gradient (kategori & lencana menempel di atas foto) */}
-                  <div className="relative sm:w-60 md:w-72 flex-shrink-0 aspect-[16/9] sm:aspect-auto sm:min-h-[180px] bg-[#1A1A1A] overflow-hidden">
+                  {/* Foto dominan tapi ramping — nge-blend ke putih ke arah konten
+                      (ke kanan di desktop, ke bawah di mobile) */}
+                  <div className="relative sm:w-56 md:w-64 flex-shrink-0 aspect-[16/9] sm:aspect-auto sm:min-h-[132px] bg-[#F7F7F7] overflow-hidden">
                     {photo ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -248,87 +250,63 @@ export default function DirektoriListClient({
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-[#F7F7F7]">
-                        <Store size={36} className="text-[#DDDDDD]" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Store size={30} className="text-[#DDDDDD]" />
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                    <div className="absolute bottom-0 inset-x-0 p-3 flex items-end justify-between gap-2">
-                      <span className="font-sans text-[11px] text-white/90 flex items-center gap-1">
-                        <MapPin size={11} className="text-[#C8956C]" />
-                        {biz.location}
-                      </span>
+                    <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-transparent from-45% to-white" />
+                    <div className="sm:hidden absolute inset-0 bg-gradient-to-b from-transparent from-55% to-white" />
+                  </div>
+
+                  {/* Konten — slim, satu alur rapat */}
+                  <div className="flex-1 min-w-0 px-4 py-3.5 md:px-5 flex flex-col">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <h2 className="font-serif text-lg md:text-xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
+                        {biz.name}
+                      </h2>
                       {biz.featured && (
-                        <span className="bg-[#C8956C] text-white font-sans text-[10px] tracking-wider uppercase px-2 py-0.5">
+                        <span className="bg-[#C8956C]/15 text-[#C8956C] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
                           Unggulan
                         </span>
                       )}
                     </div>
-                  </div>
-
-                  {/* Konten */}
-                  <div className="flex-1 min-w-0 p-5 md:p-6 flex flex-col">
-                    <div className="flex items-start gap-3">
-                      <div className="min-w-0">
-                        <h2 className="font-serif text-xl md:text-2xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
-                          {biz.name}
-                        </h2>
-                        <p className="font-sans text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                          <span className="bg-[#A42A28]/10 text-[#A42A28] px-2 py-0.5">
-                            {biz.category || "Lainnya"}
+                    <p className="font-sans text-xs text-[#999999] mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                      <span className="text-[#A42A28]">{biz.category || "Lainnya"}</span>
+                      <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
+                      <span className="flex items-center gap-1">
+                        <MapPin size={11} className="text-[#C8956C]" /> {biz.location}
+                      </span>
+                      {biz.owner && (
+                        <>
+                          <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
+                          <span className="flex items-center gap-1">
+                            <User size={11} /> {biz.owner}
                           </span>
-                          {biz.owner && (
-                            <span className="text-[#999999] flex items-center gap-1">
-                              <User size={11} /> {biz.owner}
-                            </span>
-                          )}
-                          {biz.since && (
-                            <span className="text-[#BBBBBB]">Berdiri {biz.since}</span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    <p className="mt-3 font-sans text-sm text-[#666666] leading-relaxed line-clamp-2">
+                        </>
+                      )}
+                    </p>
+                    <p className="mt-1.5 font-sans text-sm text-[#666666] leading-relaxed line-clamp-2">
                       {biz.description}
                     </p>
-
-                    <div className="mt-3 space-y-1.5">
-                      {biz.address && (
-                        <p className="font-sans text-xs text-[#999999] flex items-start gap-1.5">
-                          <MapPin size={12} className="mt-0.5 flex-shrink-0 text-[#C8956C]" />
-                          <span className="line-clamp-1">{biz.address}</span>
-                        </p>
-                      )}
-                    </div>
-
-                    {/* CTA website — elemen paling menonjol di row */}
-                    <div className="mt-auto pt-4 border-t border-[#F0F0F0] flex flex-wrap items-center gap-2">
+                    <div className="mt-auto pt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
                       {biz.website ? (
                         <a
                           href={biz.website}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
+                          className="inline-flex items-center gap-1.5 text-[#A42A28] font-sans text-xs font-semibold hover:gap-2.5 transition-all"
                         >
-                          <Globe size={14} /> Kunjungi Website
+                          <Globe size={13} /> Kunjungi Website <ArrowRight size={12} />
                         </a>
                       ) : (
-                        <span className="inline-flex items-center gap-2 border border-dashed border-[#DDDDDD] text-[#BBBBBB] px-4 py-2 font-sans text-xs">
-                          <Globe size={14} /> Website belum tersedia
+                        <span className="inline-flex items-center gap-1.5 text-[#CCCCCC] font-sans text-xs">
+                          <Globe size={13} /> Website belum tersedia
                         </span>
                       )}
-                      {biz.email && (
-                        <span className="font-sans text-xs text-[#999999] flex items-center gap-1.5 truncate">
-                          <Mail size={12} className="flex-shrink-0 text-[#C8956C]" />
-                          {biz.email}
-                        </span>
-                      )}
-                      {biz.phone && (
-                        <span className="font-sans text-xs text-[#999999] flex items-center gap-1.5">
-                          <Phone size={12} className="flex-shrink-0 text-[#C8956C]" />
-                          {biz.phone}
+                      {biz.address && (
+                        <span className="font-sans text-[11px] text-[#BBBBBB] truncate hidden md:inline">
+                          {biz.address}
                         </span>
                       )}
                     </div>
