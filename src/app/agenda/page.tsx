@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "Agenda dan jadwal kegiatan INTI Kepulauan Riau: bakti sosial, rapat, perayaan budaya, dan program kemasyarakatan yang akan datang.",
   alternates: { canonical: "/agenda/" },
   openGraph: {
-    title: "Agenda Kegiatan — INTI Kepri",
+    title: "Agenda Kegiatan | INTI Kepri",
     description:
       "Agenda dan jadwal kegiatan INTI Kepulauan Riau: bakti sosial, rapat, perayaan budaya, dan program kemasyarakatan yang akan datang.",
     type: "website",

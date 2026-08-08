@@ -1,8 +1,9 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import StructureSection from "@/components/StructureSection";
 import { branches, ketuaPeriode, sejarah, visiMisi } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -128,8 +129,12 @@ export default function TentangKamiPage() {
           </div>
         </section>
 
+        {/* Struktur Pengurus & Bidang (dipindah dari homepage: konten referensi,
+            bukan promosi, jadi rumahnya di sini) */}
+        <StructureSection />
+
         {/* Jaringan */}
-        <section className="py-16 md:py-24 bg-white">
+        <section className="py-16 md:py-24 bg-[#F7F7F7]">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="text-center mb-12">
               <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">

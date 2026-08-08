@@ -105,7 +105,7 @@ export default function PustakaClient({
             Pustaka & Media
           </h1>
           <p className="font-sans text-sm text-[#999999] mt-3 max-w-2xl">
-            Rekaman kegiatan dan dokumen resmi INTI Kepulauan Riau — makalah,
+            Rekaman kegiatan dan dokumen resmi INTI Kepulauan Riau: makalah,
             laporan, dan publikasi yang bisa diakses publik.
           </p>
         </div>
@@ -288,7 +288,7 @@ export default function PustakaClient({
                     className="group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex gap-4 md:gap-5 p-4 md:p-5"
                   >
                     {/* Cover dokumen: border tipis elegan, bukan fade */}
-                    <div className="flex-shrink-0 w-16 sm:w-20 aspect-[3/4] bg-[#F7F7F7] border border-[#E5E5E5] overflow-hidden flex flex-col items-center justify-center">
+                    <div className="flex-shrink-0 w-24 sm:w-28 aspect-[3/4] bg-[#F7F7F7] border border-[#DDDDDD] overflow-hidden flex flex-col items-center justify-center">
                       {doc.thumbnail ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -299,7 +299,7 @@ export default function PustakaClient({
                         />
                       ) : (
                         <>
-                          <FileText size={22} className="text-[#C8956C]" />
+                          <FileText size={28} className="text-[#C8956C]" />
                           <span className="font-sans text-[9px] tracking-widest uppercase text-[#BBBBBB] mt-1">
                             PDF
                           </span>

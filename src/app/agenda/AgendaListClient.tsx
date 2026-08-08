@@ -152,7 +152,7 @@ export default function AgendaListClient({
             Agenda Kegiatan
           </h1>
           <p className="font-sans text-sm text-[#999999] mt-3 max-w-2xl">
-            Jadwal kegiatan INTI Kepulauan Riau — ikuti dan berpartisipasilah.
+            Jadwal kegiatan INTI Kepulauan Riau. Ikuti dan berpartisipasilah.
           </p>
         </div>
 

@@ -13,12 +13,12 @@ import PustakaClient from "./PustakaClient";
 export const metadata: Metadata = {
   title: "Pustaka & Media",
   description:
-    "Rekaman kegiatan dan dokumen resmi Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau — makalah, laporan, dan publikasi.",
+    "Rekaman kegiatan dan dokumen resmi Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau : makalah, laporan, dan publikasi.",
   alternates: { canonical: "https://intikepri.com/pustaka/" },
   openGraph: {
     title: "Pustaka & Media | INTI Kepri",
     description:
-      "Rekaman kegiatan dan dokumen resmi INTI Kepulauan Riau — makalah, laporan, dan publikasi.",
+      "Rekaman kegiatan dan dokumen resmi INTI Kepulauan Riau : makalah, laporan, dan publikasi.",
     url: "https://intikepri.com/pustaka/",
   },
 };

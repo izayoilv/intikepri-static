@@ -157,19 +157,21 @@ export default function AgendaDetailClient({
           )}
         </div>
 
-        {event.image && (
-          <div className="bg-white border border-[#E5E5E5] overflow-hidden mb-8">
+        {/* FOTO + DESKRIPSI: satu blok menyatu, foto flush ke tepi kartu
+            (bukan foto yang "dimasukkan" ke dalam kotak) */}
+        <article className="bg-white border border-[#E5E5E5] overflow-hidden">
+          {event.image && (
             <div
               className="aspect-[16/9] bg-cover bg-center"
               style={{ backgroundImage: `url(${event.image})` }}
+              role="img"
+              aria-label={`Foto ${event.title}`}
             />
-          </div>
-        )}
-
-        {/* DESKRIPSI */}
-        <article className="bg-white border border-[#E5E5E5] p-6 md:p-10">
-          <div className="prose prose-sm max-w-none text-[#444444] font-sans leading-loose whitespace-pre-line">
-            {event.description}
+          )}
+          <div className="p-6 md:p-10">
+            <div className="prose prose-sm max-w-none text-[#444444] font-sans leading-loose whitespace-pre-line">
+              {event.description}
+            </div>
           </div>
         </article>
 

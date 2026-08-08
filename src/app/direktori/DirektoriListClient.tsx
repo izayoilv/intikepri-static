@@ -22,7 +22,7 @@ import type { Business } from "@/types";
 const PAGE_SIZE = 6;
 
 const DAFTAR_HREF = `mailto:perhimpunanintikepri@gmail.com?subject=${encodeURIComponent(
-  "Pendaftaran Direktori Bisnis — INTI Kepri",
+  "Pendaftaran Direktori Bisnis INTI Kepri",
 )}&body=${encodeURIComponent(
   `Halo Admin INTI Kepri,
 

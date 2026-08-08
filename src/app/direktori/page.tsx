@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "Direktori bisnis anggota dan komunitas INTI Kepulauan Riau: kuliner, jasa, retail, dan UMKM di Batam, Tanjungpinang, Karimun, dan seluruh Kepri.",
   alternates: { canonical: "/direktori/" },
   openGraph: {
-    title: "Direktori Bisnis — INTI Kepri",
+    title: "Direktori Bisnis | INTI Kepri",
     description:
       "Direktori bisnis anggota dan komunitas INTI Kepulauan Riau: kuliner, jasa, retail, dan UMKM di seluruh Kepri.",
     type: "website",

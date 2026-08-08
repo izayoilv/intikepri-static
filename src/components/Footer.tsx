@@ -49,12 +49,20 @@ export default function Footer() {
             Mari bersama-sama membangun masyarakat Kepulauan Riau yang lebih
             baik.
           </p>
-          <Link
-            href="/tentang-kami"
-            className="inline-flex items-center gap-2 bg-white text-[#A42A28] px-6 py-3 font-sans text-sm font-semibold hover:bg-white/90 transition-colors shadow-lg"
-          >
-            Pelajari Lebih Lanjut <ChevronRight size={16} />
-          </Link>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="mailto:perhimpunanintikepri@gmail.com?subject=Bergabung%20dengan%20INTI%20Kepri&body=Halo%2C%20saya%20ingin%20mengetahui%20cara%20bergabung%20dengan%20INTI%20Kepri."
+              className="inline-flex items-center gap-2 bg-white text-[#A42A28] px-6 py-3 font-sans text-sm font-semibold hover:bg-white/90 transition-colors shadow-lg"
+            >
+              Hubungi untuk Bergabung <ChevronRight size={16} />
+            </a>
+            <Link
+              href="/tentang-kami"
+              className="inline-flex items-center gap-2 border border-white/60 text-white px-6 py-3 font-sans text-sm font-medium hover:bg-white/10 transition-colors"
+            >
+              Kenali Kami Lebih Dulu
+            </Link>
+          </div>
         </div>
       </div>
       {/* AKHIR BAGIAN BACKGROUND */}

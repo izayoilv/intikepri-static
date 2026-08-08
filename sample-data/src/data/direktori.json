@@ -28,7 +28,13 @@
     "address": "Jl. Raja H. Fisabilillah No. 88, Batam Centre",
     "phone": "+62 778 789012",
     "whatsapp": "6281377665544",
-    "since": "2015"
+    "since": "2015",
+    "image": "https://s3.intikepri.com/assets/news/8ebb3294-b732-49eb-af3e-ae3e9fbeb2b0/sebuah-akhir-masa-bakti-sebuah-awal-perjalanan-baru-muscab-v-inti-batam-serahkan-mandat-kepada-inti.jpg",
+    "banner": "https://s3.intikepri.com/assets/news/446ba751-3e4b-4b9e-abcd-3d22ffe2f3c1/inti-karimun-gelar-baksos-sembako-sambut-hut-kodam-xix-tt.jpg",
+    "photos": [
+      "https://s3.intikepri.com/assets/news/446ba751-3e4b-4b9e-abcd-3d22ffe2f3c1/inti-karimun-gelar-baksos-sembako-sambut-hut-kodam-xix-tt.jpg",
+      "https://s3.intikepri.com/assets/news/8ebb3294-b732-49eb-af3e-ae3e9fbeb2b0/sebuah-akhir-masa-bakti-sebuah-awal-perjalanan-baru-muscab-v-inti-batam-serahkan-mandat-kepada-inti.jpg"
+    ]
   },
   {
     "name": "Toko Kain & Tailor Anggrek",
@@ -42,7 +48,8 @@
     "since": "2008",
     "banner": "https://s3.intikepri.com/assets/news/446ba751-3e4b-4b9e-abcd-3d22ffe2f3c1/inti-karimun-gelar-baksos-sembako-sambut-hut-kodam-xix-tt.jpg",
     "photos": [
-      "https://s3.intikepri.com/assets/news/446ba751-3e4b-4b9e-abcd-3d22ffe2f3c1/inti-karimun-gelar-baksos-sembako-sambut-hut-kodam-xix-tt.jpg"
+      "https://s3.intikepri.com/assets/news/446ba751-3e4b-4b9e-abcd-3d22ffe2f3c1/inti-karimun-gelar-baksos-sembako-sambut-hut-kodam-xix-tt.jpg",
+      "https://s3.intikepri.com/assets/news/8ebb3294-b732-49eb-af3e-ae3e9fbeb2b0/sebuah-akhir-masa-bakti-sebuah-awal-perjalanan-baru-muscab-v-inti-batam-serahkan-mandat-kepada-inti.jpg"
     ]
   }
 ]

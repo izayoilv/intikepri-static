@@ -9,7 +9,6 @@ import HeroSection from "@/components/HeroSection";
 import IntroSection from "@/components/IntroSection";
 import Navbar from "@/components/Navbar";
 import NewsSection from "@/components/NewsSection";
-import StructureSection from "@/components/StructureSection";
 import {
   fallbackAgenda,
   fallbackBusinesses,
@@ -114,7 +113,6 @@ export default async function HomePage() {
       <NewsSection initialItems={latestNews} />
       <GaleriSection initialItems={latestGallery} />
       <DirektoriSection initialItems={latestBusinesses} />
-      <StructureSection />
       <Footer />
     </main>
   );

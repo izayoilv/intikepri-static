@@ -167,7 +167,7 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
                   <span className="text-[#1A1A1A] font-medium">
                     {item.author}
                   </span>{" "}
-                  — {item.date}
+                  · {item.date}
                 </p>
                 <Link
                   href="/berita"

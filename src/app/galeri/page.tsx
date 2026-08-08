@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "Dokumentasi kegiatan INTI Kepulauan Riau dalam foto: bakti sosial, pertemuan, perayaan budaya, dan program kemasyarakatan.",
   alternates: { canonical: "/galeri/" },
   openGraph: {
-    title: "Galeri & Dokumentasi — INTI Kepri",
+    title: "Galeri & Dokumentasi | INTI Kepri",
     description:
       "Dokumentasi kegiatan INTI Kepulauan Riau dalam foto: bakti sosial, pertemuan, perayaan budaya, dan program kemasyarakatan.",
     type: "website",

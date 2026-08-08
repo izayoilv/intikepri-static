@@ -2,15 +2,13 @@
 
 import {
   Calendar,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Images,
   MapPin,
-  Search,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { GalleryPhoto } from "@/types";
 
@@ -21,48 +19,13 @@ export default function GaleriListClient({
 }: {
   initialItems: GalleryPhoto[];
 }) {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("Semua");
   const [page, setPage] = useState(1);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
-  // Kategori diturunkan otomatis dari data, DIKELOMPOKKAN PER TAHUN.
-  // Ratusan kegiatan tetap rapi: dropdown menampilkan grup "2026", "2025", ...
-  const yearGroups = useMemo(() => {
-    const groups = new Map<string, Set<string>>();
-    initialItems.forEach((p) => {
-      const year = (p.date || "").slice(0, 4) || "Lainnya";
-      const cat = (p.category || "Lainnya").trim();
-      if (!groups.has(year)) groups.set(year, new Set());
-      groups.get(year)!.add(cat);
-    });
-    return Array.from(groups.entries())
-      .sort((a, b) => b[0].localeCompare(a[0])) // tahun terbaru di atas
-      .map(([year, cats]) => ({
-        year,
-        cats: Array.from(cats).sort((a, b) => a.localeCompare(b)),
-      }));
-  }, [initialItems]);
-
-  const totalCategories = yearGroups.reduce((n, g) => n + g.cats.length, 0);
-
-  const filtered = useMemo(() => {
-    return initialItems.filter((p) => {
-      const matchCat =
-        category === "Semua" || (p.category || "Lainnya") === category;
-      const q = search.trim().toLowerCase();
-      const matchSearch =
-        !q ||
-        p.title.toLowerCase().includes(q) ||
-        (p.category || "").toLowerCase().includes(q) ||
-        (p.location || "").toLowerCase().includes(q);
-      return matchCat && matchSearch;
-    });
-  }, [initialItems, search, category]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  // Album murni: semua foto tampil apa adanya, tanpa search/filter
+  const totalPages = Math.max(1, Math.ceil(initialItems.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
-  const items = filtered.slice(
+  const items = initialItems.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
@@ -71,21 +34,19 @@ export default function GaleriListClient({
   const stepLightbox = useCallback(
     (dir: 1 | -1) => {
       setLightbox((cur) =>
-        cur === null
-          ? null
-          : (cur + dir + filtered.length) % filtered.length,
+        cur === null ? cur : (cur + dir + items.length) % items.length,
       );
     },
-    [filtered.length],
+    [items.length],
   );
 
-  // Keyboard: Esc tutup, panah kiri/kanan navigasi + kunci scroll body
+  // Keyboard: Esc tutup, panah kiri/kanan pindah foto; kunci scroll body
   useEffect(() => {
     if (lightbox === null) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeLightbox();
-      if (e.key === "ArrowRight") stepLightbox(1);
       if (e.key === "ArrowLeft") stepLightbox(-1);
+      if (e.key === "ArrowRight") stepLightbox(1);
     };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
@@ -95,12 +56,10 @@ export default function GaleriListClient({
     };
   }, [lightbox, closeLightbox, stepLightbox]);
 
-  const active = lightbox !== null ? filtered[lightbox] : null;
-
   return (
     <section className="py-16 md:py-24 bg-white min-h-[60vh]">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="mb-10">
+        <div className="mb-12">
           <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
             Galeri
           </p>
@@ -108,98 +67,45 @@ export default function GaleriListClient({
             Galeri & Dokumentasi
           </h1>
           <p className="font-sans text-sm text-[#999999] mt-3 max-w-2xl">
-            Dokumentasi kegiatan INTI Kepulauan Riau — bakti sosial, pertemuan,
-            perayaan budaya, dan program kemasyarakatan.
+            Dokumentasi kegiatan INTI Kepulauan Riau: bakti sosial, pertemuan,
+            perayaan budaya, dan momen kebersamaan komunitas.
           </p>
         </div>
-
-        {/* Toolbar: search + dropdown filter, satu baris ramping */}
-        <div className="flex flex-col md:flex-row gap-3 mb-3">
-          <div className="relative flex-1">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Cari foto atau kegiatan..."
-              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
-            />
-          </div>
-          {totalCategories > 1 && (
-            <div className="relative">
-              <select
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setPage(1);
-                }}
-                className="w-full md:w-64 appearance-none border border-[#E5E5E5] bg-white pl-3 pr-8 py-2.5 font-sans text-sm text-[#666666] focus:outline-none focus:border-[#A42A28] cursor-pointer"
-                aria-label="Filter kegiatan"
-              >
-                <option value="Semua">Semua Kegiatan</option>
-                {yearGroups.map((group) => (
-                  <optgroup key={group.year} label={group.year}>
-                    {group.cats.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-              <ChevronDown
-                size={14}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
-              />
-            </div>
-          )}
-        </div>
-        <p className="font-sans text-xs text-[#BBBBBB] mb-8">
-          {filtered.length} foto ditemukan
-        </p>
 
         {items.length === 0 ? (
           <div className="text-center py-20">
             <Images size={40} className="mx-auto text-[#E5E5E5] mb-4" />
             <p className="text-[#999999] font-sans">
-              {initialItems.length === 0
-                ? "Belum ada foto di galeri."
-                : "Tidak ada foto yang cocok."}
+              Belum ada dokumentasi yang dipublikasikan.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {items.map((photo) => {
-              const globalIndex = filtered.indexOf(photo);
-              return (
-                <button
-                  key={`${photo.image}-${globalIndex}`}
-                  onClick={() => setLightbox(globalIndex)}
-                  className="group relative aspect-square overflow-hidden bg-[#E5E5E5] text-left"
-                  aria-label={`Perbesar foto: ${photo.title}`}
-                >
-                  <div
-                    className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                    style={{ backgroundImage: `url(${photo.image})` }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <p className="font-sans text-xs font-medium text-white line-clamp-2">
-                      {photo.title}
-                    </p>
-                    <p className="font-sans text-[10px] text-white/60 mt-1">
-                      {photo.category || "Lainnya"}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+            {items.map((photo, i) => (
+              <button
+                key={`${photo.image}-${i}`}
+                onClick={() => setLightbox(i)}
+                className="group relative aspect-[4/3] bg-[#F7F7F7] overflow-hidden text-left"
+                aria-label={`Perbesar foto: ${photo.title}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photo.image}
+                  alt={photo.title}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute bottom-0 inset-x-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
+                  <p className="font-sans text-xs font-medium text-white line-clamp-1">
+                    {photo.title}
+                  </p>
+                  <p className="font-sans text-[10px] text-white/70 mt-0.5">
+                    {photo.category}
+                  </p>
+                </div>
+              </button>
+            ))}
           </div>
         )}
 
@@ -229,97 +135,78 @@ export default function GaleriListClient({
       </div>
 
       {/* LIGHTBOX */}
-      {active && (
+      {lightbox !== null && items[lightbox] && (
         <div
-          className="fixed inset-0 z-[60] bg-black/95 flex flex-col"
+          className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
-          aria-label={`Foto: ${active.title}`}
+          aria-label={`Foto: ${items[lightbox].title}`}
           onClick={closeLightbox}
         >
-          <div className="flex items-center justify-between px-4 md:px-8 py-4">
-            <span className="font-sans text-xs text-white/50 tracking-widest">
-              {(lightbox ?? 0) + 1} / {filtered.length}
-            </span>
-            <button
-              onClick={closeLightbox}
-              className="p-2 text-white/70 hover:text-white transition-colors"
-              aria-label="Tutup galeri"
-            >
-              <X size={24} />
-            </button>
-          </div>
-
-          <div
-            className="flex-1 flex items-center justify-center px-4 md:px-16 min-h-0"
-            onClick={(e) => e.stopPropagation()}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 p-2 text-white/60 hover:text-white transition-colors z-10"
+            aria-label="Tutup galeri"
           >
-            {filtered.length > 1 && (
+            <X size={24} />
+          </button>
+          {items.length > 1 && (
+            <>
               <button
-                onClick={() => stepLightbox(-1)}
-                className="hidden md:flex p-3 text-white/50 hover:text-white transition-colors flex-shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  stepLightbox(-1);
+                }}
+                className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 p-3 text-white/60 hover:text-white transition-colors z-10"
                 aria-label="Foto sebelumnya"
               >
-                <ChevronLeft size={32} />
+                <ChevronLeft size={28} />
               </button>
-            )}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={active.image}
-              alt={active.title}
-              className="max-h-full max-w-full object-contain"
-            />
-            {filtered.length > 1 && (
               <button
-                onClick={() => stepLightbox(1)}
-                className="hidden md:flex p-3 text-white/50 hover:text-white transition-colors flex-shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  stepLightbox(1);
+                }}
+                className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 p-3 text-white/60 hover:text-white transition-colors z-10"
                 aria-label="Foto berikutnya"
               >
-                <ChevronRight size={32} />
+                <ChevronRight size={28} />
               </button>
-            )}
-          </div>
-
+            </>
+          )}
           <div
-            className="px-4 md:px-8 py-5 text-center"
+            className="max-w-5xl w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="font-serif text-base md:text-lg font-semibold text-white">
-              {active.title}
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-2">
-              <span className="inline-block bg-[#A42A28] text-white text-[10px] font-sans px-2 py-0.5">
-                {active.category || "Lainnya"}
-              </span>
-              {active.date && (
-                <span className="flex items-center gap-1 font-sans text-xs text-white/50">
-                  <Calendar size={12} /> {active.date}
-                </span>
-              )}
-              {active.location && (
-                <span className="flex items-center gap-1 font-sans text-xs text-white/50">
-                  <MapPin size={12} /> {active.location}
-                </span>
-              )}
-            </div>
-            {filtered.length > 1 && (
-              <div className="flex md:hidden items-center justify-center gap-6 mt-4">
-                <button
-                  onClick={() => stepLightbox(-1)}
-                  className="p-2 border border-white/20 text-white/70"
-                  aria-label="Foto sebelumnya"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <button
-                  onClick={() => stepLightbox(1)}
-                  className="p-2 border border-white/20 text-white/70"
-                  aria-label="Foto berikutnya"
-                >
-                  <ChevronRight size={20} />
-                </button>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={items[lightbox].image}
+              alt={items[lightbox].title}
+              className="w-full max-h-[75vh] object-contain"
+            />
+            <div className="mt-4 flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <h2 className="font-serif text-lg font-semibold text-white">
+                  {items[lightbox].title}
+                </h2>
+                <p className="font-sans text-xs text-white/60 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span>{items[lightbox].category}</span>
+                  {items[lightbox].date && (
+                    <span className="flex items-center gap-1">
+                      <Calendar size={11} /> {items[lightbox].date}
+                    </span>
+                  )}
+                  {items[lightbox].location && (
+                    <span className="flex items-center gap-1">
+                      <MapPin size={11} /> {items[lightbox].location}
+                    </span>
+                  )}
+                </p>
               </div>
-            )}
+              <span className="font-sans text-xs text-white/40 flex-shrink-0">
+                {lightbox + 1} / {items.length}
+              </span>
+            </div>
           </div>
         </div>
       )}

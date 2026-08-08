@@ -46,7 +46,7 @@ export default function GaleriSection({
   const track = [...photos, ...photos];
 
   return (
-    <section ref={ref} className="py-20 md:py-32 bg-white overflow-hidden">
+    <section ref={ref} className="pt-10 md:pt-14 pb-20 md:pb-32 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex items-end justify-between mb-12 galeri-reveal">
           <div>

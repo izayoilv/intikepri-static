@@ -27,12 +27,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const event = getAllAgenda().find((e) => e.slug === slug);
 
-  if (!event) return { title: "Agenda tidak ditemukan — INTI Kepri" };
+  if (!event) return { title: "Agenda tidak ditemukan | INTI Kepri" };
 
   const description = event.description.replace(/\s+/g, " ").slice(0, 160);
 
   return {
-    title: `${event.title} — INTI Kepri`,
+    title: `${event.title} | INTI Kepri`,
     description,
     alternates: { canonical: `/agenda/${event.slug}/` },
     openGraph: {

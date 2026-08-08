@@ -34,12 +34,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const news = getAllNews().find((n) => n.slug === slug);
 
-  if (!news) return { title: "Berita tidak ditemukan — INTI Kepri" };
+  if (!news) return { title: "Berita tidak ditemukan | INTI Kepri" };
 
   const description = news.content.replace(/\s+/g, " ").slice(0, 160);
 
   return {
-    title: `${news.title} — INTI Kepri`,
+    title: `${news.title} | INTI Kepri`,
     description,
     alternates: { canonical: `/berita/${news.slug}/` },
     openGraph: {

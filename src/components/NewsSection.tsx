@@ -44,7 +44,7 @@ export default function NewsSection({
   if (initialItems.length === 0 || !featured) return null;
 
   return (
-    <section ref={ref} className="py-20 md:py-32 bg-white">
+    <section ref={ref} className="pt-20 md:pt-32 pb-10 md:pb-14 bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex items-end justify-between mb-12 news-reveal">
           <div>
