@@ -162,3 +162,37 @@ Agenda kegiatan (yang akan datang maupun yang sudah berlangsung). Satu item = sa
   "ctaUrl": "https://forms.google.com/..."
 }
 ```
+
+---
+
+## 4. `GET /api/videos` — Pustaka (video YouTube)
+
+Query: `?limit`, `?page` — envelope sama persis dengan `/api/news`.
+
+| Field | Tipe | Wajib | Keterangan |
+|---|---|---|---|
+| `title` | string | ✅ | Judul video |
+| `youtubeId` | string | ✅ | ID video YouTube saja (bagian setelah `watch?v=`), mis. `aqz-KE-bpKQ`. BUKAN URL penuh |
+| `description` | string | opsional | Deskripsi singkat |
+| `date` | string | ✅ | ISO `YYYY-MM-DD`, tanggal publikasi |
+| `duration` | string | opsional | Format `m:ss`, mis. `"10:24"` |
+| `category` | string | opsional | mis. Kegiatan, Sosial, Budaya |
+
+Thumbnail TIDAK perlu dikirim — frontend mengambil otomatis dari `img.youtube.com/vi/<youtubeId>/`.
+Video diputar dalam modal di situs (iframe YouTube baru dimuat saat user klik).
+
+## 5. `GET /api/documents` — Pustaka (dokumen PDF)
+
+| Field | Tipe | Wajib | Keterangan |
+|---|---|---|---|
+| `title` | string | ✅ | Judul dokumen |
+| `author` | string | ✅ | Penulis/penerbit, mis. "Sekretariat INTI Kepri" |
+| `date` | string | ✅ | ISO `YYYY-MM-DD` |
+| `fileUrl` | string | ✅ | URL PDF absolut (https://s3.intikepri.com/...). Dibuka di tab baru |
+| `description` | string | opsional | Ringkasan 1-2 kalimat |
+| `thumbnail` | string | opsional | Cover dokumen (URL absolut). **Idealnya CMS auto-generate dari halaman pertama PDF** (mis. pdftoppm/Imagick) bila admin tidak upload cover sendiri; bila kosong pun frontend menampilkan placeholder rapi |
+| `pages` | number | opsional | Jumlah halaman |
+| `size` | string | opsional | Ukuran ramah baca, mis. `"2,4 MB"` |
+| `category` | string | opsional | mis. Resmi, Laporan, Makalah |
+
+File JSON lokal: `src/data/video.json` dan `src/data/dokumen.json` (pola identik dengan news/galeri/direktori/agenda).

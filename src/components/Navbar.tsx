@@ -25,6 +25,7 @@ export default function Navbar() {
     { to: "/agenda", label: "Agenda" },
     { to: "/galeri", label: "Galeri" },
     { to: "/direktori", label: "Direktori" },
+    { to: "/pustaka", label: "Pustaka" },
   ];
 
   const isActive = (p: string) => pathname === p;

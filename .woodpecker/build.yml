@@ -79,6 +79,33 @@ steps:
           echo "agenda.json: endpoint CMS belum tersedia, pakai file dari repo"
         fi
 
+
+  fetch-videos:
+    image: alpine:3.24
+    commands:
+      - apk add --no-cache curl jq
+      - mkdir -p src/data
+      - |
+        if curl -sf "https://api.intikepri.com/api/videos?limit=1000" | jq -e '.data.items' > src/data/video.json.tmp; then
+          mv src/data/video.json.tmp src/data/video.json
+        else
+          rm -f src/data/video.json.tmp
+          test -f src/data/video.json || echo '[]' > src/data/video.json
+        fi
+
+  fetch-dokumen:
+    image: alpine:3.24
+    commands:
+      - apk add --no-cache curl jq
+      - mkdir -p src/data
+      - |
+        if curl -sf "https://api.intikepri.com/api/documents?limit=1000" | jq -e '.data.items' > src/data/dokumen.json.tmp; then
+          mv src/data/dokumen.json.tmp src/data/dokumen.json
+        else
+          rm -f src/data/dokumen.json.tmp
+          test -f src/data/dokumen.json || echo '[]' > src/data/dokumen.json
+        fi
+
   build-and-push:
     image: moby/buildkit:v0.31.2
     environment:

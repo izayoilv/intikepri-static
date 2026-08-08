@@ -3,10 +3,12 @@ import type {
   Bidang,
   Branch,
   Business,
+  DocumentItem,
   GalleryPhoto,
   Ketua,
   News,
   Pengurus,
+  VideoItem,
   VisiMisi,
 } from "@/types";
 
@@ -123,3 +125,7 @@ export const fallbackGallery: GalleryPhoto[] = [];
 export const fallbackBusinesses: Business[] = [];
 
 export const fallbackAgenda: AgendaEvent[] = [];
+
+// Fallback kosong: dipakai bila src/data/video.json / dokumen.json belum ada
+export const fallbackVideos: VideoItem[] = [];
+export const fallbackDocuments: DocumentItem[] = [];

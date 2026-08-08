@@ -34,6 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/agenda/`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/galeri/`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/direktori/`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/pustaka/`, changeFrequency: "weekly", priority: 0.7 },
     ...news.map((n) => ({
       url: `${BASE}/berita/${n.slug}/`,
       lastModified: toISODate(n.date),

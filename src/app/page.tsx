@@ -77,7 +77,7 @@ const organizationLd = {
   name: "Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau",
   alternateName: "INTI Kepri",
   url: "https://intikepri.com/",
-  logo: "https://intikepri.com/images/Logo-INTI.png",
+  logo: "https://intikepri.com/images/Logo-INTI-512.png",
   description:
     "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau - Tulus memberi, ikhlas mengabdi.",
   address: {

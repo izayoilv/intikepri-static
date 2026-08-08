@@ -122,3 +122,32 @@ export interface AgendaEvent {
   ctaType?: "link" | "whatsapp" | "email";
   ctaUrl?: string;
 }
+
+export interface VideoItem {
+  title: string;
+  /** ID video YouTube (bagian setelah watch?v=), mis. dQw4w9WgXcQ */
+  youtubeId: string;
+  description?: string;
+  /** ISO YYYY-MM-DD */
+  date: string;
+  /** mis. "12:34" */
+  duration?: string;
+  category?: string;
+}
+
+export interface DocumentItem {
+  title: string;
+  description?: string;
+  author: string;
+  /** ISO YYYY-MM-DD */
+  date: string;
+  /** URL PDF (absolut https://s3... atau relatif /dokumen/...). Dibuka di tab baru */
+  fileUrl: string;
+  /** Cover/thumbnail PDF (opsional — CMS auto-generate dari halaman pertama bila kosong) */
+  thumbnail?: string;
+  /** Jumlah halaman, mis. 24 */
+  pages?: number;
+  /** Ukuran file ramah baca, mis. "2,4 MB" */
+  size?: string;
+  category?: string;
+}

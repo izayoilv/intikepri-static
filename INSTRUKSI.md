@@ -1,5 +1,12 @@
 # Update Galeri + Direktori Bisnis — intikepri-static
 
+> **V5 (Pustaka & Media)**: tambahan di atas v4 —
+> - Halaman baru `/pustaka`: tab **Video** (thumbnail YouTube facade + modal player, iframe baru dimuat saat klik)
+>   dan tab **Dokumen** (row dengan cover ber-border tipis, "Baca PDF" buka tab baru).
+> - Data: `src/data/video.json` + `dokumen.json` (di-commit sebagai sample live, pola sama seperti galeri/direktori/agenda);
+>   endpoint CMS baru `/api/videos` + `/api/documents` (spek di CMS-SPEC.md, thumbnail PDF idealnya auto-generate oleh backend).
+> - Dummy PDF ada di `public/dokumen/*.pdf` — file contoh bertanda "DOKUMEN CONTOH", hapus setelah CMS live.
+>
 > **V4 (row direktori + fix mobile + agenda live)**: tambahan di atas v3 —
 > - Direktori jadi **row penuh per bisnis** dengan foto besar + shade gradient (halaman direktori & homepage);
 >   pop-up detail kini hero foto + overlay identitas + strip galeri foto (`photos`).

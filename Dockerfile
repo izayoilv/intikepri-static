@@ -9,7 +9,7 @@ RUN mkdir -p src/data && \
     (test -f src/data/news.json || echo '[]' > src/data/news.json) && \
     (test -f src/data/galeri.json || echo '[]' > src/data/galeri.json) && \
     (test -f src/data/direktori.json || echo '[]' > src/data/direktori.json) && \
-    (test -f src/data/agenda.json || echo '[]' > src/data/agenda.json)
+    (test -f src/data/agenda.json || echo '[]' > src/data/agenda.json && test -f src/data/video.json || echo '[]' > src/data/video.json && test -f src/data/dokumen.json || echo '[]' > src/data/dokumen.json)
 RUN pnpm build
 
 FROM nginx:1.31-alpine
