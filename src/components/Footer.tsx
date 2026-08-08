@@ -13,6 +13,7 @@ export default function Footer() {
     { to: "/", label: "Beranda" },
     { to: "/tentang-kami", label: "Tentang Kami" },
     { to: "/berita", label: "Berita" },
+    { to: "/agenda", label: "Agenda" },
     { to: "/galeri", label: "Galeri" },
     { to: "/direktori", label: "Direktori Bisnis" },
   ];

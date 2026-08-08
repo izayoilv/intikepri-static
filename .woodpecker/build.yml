@@ -64,6 +64,21 @@ steps:
           echo "direktori.json: endpoint CMS belum tersedia, pakai file dari repo"
         fi
 
+  fetch-agenda:
+    image: alpine:3.24
+    commands:
+      - apk add --no-cache curl jq
+      - mkdir -p src/data
+      - |
+        if curl -sf "https://api.intikepri.com/api/events?limit=1000" | jq -e '.data.items' > src/data/agenda.json.tmp; then
+          mv src/data/agenda.json.tmp src/data/agenda.json
+          echo "agenda.json: data dari CMS"
+        else
+          rm -f src/data/agenda.json.tmp
+          test -f src/data/agenda.json || echo '[]' > src/data/agenda.json
+          echo "agenda.json: endpoint CMS belum tersedia, pakai file dari repo"
+        fi
+
   build-and-push:
     image: moby/buildkit:v0.31.2
     environment:

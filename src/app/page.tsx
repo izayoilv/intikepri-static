@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 
+import AgendaSection from "@/components/AgendaSection";
 import DirektoriSection from "@/components/DirektoriSection";
 import Footer from "@/components/Footer";
 import GaleriSection from "@/components/GaleriSection";
@@ -8,10 +9,14 @@ import HeroSection from "@/components/HeroSection";
 import IntroSection from "@/components/IntroSection";
 import Navbar from "@/components/Navbar";
 import NewsSection from "@/components/NewsSection";
-import StatsSection from "@/components/StatsSection";
 import StructureSection from "@/components/StructureSection";
-import { fallbackBusinesses, fallbackGallery, fallbackNews } from "@/lib/data";
-import type { Business, GalleryPhoto, News } from "@/types";
+import {
+  fallbackAgenda,
+  fallbackBusinesses,
+  fallbackGallery,
+  fallbackNews,
+} from "@/lib/data";
+import type { AgendaEvent, Business, GalleryPhoto, News } from "@/types";
 import type { Metadata } from "next";
 
 function getLatestGallery(): GalleryPhoto[] {
@@ -33,6 +38,21 @@ function getLatestBusinesses(): Business[] {
     return parsed.length > 0 ? parsed.slice(0, 3) : fallbackBusinesses;
   } catch {
     return fallbackBusinesses;
+  }
+}
+
+function getUpcomingAgenda(): AgendaEvent[] {
+  try {
+    const filePath = path.join(process.cwd(), "src", "data", "agenda.json");
+    const content = fs.readFileSync(filePath, "utf-8");
+    const parsed: AgendaEvent[] = JSON.parse(content);
+    const today = new Date().toISOString().slice(0, 10);
+    return parsed
+      .filter((e) => (e.endDate || e.date) >= today)
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(0, 3);
+  } catch {
+    return fallbackAgenda;
   }
 }
 
@@ -79,6 +99,7 @@ export default async function HomePage() {
   const latestNews = getLatestNews();
   const latestGallery = getLatestGallery();
   const latestBusinesses = getLatestBusinesses();
+  const upcomingAgenda = getUpcomingAgenda();
 
   return (
     <main>
@@ -89,8 +110,8 @@ export default async function HomePage() {
       <Navbar />
       <HeroSection />
       <IntroSection />
-      <StatsSection />
       <NewsSection initialItems={latestNews} />
+      <AgendaSection initialItems={upcomingAgenda} />
       <GaleriSection initialItems={latestGallery} />
       <DirektoriSection initialItems={latestBusinesses} />
       <StructureSection />

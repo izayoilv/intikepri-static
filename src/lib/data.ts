@@ -1,4 +1,5 @@
 import type {
+  AgendaEvent,
   Bidang,
   Branch,
   Business,
@@ -120,3 +121,5 @@ export const fallbackNews: News[] = [];
 export const fallbackGallery: GalleryPhoto[] = [];
 
 export const fallbackBusinesses: Business[] = [];
+
+export const fallbackAgenda: AgendaEvent[] = [];

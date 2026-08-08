@@ -2,6 +2,7 @@
 
 import {
   Calendar,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Images,
@@ -25,14 +26,25 @@ export default function GaleriListClient({
   const [page, setPage] = useState(1);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
-  // Kategori diturunkan otomatis dari data — apapun nama kegiatan/sumber
-  // yang diisi admin di CMS langsung jadi filter tanpa ubah kode.
-  const categories = useMemo(() => {
-    const cats = new Set(
-      initialItems.map((p) => (p.category || "Lainnya").trim()),
-    );
-    return ["Semua", ...Array.from(cats).sort((a, b) => a.localeCompare(b))];
+  // Kategori diturunkan otomatis dari data, DIKELOMPOKKAN PER TAHUN.
+  // Ratusan kegiatan tetap rapi: dropdown menampilkan grup "2026", "2025", ...
+  const yearGroups = useMemo(() => {
+    const groups = new Map<string, Set<string>>();
+    initialItems.forEach((p) => {
+      const year = (p.date || "").slice(0, 4) || "Lainnya";
+      const cat = (p.category || "Lainnya").trim();
+      if (!groups.has(year)) groups.set(year, new Set());
+      groups.get(year)!.add(cat);
+    });
+    return Array.from(groups.entries())
+      .sort((a, b) => b[0].localeCompare(a[0])) // tahun terbaru di atas
+      .map(([year, cats]) => ({
+        year,
+        cats: Array.from(cats).sort((a, b) => a.localeCompare(b)),
+      }));
   }, [initialItems]);
+
+  const totalCategories = yearGroups.reduce((n, g) => n + g.cats.length, 0);
 
   const filtered = useMemo(() => {
     return initialItems.filter((p) => {
@@ -101,50 +113,56 @@ export default function GaleriListClient({
           </p>
         </div>
 
-        {/* Search */}
-        <div className="relative md:w-80 mb-6">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
-          />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Cari foto atau kegiatan..."
-            className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
-          />
-        </div>
-
-        {/* Filter kategori (otomatis dari data) */}
-        {categories.length > 2 && (
-          <div className="mb-10">
-            <p className="font-sans text-[11px] tracking-[0.2em] uppercase text-[#999999] mb-2">
-              Kegiatan
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    setCategory(cat);
-                    setPage(1);
-                  }}
-                  className={`px-4 py-2 font-sans text-xs tracking-wide border transition-colors ${
-                    category === cat
-                      ? "bg-[#A42A28] text-white border-[#A42A28]"
-                      : "bg-white text-[#666666] border-[#E5E5E5] hover:border-[#A42A28]/40"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+        {/* Toolbar: search + dropdown filter, satu baris ramping */}
+        <div className="flex flex-col md:flex-row gap-3 mb-3">
+          <div className="relative flex-1">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Cari foto atau kegiatan..."
+              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
+            />
           </div>
-        )}
+          {totalCategories > 1 && (
+            <div className="relative">
+              <select
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full md:w-64 appearance-none border border-[#E5E5E5] bg-white pl-3 pr-8 py-2.5 font-sans text-sm text-[#666666] focus:outline-none focus:border-[#A42A28] cursor-pointer"
+                aria-label="Filter kegiatan"
+              >
+                <option value="Semua">Semua Kegiatan</option>
+                {yearGroups.map((group) => (
+                  <optgroup key={group.year} label={group.year}>
+                    {group.cats.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+              <ChevronDown
+                size={14}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
+              />
+            </div>
+          )}
+        </div>
+        <p className="font-sans text-xs text-[#BBBBBB] mb-8">
+          {filtered.length} foto ditemukan
+        </p>
 
         {items.length === 0 ? (
           <div className="text-center py-20">

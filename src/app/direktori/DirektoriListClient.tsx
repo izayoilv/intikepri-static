@@ -64,8 +64,17 @@ export default function DirektoriListClient({
     return ["Semua", ...Array.from(locs).sort((a, b) => a.localeCompare(b))];
   }, [initialItems]);
 
+  // Urutan: unggulan selalu di atas, sisanya mengikuti urutan CMS
+  const sorted = useMemo(
+    () =>
+      [...initialItems].sort(
+        (a, b) => Number(b.featured || false) - Number(a.featured || false),
+      ),
+    [initialItems],
+  );
+
   const filtered = useMemo(() => {
-    return initialItems.filter((b) => {
+    return sorted.filter((b) => {
       const matchCat = category === "Semua" || (b.category || "Lainnya") === category;
       const matchLoc = location === "Semua" || b.location === location;
       const q = search.trim().toLowerCase();
@@ -77,7 +86,7 @@ export default function DirektoriListClient({
         (b.owner || "").toLowerCase().includes(q);
       return matchCat && matchLoc && matchSearch;
     });
-  }, [initialItems, search, category, location]);
+  }, [sorted, search, category, location]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -244,6 +253,11 @@ export default function DirektoriListClient({
                         {biz.category || "Lainnya"}
                       </span>
                       <span className="text-[#999999]">{biz.location}</span>
+                      {biz.featured && (
+                        <span className="bg-[#C8956C]/15 text-[#C8956C] px-2 py-0.5 font-medium">
+                          Unggulan
+                        </span>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -336,6 +350,14 @@ export default function DirektoriListClient({
             className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto border-t-2 border-t-[#A42A28]"
             onClick={(e) => e.stopPropagation()}
           >
+            {selected.banner && (
+              <div
+                className="aspect-[16/7] bg-cover bg-center bg-[#1A1A1A]"
+                style={{ backgroundImage: `url(${selected.banner})` }}
+                role="img"
+                aria-label={`Foto ${selected.name}`}
+              />
+            )}
             <div className="p-6 md:p-8">
               <div className="flex items-start justify-between gap-4 mb-5">
                 <div className="flex items-start gap-4 min-w-0">

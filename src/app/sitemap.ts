@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import type { MetadataRoute } from "next";
-import type { News } from "@/types";
+import type { AgendaEvent, News } from "@/types";
 
 export const dynamic = "force-static";
 
@@ -20,10 +20,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     );
   } catch {}
 
+  let agenda: AgendaEvent[] = [];
+  try {
+    agenda = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), "src", "data", "agenda.json"), "utf-8")
+    );
+  } catch {}
+
   return [
     { url: `${BASE}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${BASE}/tentang-kami/`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/berita/`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE}/agenda/`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/galeri/`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/direktori/`, changeFrequency: "weekly", priority: 0.8 },
     ...news.map((n) => ({
@@ -31,6 +39,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: toISODate(n.date),
       changeFrequency: "yearly" as const,
       priority: 0.6,
+    })),
+    ...agenda.map((e) => ({
+      url: `${BASE}/agenda/${e.slug}/`,
+      lastModified: toISODate(e.date),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
     })),
   ];
 }

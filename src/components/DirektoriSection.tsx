@@ -16,7 +16,10 @@ export default function DirektoriSection({
   initialItems: Business[];
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const businesses = initialItems.slice(0, 3);
+  // Urutan: unggulan selalu di atas
+  const businesses = [...initialItems]
+    .sort((a, b) => Number(b.featured || false) - Number(a.featured || false))
+    .slice(0, 3);
 
   useEffect(() => {
     if (!ref.current || businesses.length === 0) return;
@@ -91,6 +94,11 @@ export default function DirektoriSection({
                       {biz.category || "Lainnya"}
                     </span>
                     <span className="text-[#999999]">{biz.location}</span>
+                    {biz.featured && (
+                      <span className="bg-[#C8956C]/15 text-[#C8956C] px-2 py-0.5 font-medium">
+                        Unggulan
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>

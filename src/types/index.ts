@@ -88,6 +88,35 @@ export interface Business {
   instagram?: string;
   /** Logo atau foto usaha (URL absolut) */
   image?: string;
+  /** Foto wide/banner untuk halaman detail (URL absolut) */
+  banner?: string;
+  /** true = tampil di urutan teratas dengan lencana Unggulan */
+  featured?: boolean;
   /** Tahun berdiri, mis. 2015 */
   since?: string;
+}
+
+export interface AgendaEvent {
+  title: string;
+  slug: string;
+  description: string;
+  /** Tanggal mulai, ISO: YYYY-MM-DD */
+  date: string;
+  /** Tanggal selesai (opsional, untuk agenda multi-hari), ISO */
+  endDate?: string;
+  /** Mis. "09:00 - 12:00 WIB" */
+  time?: string;
+  /** Kota/Kabupaten, mis. Batam, Karimun */
+  location: string;
+  /** Nama tempat & alamat, mis. "Aula Vihara Duta Maitreya, Batam Centre" */
+  venue?: string;
+  organization?: string;
+  /** Mis. Bakti Sosial, Rapat, Perayaan, Pelatihan */
+  category?: string;
+  image?: string;
+  /** CTA partisipasi — dikustomisasi admin per agenda di CMS */
+  ctaLabel?: string;
+  /** link = URL bebas (Google Form dsb) | whatsapp = nomor 628xxx | email = alamat email */
+  ctaType?: "link" | "whatsapp" | "email";
+  ctaUrl?: string;
 }

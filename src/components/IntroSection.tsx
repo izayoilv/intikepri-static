@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
-import { visiMisi } from "@/lib/data";
+import { bidangPengurus, branches, visiMisi } from "@/lib/data";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -35,7 +35,7 @@ export default function IntroSection() {
   }, []);
 
   return (
-    <section ref={ref} className="py-20 md:py-32 bg-white">
+    <section ref={ref} className="py-20 md:py-32 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="intro-reveal">
@@ -49,6 +49,28 @@ export default function IntroSection() {
               <p>{visiMisi.visi}</p>
               <p>{visiMisi.misi}</p>
             </div>
+
+            {/* Fakta singkat: informatif tanpa kotak-kotak angka */}
+            <p className="mt-8 pt-6 border-t border-[#E5E5E5] font-sans text-xs tracking-wide text-[#999999] flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>
+                Berdiri <span className="text-[#1A1A1A] font-medium">2004</span>
+              </span>
+              <span className="w-1 h-1 bg-[#A42A28] rounded-full" />
+              <span>
+                <span className="text-[#1A1A1A] font-medium">
+                  {branches.length} cabang
+                </span>{" "}
+                se-Kepri
+              </span>
+              <span className="w-1 h-1 bg-[#A42A28] rounded-full" />
+              <span>
+                <span className="text-[#1A1A1A] font-medium">
+                  {bidangPengurus.length} bidang
+                </span>{" "}
+                pengurus
+              </span>
+            </p>
+
             <Link
               href="/tentang-kami"
               className="inline-flex items-center gap-2 text-[#A42A28] font-sans text-sm font-medium mt-6 hover:gap-3 transition-all"
@@ -57,23 +79,28 @@ export default function IntroSection() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { number: "22", label: "Tahun Mengabdi" },
-              { number: "7", label: "Kota/Kabupaten" },
-              { number: "300+", label: "Anggota" },
-              { number: "100+", label: "Kegiatan" },
-            ].map((stat, i) => (
+          {/* Komposisi foto + kartu motto (rumah baru motto setelah blok gelap dihapus) */}
+          <div className="intro-reveal relative">
+            <div className="aspect-[4/3] bg-[#E5E5E5] overflow-hidden">
               <div
-                key={i}
-                className="intro-reveal bg-[#F7F7F7] p-6 border border-[#E5E5E5]"
-              >
-                <p className="font-serif text-3xl font-bold text-[#A42A28] mb-1">
-                  {stat.number}
-                </p>
-                <p className="font-sans text-xs text-[#999999]">{stat.label}</p>
-              </div>
-            ))}
+                className="w-full h-full bg-cover bg-center"
+                style={{ backgroundImage: "url('/images/hero-bg-2.jpeg')" }}
+              />
+            </div>
+            <div className="hidden md:block absolute -bottom-10 -left-10 w-56 aspect-[4/3] border-8 border-white bg-[#E5E5E5] overflow-hidden shadow-lg">
+              <div
+                className="w-full h-full bg-cover bg-center"
+                style={{ backgroundImage: "url('/images/hero-bg-3.jpeg')" }}
+              />
+            </div>
+            <div className="hidden md:block absolute -top-6 -right-6 bg-white border-l-2 border-[#A42A28] shadow-lg px-6 py-5 max-w-[240px]">
+              <p className="font-serif italic text-base text-[#1A1A1A] leading-snug">
+                &ldquo;{visiMisi.motto}&rdquo;
+              </p>
+              <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mt-2">
+                Motto INTI
+              </p>
+            </div>
           </div>
         </div>
       </div>
