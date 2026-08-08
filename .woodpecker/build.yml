@@ -31,20 +31,38 @@ steps:
       - curl -s "https://api.intikepri.com/api/news?limit=1000" | jq '.data.items' > src/data/news.json
 
   # Galeri + Direktori Bisnis dari CMS (endpoint disiapkan tim intikepri-cms).
-  # Fallback ke array kosong supaya build tetap sukses sebelum endpoint rilis.
+  # Kalau CMS berhasil -> file dioverwrite dengan data CMS.
+  # Kalau endpoint belum ada/gagal -> tetap pakai file yang ada di repo
+  # (fallback terakhir: array kosong). Build tidak pernah gagal.
   fetch-gallery:
     image: alpine:3.24
     commands:
       - apk add --no-cache curl jq
       - mkdir -p src/data
-      - curl -sf "https://api.intikepri.com/api/gallery?limit=1000" | jq '.data.items // []' > src/data/galeri.json || echo '[]' > src/data/galeri.json
+      - |
+        if curl -sf "https://api.intikepri.com/api/gallery?limit=1000" | jq -e '.data.items' > src/data/galeri.json.tmp; then
+          mv src/data/galeri.json.tmp src/data/galeri.json
+          echo "galeri.json: data dari CMS"
+        else
+          rm -f src/data/galeri.json.tmp
+          test -f src/data/galeri.json || echo '[]' > src/data/galeri.json
+          echo "galeri.json: endpoint CMS belum tersedia, pakai file dari repo"
+        fi
 
   fetch-businesses:
     image: alpine:3.24
     commands:
       - apk add --no-cache curl jq
       - mkdir -p src/data
-      - curl -sf "https://api.intikepri.com/api/businesses?limit=1000" | jq '.data.items // []' > src/data/direktori.json || echo '[]' > src/data/direktori.json
+      - |
+        if curl -sf "https://api.intikepri.com/api/businesses?limit=1000" | jq -e '.data.items' > src/data/direktori.json.tmp; then
+          mv src/data/direktori.json.tmp src/data/direktori.json
+          echo "direktori.json: data dari CMS"
+        else
+          rm -f src/data/direktori.json.tmp
+          test -f src/data/direktori.json || echo '[]' > src/data/direktori.json
+          echo "direktori.json: endpoint CMS belum tersedia, pakai file dari repo"
+        fi
 
   build-and-push:
     image: moby/buildkit:v0.31.2
