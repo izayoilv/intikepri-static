@@ -1,12 +1,16 @@
 import fs from "fs";
-import type { Metadata } from "next";
 import path from "path";
 
-import { SITE_URL } from "@/lib/site";
+import type { Metadata } from "next";
+
+import Breadcrumb from "@/components/Breadcrumb";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 import type { News } from "@/types";
 
 import BeritaDetailClient from "./BeritaDetailClient";
 
+// Helper untuk membaca data berita (sesuaikan dengan implementasi asli di tokomu jika berbeda)
 function getAllNews(): News[] {
   try {
     const filePath = path.join(process.cwd(), "src/data/news.json");
@@ -17,11 +21,14 @@ function getAllNews(): News[] {
   }
 }
 
+const BASE = "https://intikepri.com";
+
 function toISODate(date: string): string | undefined {
   const d = new Date(date);
   return isNaN(d.getTime()) ? undefined : d.toISOString();
 }
 
+// SEO: metadata unik per artikel (title, description, Open Graph untuk share preview)
 export async function generateMetadata({
   params,
 }: {
@@ -64,6 +71,7 @@ export default async function BeritaDetailPage({
   const items = getAllNews();
   const news = items.find((n) => n.slug === slug) || null;
 
+  // Berita lainnya: semua berita selain yang sedang dibuka, ambil 3 teratas
   const relatedNews = items.filter((n) => n.slug !== slug).slice(0, 3);
 
   const isoDate = news ? toISODate(news.date) : undefined;
@@ -77,28 +85,39 @@ export default async function BeritaDetailPage({
         author: { "@type": "Person", name: news.author },
         image: news.image?.startsWith("http")
           ? news.image
-          : `${SITE_URL}${news.image}`,
+          : `${BASE}${news.image}`,
         publisher: {
           "@type": "Organization",
           name: "INTI Kepri",
           logo: {
             "@type": "ImageObject",
-            url: `${SITE_URL}/images/Logo-INTI.png`,
+            url: `${BASE}/images/Logo-INTI.png`,
           },
         },
-        mainEntityOfPage: `${SITE_URL}/berita/${news.slug}/`,
+        mainEntityOfPage: `${BASE}/berita/${news.slug}/`,
       }
     : null;
 
   return (
-    <>
+    <main>
       {articleLd && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
         />
       )}
-      <BeritaDetailClient news={news} relatedNews={relatedNews} />
-    </>
+      <Navbar />
+      <div className="pt-24">
+        <Breadcrumb
+          items={
+            news
+              ? [{ label: "Berita", to: "/berita" }, { label: news.title }]
+              : [{ label: "Berita", to: "/berita" }, { label: "Tidak ditemukan" }]
+          }
+        />
+        <BeritaDetailClient news={news} relatedNews={relatedNews} />
+      </div>
+      <Footer />
+    </main>
   );
 }
