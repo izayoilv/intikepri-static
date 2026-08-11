@@ -1,6 +1,18 @@
 "use client";
 
-import { SiInstagram, SiWhatsapp } from "@icons-pack/react-simple-icons";
+import {
+  SiFacebook,
+  SiGooglemaps,
+  SiInstagram,
+  SiLine,
+  SiShopee,
+  SiTelegram,
+  SiThreads,
+  SiTiktok,
+  SiWhatsapp,
+  SiX,
+} from "@icons-pack/react-simple-icons";
+import Fuse from "fuse.js";
 import {
   ArrowRight,
   ChevronDown,
@@ -16,11 +28,85 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { type ComponentType, useEffect, useMemo, useState } from "react";
 
-import type { Business } from "@/types";
+import type { Business, BusinessContacts } from "@/types";
 
 const PAGE_SIZE = 6;
+
+const CONTACT_PLATFORMS: {
+  key: keyof BusinessContacts;
+  label: string;
+  icon: ComponentType<{ size?: number }>;
+  href: (value: string) => string;
+}[] = [
+  {
+    key: "phone",
+    label: "Phone",
+    icon: Phone,
+    href: (v) => `tel:${v.replace(/\s/g, "")}`,
+  },
+  {
+    key: "whatsapp",
+    label: "WhatsApp",
+    icon: SiWhatsapp,
+    href: (v) => `https://wa.me/${v.replace(/\D/g, "")}`,
+  },
+  {
+    key: "telegram",
+    label: "Telegram",
+    icon: SiTelegram,
+    href: (v) => `https://t.me/${v}`,
+  },
+  { key: "email", label: "Email", icon: Mail, href: (v) => `mailto:${v}` },
+  { key: "website", label: "Website", icon: Globe, href: (v) => v },
+  {
+    key: "instagram",
+    label: "Instagram",
+    icon: SiInstagram,
+    href: (v) => `https://instagram.com/${v.replace(/^@/, "")}`,
+  },
+  {
+    key: "facebook",
+    label: "Facebook",
+    icon: SiFacebook,
+    href: (v) => `https://facebook.com/${v.replace(/^@/, "")}`,
+  },
+  {
+    key: "tiktok",
+    label: "TikTok",
+    icon: SiTiktok,
+    href: (v) => `https://tiktok.com/${v.startsWith("@") ? v : `@${v}`}`,
+  },
+  {
+    key: "x",
+    label: "X (Twitter)",
+    icon: SiX,
+    href: (v) => `https://x.com/${v.replace(/^@/, "")}`,
+  },
+  {
+    key: "threads",
+    label: "Threads",
+    icon: SiThreads,
+    href: (v) => `https://threads.net/${v.startsWith("@") ? v : `@${v}`}`,
+  },
+  { key: "shopee", label: "Shopee", icon: SiShopee, href: (v) => v },
+  {
+    key: "line",
+    label: "LINE",
+    icon: SiLine,
+    href: (v) => `https://line.me/R/ti/p/${v}`,
+  },
+  {
+    key: "googlemaps",
+    label: "Google Maps",
+    icon: SiGooglemaps,
+    href: (v) =>
+      v.startsWith("http")
+        ? v
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v)}`,
+  },
+];
 
 const DAFTAR_HREF = `mailto:perhimpunanintikepri@gmail.com?subject=${encodeURIComponent(
   "Pendaftaran Direktori Bisnis INTI Kepri",
@@ -48,6 +134,10 @@ function businessPhoto(biz: Business): string | null {
   return biz.banner || biz.image || null;
 }
 
+function isFeatured(biz: Business): boolean {
+  return (biz.sort_order ?? 999) < 999;
+}
+
 export default function DirektoriListClient({
   initialItems,
 }: {
@@ -71,22 +161,34 @@ export default function DirektoriListClient({
     return ["Semua", ...Array.from(locs).sort((a, b) => a.localeCompare(b))];
   }, [initialItems]);
 
-  const sorted = useMemo(() => [...initialItems], [initialItems]);
+  const sorted = useMemo(
+    () =>
+      [...initialItems].sort(
+        (a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999),
+      ),
+    [initialItems],
+  );
+
+  const fuse = useMemo(
+    () =>
+      new Fuse(sorted, {
+        keys: ["name", "description", "category", "owner"],
+        threshold: 0.4,
+        ignoreLocation: true,
+      }),
+    [sorted],
+  );
 
   const filtered = useMemo(() => {
-    return sorted.filter((b) => {
+    const base = search.trim()
+      ? fuse.search(search).map((r) => r.item)
+      : sorted;
+    return base.filter((b) => {
       const matchCat = category === "Semua" || b.category === category;
       const matchLoc = location === "Semua" || b.location === location;
-      const q = search.trim().toLowerCase();
-      const matchSearch =
-        !q ||
-        b.name.toLowerCase().includes(q) ||
-        b.description.toLowerCase().includes(q) ||
-        (b.category || "").toLowerCase().includes(q) ||
-        (b.owner || "").toLowerCase().includes(q);
-      return matchCat && matchLoc && matchSearch;
+      return matchCat && matchLoc;
     });
-  }, [sorted, search, category, location]);
+  }, [fuse, search, sorted, category, location]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -258,6 +360,11 @@ export default function DirektoriListClient({
                       <h2 className="font-serif text-lg md:text-xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
                         {biz.name}
                       </h2>
+                      {isFeatured(biz) && (
+                        <span className="bg-[#C8956C]/15 text-[#C8956C] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
+                          Unggulan
+                        </span>
+                      )}
                     </div>
                     <p className="font-sans text-xs text-[#999999] mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                       <span className="text-[#A42A28]">{biz.category}</span>
@@ -283,9 +390,9 @@ export default function DirektoriListClient({
                       {biz.description}
                     </p>
                     <div className="mt-auto pt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                      {biz.website && (
+                      {biz.contacts?.website && (
                         <a
-                          href={biz.website}
+                          href={biz.contacts.website}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
@@ -379,6 +486,11 @@ export default function DirektoriListClient({
                       {selected.location}
                     </span>
                   )}
+                  {isFeatured(selected) && (
+                    <span className="bg-[#C8956C] text-white px-2 py-0.5 tracking-wider uppercase text-[10px]">
+                      Unggulan
+                    </span>
+                  )}
                 </p>
                 <h2 className="font-serif text-2xl md:text-3xl font-bold text-white leading-snug">
                   {selected.name}
@@ -426,52 +538,32 @@ export default function DirektoriListClient({
               )}
 
               <div className="flex flex-wrap gap-2">
-                {selected.website && (
-                  <a
-                    href={selected.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2.5 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
-                  >
-                    <Globe size={14} /> Kunjungi Website
-                  </a>
-                )}
-                {selected.whatsapp && (
-                  <a
-                    href={`https://wa.me/${selected.whatsapp.replace(/\D/g, "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 border border-[#E5E5E5] text-[#666666] px-4 py-2.5 font-sans text-xs font-medium hover:border-[#A42A28]/40 hover:text-[#A42A28] transition-colors"
-                  >
-                    <SiWhatsapp size={14} /> WhatsApp
-                  </a>
-                )}
-                {selected.phone && (
-                  <a
-                    href={`tel:${selected.phone.replace(/\s/g, "")}`}
-                    className="inline-flex items-center gap-2 border border-[#E5E5E5] text-[#666666] px-4 py-2.5 font-sans text-xs font-medium hover:border-[#A42A28]/40 hover:text-[#A42A28] transition-colors"
-                  >
-                    <Phone size={14} /> Telepon
-                  </a>
-                )}
-                {selected.email && (
-                  <a
-                    href={`mailto:${selected.email}`}
-                    className="inline-flex items-center gap-2 border border-[#E5E5E5] text-[#666666] px-4 py-2.5 font-sans text-xs font-medium hover:border-[#A42A28]/40 hover:text-[#A42A28] transition-colors"
-                  >
-                    <Mail size={14} /> Email
-                  </a>
-                )}
-                {selected.instagram && (
-                  <a
-                    href={`https://instagram.com/${selected.instagram.replace(/^@/, "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 border border-[#E5E5E5] text-[#666666] px-4 py-2.5 font-sans text-xs font-medium hover:border-[#A42A28]/40 hover:text-[#A42A28] transition-colors"
-                  >
-                    <SiInstagram size={14} /> Instagram
-                  </a>
-                )}
+                {CONTACT_PLATFORMS.map((p) => {
+                  const value = selected.contacts?.[p.key];
+                  if (!value) return null;
+                  const Icon = p.icon;
+                  return p.key === "website" ? (
+                    <a
+                      key={p.key}
+                      href={p.href(value)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2.5 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
+                    >
+                      <Icon size={14} /> Kunjungi Website
+                    </a>
+                  ) : (
+                    <a
+                      key={p.key}
+                      href={p.href(value)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 border border-[#E5E5E5] text-[#666666] px-4 py-2.5 font-sans text-xs font-medium hover:border-[#A42A28]/40 hover:text-[#A42A28] transition-colors"
+                    >
+                      <Icon size={14} /> {p.label}
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </div>

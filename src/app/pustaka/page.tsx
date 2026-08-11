@@ -90,7 +90,7 @@ export default function PustakaPage() {
       )}
       <Navbar />
       <main className="pt-16">
-        <Breadcrumb items={[{ label: "Pustaka" }]} hideNav />
+        <Breadcrumb items={[{ label: "Pustaka" }]} />
         <PustakaClient videos={videos} documents={documents} />
       </main>
       <Footer />

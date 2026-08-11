@@ -62,12 +62,22 @@ export interface LoginResponse {
 export interface GalleryPhoto {
   title: string;
   image: string;
-  /** Nama kegiatan / sumber upload — otomatis jadi filter di halaman galeri */
-  category: string;
-  /** Format ISO: YYYY-MM-DD */
-  date: string;
-  location?: string;
-  organization?: string;
+}
+
+export interface BusinessContacts {
+  phone?: string;
+  whatsapp?: string;
+  telegram?: string;
+  email?: string;
+  website?: string;
+  instagram?: string;
+  facebook?: string;
+  tiktok?: string;
+  x?: string;
+  threads?: string;
+  shopee?: string;
+  line?: string;
+  googlemaps?: string;
 }
 
 export interface Business {
@@ -75,26 +85,14 @@ export interface Business {
   category: string;
   description: string;
   owner?: string;
-  /** Kota/Kabupaten, mis. Batam, Karimun, TPI & Bintan */
   location: string;
   address?: string;
-  phone?: string;
-  /** Format internasional tanpa +, mis. 6281234567890 */
-  whatsapp?: string;
-  email?: string;
-  /** URL lengkap, mis. https://example.com */
-  website?: string;
-  /** Username tanpa @, mis. toko.saya */
-  instagram?: string;
-  /** Logo atau foto usaha (URL absolut) */
+  contacts?: BusinessContacts;
   image?: string;
-  /** Foto wide/banner untuk kartu & popup detail (URL absolut) */
   banner?: string;
-  /** Foto tambahan untuk strip galeri di popup detail (URL absolut) */
   photos?: string[];
-  /** true = tampil di urutan teratas dengan lencana Unggulan */
-  featured?: boolean;
-  /** Tahun berdiri, mis. 2015 */
+  is_featured?: boolean;
+  sort_order?: number;
   since?: string;
 }
 
@@ -102,52 +100,34 @@ export interface AgendaEvent {
   title: string;
   slug: string;
   description: string;
-  /** Tanggal mulai, ISO: YYYY-MM-DD */
   date: string;
-  /** Tanggal selesai (opsional, untuk agenda multi-hari), ISO */
   endDate?: string;
-  /** Mis. "09:00 - 12:00 WIB" */
   time?: string;
-  /** Kota/Kabupaten, mis. Batam, Karimun */
   location: string;
-  /** Nama tempat & alamat, mis. "Aula Vihara Duta Maitreya, Batam Centre" */
   venue?: string;
   organization?: string;
-  /** Mis. Bakti Sosial, Rapat, Perayaan, Pelatihan */
   category?: string;
   image?: string;
-  /** CTA partisipasi — dikustomisasi admin per agenda di CMS */
   ctaLabel?: string;
-  /** link = URL bebas (Google Form dsb) | whatsapp = nomor 628xxx | email = alamat email */
   ctaType?: "link" | "whatsapp" | "email";
   ctaUrl?: string;
 }
 
 export interface VideoItem {
   title: string;
-  /** ID video YouTube (bagian setelah watch?v=), mis. dQw4w9WgXcQ */
   youtubeId: string;
   description?: string;
-  /** ISO YYYY-MM-DD */
   date: string;
-  /** mis. "12:34" */
   duration?: string;
-  category?: string;
 }
 
 export interface DocumentItem {
   title: string;
   description?: string;
   author: string;
-  /** ISO YYYY-MM-DD */
   date: string;
-  /** URL PDF (absolut https://s3... atau relatif /dokumen/...). Dibuka di tab baru */
   fileUrl: string;
-  /** Cover/thumbnail PDF (opsional — CMS auto-generate dari halaman pertama bila kosong) */
   thumbnail?: string;
-  /** Jumlah halaman, mis. 24 */
   pages?: number;
-  /** Ukuran file ramah baca, mis. "2,4 MB" */
   size?: string;
-  category?: string;
 }

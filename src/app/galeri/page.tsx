@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 function getGallery(): GalleryPhoto[] {
   try {
-    const filePath = path.join(process.cwd(), "src", "data", "galeri.json");
+    const filePath = path.join(process.cwd(), "src", "data", "gallery.json");
     const content = fs.readFileSync(filePath, "utf-8");
     const parsed: GalleryPhoto[] = JSON.parse(content);
     return parsed.length > 0 ? parsed : fallbackGallery;
@@ -52,7 +52,7 @@ export default async function GaleriPage() {
     <main>
       <Navbar />
       <div className="pt-16">
-        <Breadcrumb items={[{ label: "Galeri" }]} hideNav />
+        <Breadcrumb items={[{ label: "Galeri" }]} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageLd) }}

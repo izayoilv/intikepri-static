@@ -53,7 +53,7 @@ export default async function AgendaPage() {
     <main>
       <Navbar />
       <div className="pt-16">
-        <Breadcrumb items={[{ label: "Agenda" }]} hideNav />
+        <Breadcrumb items={[{ label: "Agenda" }]} />
         <AgendaListClient upcoming={upcoming} past={past} />
       </div>
       <Footer />

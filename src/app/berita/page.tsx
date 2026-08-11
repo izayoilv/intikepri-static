@@ -35,7 +35,7 @@ export default async function BeritaPage() {
     <main>
       <Navbar />
       <div className="pt-16">
-        <Breadcrumb items={[{ label: "Berita" }]} hideNav />
+        <Breadcrumb items={[{ label: "Berita" }]} />
         <BeritaListClient
           initialItems={items}
           locations={locations}

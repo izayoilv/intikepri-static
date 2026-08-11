@@ -1,28 +1,44 @@
 "use client";
 
-import { Calendar, ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import Fuse from "fuse.js";
+import {
+  Calendar,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+} from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { newsToText } from "@/lib/news-text";
 import type { News } from "@/types";
 
 const PAGE_SIZE = 6;
 
 const MONTHS_ID = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
 ];
 
-// Terima ISO (2026-08-04) -> "4 Agustus 2026"; selain itu tampilkan apa adanya
 function formatDate(raw: string): string {
   const [y, m, d] = (raw || "").split("-");
   if (!y || !m || !d || !MONTHS_ID[Number(m) - 1]) return raw;
   return `${Number(d)} ${MONTHS_ID[Number(m) - 1]} ${y}`;
 }
 
-// Ringkasan 1 kalimat dari isi berita untuk lead story
 function excerpt(content: string, max = 170): string {
-  const clean = (content || "").replace(/\s+/g, " ").trim();
+  const clean = newsToText(content);
   return clean.length > max ? `${clean.slice(0, max).trimEnd()}…` : clean;
 }
 
@@ -63,16 +79,27 @@ export default function BeritaListClient({
   const [organization, setOrganization] = useState("Semua");
   const [page, setPage] = useState(1);
 
+  const fuse = useMemo(
+    () =>
+      new Fuse(initialItems, {
+        keys: ["title"],
+        threshold: 0.4,
+        ignoreLocation: true,
+      }),
+    [initialItems],
+  );
+
   const filtered = useMemo(() => {
-    return initialItems.filter((n) => {
+    const base = search.trim()
+      ? fuse.search(search).map((r) => r.item)
+      : initialItems;
+    return base.filter((n) => {
       const matchLoc = location === "Semua" || n.location === location;
       const matchOrg =
         organization === "Semua" || n.organization === organization;
-      const q = search.trim().toLowerCase();
-      const matchSearch = !q || n.title.toLowerCase().includes(q);
-      return matchLoc && matchOrg && matchSearch;
+      return matchLoc && matchOrg;
     });
-  }, [initialItems, search, location, organization]);
+  }, [fuse, search, initialItems, location, organization]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -81,8 +108,6 @@ export default function BeritaListClient({
     currentPage * PAGE_SIZE,
   );
 
-  // Tata letak editorial (lead + secondary) hanya di halaman pertama
-  // tanpa pencarian/filter — meniru susunan halaman depan portal berita.
   const isFrontPage =
     currentPage === 1 &&
     search.trim() === "" &&
@@ -98,7 +123,7 @@ export default function BeritaListClient({
   return (
     <section className="py-10 md:py-14 bg-white min-h-[60vh]">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        {/* Kepala halaman ala section-front portal berita */}
+        {}
         <div className="border-b-2 border-[#111111] pb-4 mb-6">
           <p className="font-sans text-xs font-bold tracking-[0.25em] uppercase text-[#A42A28] mb-1.5">
             Berita
@@ -108,7 +133,7 @@ export default function BeritaListClient({
           </h1>
         </div>
 
-        {/* Toolbar: search + dropdown filter */}
+        {}
         <div className="flex flex-col md:flex-row gap-3 mb-3">
           <div className="relative flex-1">
             <Search
@@ -179,7 +204,7 @@ export default function BeritaListClient({
           </p>
         ) : (
           <>
-            {/* ═══ LEAD STORY — berita utama paling besar ═══ */}
+            {}
             {lead && (
               <Link
                 href={`/berita/${lead.slug}`}
@@ -211,7 +236,7 @@ export default function BeritaListClient({
               </Link>
             )}
 
-            {/* ═══ SECONDARY — mobile: baris ringkas, desktop: 3 kartu ═══ */}
+            {}
             {secondary.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5 pb-8 mb-2 border-b border-[#E5E5E5]">
                 {secondary.map((item) => (
@@ -244,7 +269,7 @@ export default function BeritaListClient({
               </div>
             )}
 
-            {/* ═══ DAFTAR BERITA — baris ala "latest news" ═══ */}
+            {}
             {rest.length > 0 && (
               <div className={isFrontPage ? "mt-8" : ""}>
                 {isFrontPage && (

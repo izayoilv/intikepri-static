@@ -1,24 +1,25 @@
 when:
-  - event: push
-    branch: main
-    path:
-      include:
-        - deploy/*
-        - src/**/*
-        - public/**/*
-        - package.json
-        - pnpm-lock.yaml
-        - pnpm-workspace.yaml
-        - next.config.ts
-        - tsconfig.json
-        - eslint.config.mjs
-        - postcss.config.mjs
-        - components.json
-        - nginx.conf
-        - Dockerfile
-        - .dockerignore
-        - .woodpecker/*
-  - event: manual
+  event: [push, manual]
+  branch: main
+  path:
+    include:
+      - deploy/*
+      - src/**/*
+      - public/**/*
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - next.config.ts
+      - tsconfig.json
+      - postcss.config.mjs
+      - nginx.conf
+      - Dockerfile
+      - .dockerignore
+      - .woodpecker/*
+
+variables:
+  - &alpine "alpine:3.24"
+  - &buildkit "moby/buildkit:v0.31.2"
 
 clone:
   git:
@@ -28,15 +29,35 @@ clone:
       lfs: false
 
 steps:
-  fetch-news:
-    image: alpine:3.24
+  fetch-data:
+    image: *alpine
+    environment:
+      CMS_API_BASE: https://api.intikepri.com
     commands:
       - apk add --no-cache curl jq
       - mkdir -p src/data
-      - curl -s "https://api.intikepri.com/api/news?limit=1000" | jq '.data.items' > src/data/news.json
+      - |
+        for f in news:news gallery:gallery business:business; do
+          out="${f%%:*}"; ep="${f##*:}"
+          if curl -fsSL "${CMS_API_BASE}/api/${ep}" -o "/tmp/${out}.raw.json" \
+             && jq -e '.data.items' "/tmp/${out}.raw.json" > "src/data/${out}.json.tmp" 2>/dev/null; then
+            mv "src/data/${out}.json.tmp" "src/data/${out}.json"
+            echo "fetched ${out}.json ($(jq length "src/data/${out}.json") items)"
+          else
+            echo "WARNING: failed to fetch ${out} from ${CMS_API_BASE}, keeping committed data"
+          fi
+        done
+      - |
+        for f in news gallery business; do
+          if [ ! -f "src/data/$f.json" ]; then
+            echo "ERROR: src/data/$f.json missing after fetch"
+            exit 1
+          fi
+        done
 
   build-and-push:
-    image: moby/buildkit:v0.31.2
+    image: *buildkit
+    depends_on: [fetch-data]
     environment:
       DOCKER_PASSWORD:
         from_secret: docker_password
@@ -59,8 +80,10 @@ steps:
           echo "BuildKit failed (attempt $i/3), retrying in 10s..."
           sleep 10
         done
+
   verify:
-    image: alpine:3.24
+    image: *alpine
+    depends_on: [build-and-push]
     commands:
       - apk add --no-cache curl jq
       - |

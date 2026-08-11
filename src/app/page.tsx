@@ -21,7 +21,7 @@ import type { AgendaEvent, Business, GalleryPhoto, News } from "@/types";
 
 function getLatestGallery(): GalleryPhoto[] {
   try {
-    const filePath = path.join(process.cwd(), "src", "data", "galeri.json");
+    const filePath = path.join(process.cwd(), "src", "data", "gallery.json");
     const content = fs.readFileSync(filePath, "utf-8");
     const parsed: GalleryPhoto[] = JSON.parse(content);
     return parsed.length > 0 ? parsed.slice(0, 8) : fallbackGallery;
@@ -32,7 +32,7 @@ function getLatestGallery(): GalleryPhoto[] {
 
 function getLatestBusinesses(): Business[] {
   try {
-    const filePath = path.join(process.cwd(), "src", "data", "direktori.json");
+    const filePath = path.join(process.cwd(), "src", "data", "business.json");
     const content = fs.readFileSync(filePath, "utf-8");
     const parsed: Business[] = JSON.parse(content);
     return parsed.length > 0 ? parsed.slice(0, 3) : fallbackBusinesses;

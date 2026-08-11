@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 function getBusinesses(): Business[] {
   try {
-    const filePath = path.join(process.cwd(), "src", "data", "direktori.json");
+    const filePath = path.join(process.cwd(), "src", "data", "business.json");
     const content = fs.readFileSync(filePath, "utf-8");
     const parsed: Business[] = JSON.parse(content);
     return parsed.length > 0 ? parsed : fallbackBusinesses;
@@ -52,9 +52,9 @@ export default async function DirektoriPage() {
               "@type": "LocalBusiness",
               name: b.name,
               description: b.description,
-              ...(b.image ? { image: b.image } : {}),
-              ...(b.phone ? { telephone: b.phone } : {}),
-              ...(b.website ? { url: b.website } : {}),
+              ...(b.banner || b.image ? { image: b.banner || b.image } : {}),
+              ...(b.contacts?.phone ? { telephone: b.contacts.phone } : {}),
+              ...(b.contacts?.website ? { url: b.contacts.website } : {}),
               address: {
                 "@type": "PostalAddress",
                 ...(b.address ? { streetAddress: b.address } : {}),
@@ -71,7 +71,7 @@ export default async function DirektoriPage() {
     <main>
       <Navbar />
       <div className="pt-16">
-        <Breadcrumb items={[{ label: "Direktori Bisnis" }]} hideNav />
+        <Breadcrumb items={[{ label: "Direktori Bisnis" }]} />
         {itemListLd && (
           <script
             type="application/ld+json"

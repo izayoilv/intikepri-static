@@ -1,17 +1,8 @@
 "use client";
 
-import {
-  Calendar,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Images,
-  MapPin,
-  Search,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Images, X } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { GalleryPhoto } from "@/types";
 
@@ -22,35 +13,12 @@ export default function GaleriListClient({
 }: {
   initialItems: GalleryPhoto[];
 }) {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("Semua");
   const [page, setPage] = useState(1);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
-  const categories = useMemo(() => {
-    const cats = new Set(
-      initialItems.map((p) => (p.category || "Lainnya").trim()),
-    );
-    return ["Semua", ...Array.from(cats).sort((a, b) => a.localeCompare(b))];
-  }, [initialItems]);
-
-  const filtered = useMemo(() => {
-    return initialItems.filter((p) => {
-      const matchCat =
-        category === "Semua" || (p.category || "Lainnya") === category;
-      const q = search.trim().toLowerCase();
-      const matchSearch =
-        !q ||
-        p.title.toLowerCase().includes(q) ||
-        (p.category || "").toLowerCase().includes(q) ||
-        (p.location || "").toLowerCase().includes(q);
-      return matchCat && matchSearch;
-    });
-  }, [initialItems, search, category]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(initialItems.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
-  const items = filtered.slice(
+  const items = initialItems.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
@@ -59,10 +27,12 @@ export default function GaleriListClient({
   const stepLightbox = useCallback(
     (dir: 1 | -1) => {
       setLightbox((cur) =>
-        cur === null ? null : (cur + dir + filtered.length) % filtered.length,
+        cur === null
+          ? null
+          : (cur + dir + initialItems.length) % initialItems.length,
       );
     },
-    [filtered.length],
+    [initialItems.length],
   );
 
   useEffect(() => {
@@ -80,7 +50,7 @@ export default function GaleriListClient({
     };
   }, [lightbox, closeLightbox, stepLightbox]);
 
-  const active = lightbox !== null ? filtered[lightbox] : null;
+  const active = lightbox !== null ? initialItems[lightbox] : null;
 
   return (
     <section className="py-16 md:py-24 bg-white min-h-[60vh]">
@@ -98,87 +68,28 @@ export default function GaleriListClient({
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-3 mb-3">
-          <div className="relative flex-1">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Cari foto atau kegiatan..."
-              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
-            />
-          </div>
-          {categories.length > 2 && (
-            <div className="relative">
-              <select
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setPage(1);
-                }}
-                className="w-full md:w-64 appearance-none border border-[#E5E5E5] bg-white pl-3 pr-8 py-2.5 font-sans text-sm text-[#666666] focus:outline-none focus:border-[#A42A28] cursor-pointer"
-                aria-label="Filter kegiatan"
-              >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat === "Semua" ? "Semua Kegiatan" : cat}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                size={14}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
-              />
-            </div>
-          )}
-        </div>
-        <p className="font-sans text-xs text-[#BBBBBB] mb-8">
-          {filtered.length} foto ditemukan
-        </p>
-
         {items.length === 0 ? (
           <div className="text-center py-20">
             <Images size={40} className="mx-auto text-[#E5E5E5] mb-4" />
             <p className="text-[#999999] font-sans">
-              {initialItems.length === 0
-                ? "Belum ada foto di galeri."
-                : "Tidak ada foto yang cocok."}
+              Belum ada foto di galeri.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {items.map((photo) => {
-              const globalIndex = filtered.indexOf(photo);
-              return (
-                <button
-                  key={`${photo.image}-${globalIndex}`}
-                  onClick={() => setLightbox(globalIndex)}
-                  className="group relative aspect-square overflow-hidden bg-[#E5E5E5] text-left"
-                  aria-label={`Perbesar foto: ${photo.title}`}
-                >
-                  <div
-                    className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                    style={{ backgroundImage: `url(${photo.image})` }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <p className="font-sans text-xs font-medium text-white line-clamp-2">
-                      {photo.title}
-                    </p>
-                    <p className="font-sans text-[10px] text-white/60 mt-1">
-                      {photo.category || "Lainnya"}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
+            {items.map((photo, globalIndex) => (
+              <button
+                key={`${photo.image}-${globalIndex}`}
+                onClick={() => setLightbox(globalIndex)}
+                className="group relative aspect-square overflow-hidden bg-[#E5E5E5] text-left"
+                aria-label={`Perbesar foto: ${photo.title}`}
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
+                  style={{ backgroundImage: `url(${photo.image})` }}
+                />
+              </button>
+            ))}
           </div>
         )}
 
@@ -217,7 +128,7 @@ export default function GaleriListClient({
         >
           <div className="flex items-center justify-between px-4 md:px-8 py-4">
             <span className="font-sans text-xs text-white/50 tracking-widest">
-              {(lightbox ?? 0) + 1} / {filtered.length}
+              {(lightbox ?? 0) + 1} / {initialItems.length}
             </span>
             <button
               onClick={closeLightbox}
@@ -232,7 +143,7 @@ export default function GaleriListClient({
             className="flex-1 flex items-center justify-center px-4 md:px-16 min-h-0"
             onClick={(e) => e.stopPropagation()}
           >
-            {filtered.length > 1 && (
+            {initialItems.length > 1 && (
               <button
                 onClick={() => stepLightbox(-1)}
                 className="hidden md:flex p-3 text-white/50 hover:text-white transition-colors flex-shrink-0"
@@ -248,7 +159,7 @@ export default function GaleriListClient({
               height={900}
               className="max-h-full max-w-full object-contain"
             />
-            {filtered.length > 1 && (
+            {initialItems.length > 1 && (
               <button
                 onClick={() => stepLightbox(1)}
                 className="hidden md:flex p-3 text-white/50 hover:text-white transition-colors flex-shrink-0"
@@ -259,47 +170,24 @@ export default function GaleriListClient({
             )}
           </div>
 
-          <div
-            className="px-4 md:px-8 py-5 text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <p className="font-serif text-base md:text-lg font-semibold text-white">
-              {active.title}
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-2">
-              <span className="inline-block bg-[#A42A28] text-white text-[10px] font-sans px-2 py-0.5">
-                {active.category || "Lainnya"}
-              </span>
-              {active.date && (
-                <span className="flex items-center gap-1 font-sans text-xs text-white/50">
-                  <Calendar size={12} /> {active.date}
-                </span>
-              )}
-              {active.location && (
-                <span className="flex items-center gap-1 font-sans text-xs text-white/50">
-                  <MapPin size={12} /> {active.location}
-                </span>
-              )}
+          {initialItems.length > 1 && (
+            <div className="flex md:hidden items-center justify-center gap-6 mt-4">
+              <button
+                onClick={() => stepLightbox(-1)}
+                className="p-2 border border-white/20 text-white/70"
+                aria-label="Foto sebelumnya"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={() => stepLightbox(1)}
+                className="p-2 border border-white/20 text-white/70"
+                aria-label="Foto berikutnya"
+              >
+                <ChevronRight size={20} />
+              </button>
             </div>
-            {filtered.length > 1 && (
-              <div className="flex md:hidden items-center justify-center gap-6 mt-4">
-                <button
-                  onClick={() => stepLightbox(-1)}
-                  className="p-2 border border-white/20 text-white/70"
-                  aria-label="Foto sebelumnya"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <button
-                  onClick={() => stepLightbox(1)}
-                  className="p-2 border border-white/20 text-white/70"
-                  aria-label="Foto berikutnya"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-            )}
-          </div>
+          )}
         </div>
       )}
     </section>

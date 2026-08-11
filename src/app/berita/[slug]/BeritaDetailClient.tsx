@@ -1,27 +1,66 @@
 "use client";
 
-import {
-  SiFacebook,
-  SiWhatsapp,
-  SiX,
-} from "@icons-pack/react-simple-icons";
+import { SiFacebook, SiWhatsapp, SiX } from "@icons-pack/react-simple-icons";
+import parse, { Element } from "html-react-parser";
 import { ArrowRight, Calendar, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { SITE_URL } from "@/lib/site";
 import type { News } from "@/types";
+
+const IMG_SIZES = "(max-width: 896px) 100vw, 672px";
+
+function ArticleContent({ html }: { html: string }) {
+  const content = parse(html, {
+    replace: (domNode) => {
+      if (domNode instanceof Element && domNode.name === "img") {
+        const { src, alt, class: cls } = domNode.attribs;
+        const sizeClass = cls?.includes("img-s")
+          ? "img-s"
+          : cls?.includes("img-m")
+            ? "img-m"
+            : "";
+        return (
+          <div
+            key={domNode.attribs.src}
+            className={`article-img-wrap ${sizeClass}`}
+          >
+            <Image
+              src={src ?? ""}
+              alt={alt ?? ""}
+              width={1280}
+              height={720}
+              sizes={IMG_SIZES}
+            />
+          </div>
+        );
+      }
+      return domNode;
+    },
+  });
+  return <>{content}</>;
+}
 
 interface Props {
   news: News | null;
   relatedNews?: News[];
+  contentHtml?: { lede: string; body: string } | null;
 }
 
-// Ganti dengan domain final website kamu (dipakai untuk URL share)
-const SITE_URL = "https://intikepri.com";
-
 const MONTHS_ID = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
 ];
 
 function formatDate(raw: string): string {
@@ -30,7 +69,11 @@ function formatDate(raw: string): string {
   return `${Number(d)} ${MONTHS_ID[Number(m) - 1]} ${y}`;
 }
 
-export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
+export default function BeritaDetailClient({
+  news,
+  relatedNews = [],
+  contentHtml = null,
+}: Props) {
   const item = news || null;
 
   if (!item) {
@@ -52,7 +95,6 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
   const encodedUrl = encodeURIComponent(articleUrl);
   const encodedTitle = encodeURIComponent(item.title);
 
-  // Semua share pakai anchor <a> biasa — tanpa JavaScript sama sekali.
   const shareLinks = [
     {
       label: "Bagikan ke WhatsApp",
@@ -80,19 +122,10 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
     },
   ];
 
-  // Paragraf pertama jadi lede (lead paragraph) ala artikel berita
-  const paragraphs = (item.content || "")
-    .split(/\r?\n\s*\r?\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
-  const lede = paragraphs[0] || "";
-  const bodyParagraphs = paragraphs.slice(1);
-
   return (
     <div className="bg-white pb-16">
       <div className="max-w-4xl mx-auto px-4 md:px-8 pt-8 md:pt-12">
         <div className="lg:flex lg:gap-10">
-          {/* Share rail — DESKTOP: sticky di samping artikel (ala CNN) */}
           <aside className="hidden lg:block flex-shrink-0 w-11">
             <div className="sticky top-28 flex flex-col items-center gap-2">
               <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mb-1 [writing-mode:vertical-rl]">
@@ -115,7 +148,6 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
           </aside>
 
           <div className="flex-1 min-w-0">
-            {/* Kicker rubrik */}
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4">
               <span className="font-sans text-xs font-bold tracking-[0.18em] uppercase text-[#A42A28]">
                 {item.location}
@@ -127,17 +159,13 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
               )}
             </div>
 
-            {/* Judul */}
             <h1 className="font-serif text-[1.75rem] md:text-[2.6rem] font-bold text-[#111111] leading-[1.15] mb-6">
               {item.title}
             </h1>
 
-            {/* Byline + share (mobile) */}
             <div className="border-y border-[#E5E5E5] py-3.5 mb-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
               <div className="font-sans text-sm">
-                <p className="text-[#111111] font-bold">
-                  Oleh {item.author}
-                </p>
+                <p className="text-[#111111] font-bold">Oleh {item.author}</p>
                 <p className="text-[#777777] text-xs mt-0.5 flex items-center gap-1.5">
                   <Calendar size={12} /> {formatDate(item.date)}
                 </p>
@@ -159,7 +187,6 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
               </div>
             </div>
 
-            {/* Foto utama + keterangan */}
             <figure className="mb-8">
               <div className="relative aspect-[16/9] bg-[#EEEEEE] overflow-hidden">
                 <Image
@@ -175,29 +202,23 @@ export default function BeritaDetailClient({ news, relatedNews = [] }: Props) {
               </figcaption>
             </figure>
 
-            {/* Isi artikel */}
             <article className="max-w-[42rem]">
-              {lede && (
-                <p className="font-sans text-lg md:text-xl font-medium text-[#111111] leading-relaxed mb-6">
-                  {lede}
-                </p>
+              {contentHtml?.lede && (
+                <div className="article-lede">
+                  <ArticleContent html={contentHtml.lede} />
+                </div>
               )}
-              {bodyParagraphs.map((p, i) => (
-                <p
-                  key={i}
-                  className="font-sans text-base md:text-[1.05rem] text-[#1A1A1A] leading-loose mb-5"
-                >
-                  {p}
-                </p>
-              ))}
-              {/* Endmark ala artikel media */}
+              {contentHtml?.body && (
+                <div className="article-body">
+                  <ArticleContent html={contentHtml.body} />
+                </div>
+              )}
               <span className="inline-block w-3 h-3 bg-[#A42A28] mt-2" />
             </article>
           </div>
         </div>
       </div>
 
-      {/* BERITA LAINNYA */}
       {relatedNews.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 md:px-8 mt-16">
           <div className="border-b-2 border-[#111111] pb-3 mb-8 flex items-end justify-between">

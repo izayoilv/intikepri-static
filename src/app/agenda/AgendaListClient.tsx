@@ -1,5 +1,6 @@
 "use client";
 
+import Fuse from "fuse.js";
 import {
   Calendar,
   ChevronDown,
@@ -65,6 +66,26 @@ export default function AgendaListClient({
 
   const all = useMemo(() => [...upcoming, ...past], [upcoming, past]);
 
+  const upcomingFuse = useMemo(
+    () =>
+      new Fuse(upcoming, {
+        keys: ["title", "venue", "location"],
+        threshold: 0.4,
+        ignoreLocation: true,
+      }),
+    [upcoming],
+  );
+
+  const pastFuse = useMemo(
+    () =>
+      new Fuse(past, {
+        keys: ["title", "venue", "location"],
+        threshold: 0.4,
+        ignoreLocation: true,
+      }),
+    [past],
+  );
+
   const categories = useMemo(() => {
     const cats = new Set(
       all.map((e) => (e.category || "").trim()).filter(Boolean),
@@ -72,21 +93,17 @@ export default function AgendaListClient({
     return ["Semua", ...Array.from(cats).sort((a, b) => a.localeCompare(b))];
   }, [all]);
 
-  const applyFilters = (items: AgendaEvent[]) =>
-    items.filter((e) => {
+  const applyFilters = (items: AgendaEvent[], fuse: Fuse<AgendaEvent>) => {
+    const base = search.trim() ? fuse.search(search).map((r) => r.item) : items;
+    return base.filter((e) => {
       const matchCat = category === "Semua" || e.category === category;
-      const q = search.trim().toLowerCase();
-      const matchSearch =
-        !q ||
-        e.title.toLowerCase().includes(q) ||
-        (e.venue || "").toLowerCase().includes(q) ||
-        e.location.toLowerCase().includes(q);
-      return matchCat && matchSearch;
+      return matchCat;
     });
+  };
 
   const showUpcoming =
-    status !== "Sudah Berlangsung" ? applyFilters(upcoming) : [];
-  const showPast = status !== "Akan Datang" ? applyFilters(past) : [];
+    status !== "Sudah Berlangsung" ? applyFilters(upcoming, upcomingFuse) : [];
+  const showPast = status !== "Akan Datang" ? applyFilters(past, pastFuse) : [];
   const total = showUpcoming.length + showPast.length;
 
   const renderTimeline = (items: AgendaEvent[], dimmed: boolean) => (

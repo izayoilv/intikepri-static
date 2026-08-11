@@ -18,7 +18,7 @@ export default function TentangKamiPage() {
     <main>
       <Navbar />
       <div className="pt-16">
-        <Breadcrumb items={[{ label: "Tentang Kami" }]} hideNav />
+        <Breadcrumb items={[{ label: "Tentang Kami" }]} />
 
         <section className="bg-[#1A1A1A] py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 md:px-8">

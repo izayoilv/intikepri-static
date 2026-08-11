@@ -1,9 +1,9 @@
 "use client";
 
+import Fuse from "fuse.js";
 import {
   ArrowRight,
   BookOpen,
-  ChevronDown,
   Calendar,
   ChevronLeft,
   ChevronRight,
@@ -13,6 +13,7 @@ import {
   User,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import type { DocumentItem, VideoItem } from "@/types";
@@ -20,8 +21,18 @@ import type { DocumentItem, VideoItem } from "@/types";
 const DOC_PAGE_SIZE = 8;
 
 const MONTHS_ID = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
 ];
 
 function formatDate(iso: string): string {
@@ -30,13 +41,24 @@ function formatDate(iso: string): string {
   return `${Number(d)} ${MONTHS_ID[Number(m) - 1]} ${y}`;
 }
 
-// Thumbnail YouTube gratis tanpa API key; maxres kadang tidak ada -> fallback hq
 function ytThumb(id: string, quality: "maxres" | "hq"): string {
   return `https://img.youtube.com/vi/${id}/${quality === "maxres" ? "maxresdefault" : "hqdefault"}.jpg`;
 }
 
-function isVideoTab(t: "video" | "dokumen"): boolean {
-  return t === "video";
+function FeaturedThumb({ video }: { video: VideoItem }) {
+  const [src, setSrc] = useState(() => ytThumb(video.youtubeId, "maxres"));
+  return (
+    <Image
+      src={src}
+      onError={() => {
+        if (src.includes("maxres")) setSrc(ytThumb(video.youtubeId, "hq"));
+      }}
+      alt={video.title}
+      fill
+      sizes="(max-width: 1024px) 100vw, 1024px"
+      className="object-cover group-hover:scale-105 transition-transform duration-500"
+    />
+  );
 }
 
 export default function PustakaClient({
@@ -48,47 +70,46 @@ export default function PustakaClient({
 }) {
   const [tab, setTab] = useState<"video" | "dokumen">("video");
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("Semua");
   const [page, setPage] = useState(1);
   const [playing, setPlaying] = useState<VideoItem | null>(null);
 
-  const categories = useMemo(() => {
-    const src = isVideoTab(tab) ? videos : documents;
-    const cats = new Set(src.map((x) => (x.category || "").trim()).filter(Boolean));
-    return ["Semua", ...Array.from(cats).sort((a, b) => a.localeCompare(b))];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab, videos, documents]);
+  const videoFuse = useMemo(
+    () =>
+      new Fuse(videos, {
+        keys: ["title", "description"],
+        threshold: 0.4,
+        ignoreLocation: true,
+      }),
+    [videos],
+  );
 
-  const filteredVideos = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return videos.filter((v) => {
-      const matchCat = category === "Semua" || (v.category || "") === category;
-      const matchSearch =
-        !q ||
-        v.title.toLowerCase().includes(q) ||
-        (v.description || "").toLowerCase().includes(q) ||
-        (v.category || "").toLowerCase().includes(q);
-      return matchCat && matchSearch;
-    });
-  }, [videos, search, category]);
+  const docFuse = useMemo(
+    () =>
+      new Fuse(documents, {
+        keys: ["title", "description", "author"],
+        threshold: 0.4,
+        ignoreLocation: true,
+      }),
+    [documents],
+  );
 
-  const filteredDocs = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return documents.filter((d) => {
-      const matchCat = category === "Semua" || (d.category || "") === category;
-      const matchSearch =
-        !q ||
-        d.title.toLowerCase().includes(q) ||
-        (d.description || "").toLowerCase().includes(q) ||
-        (d.author || "").toLowerCase().includes(q) ||
-        (d.category || "").toLowerCase().includes(q);
-      return matchCat && matchSearch;
-    });
-  }, [documents, search, category]);
+  const filteredVideos = useMemo(
+    () =>
+      search.trim() ? videoFuse.search(search).map((r) => r.item) : videos,
+    [videoFuse, search, videos],
+  );
+
+  const filteredDocs = useMemo(
+    () =>
+      search.trim() ? docFuse.search(search).map((r) => r.item) : documents,
+    [docFuse, search, documents],
+  );
 
   const isVideo = tab === "video";
-  // Paginasi hanya dipakai tab dokumen; video tampil semua (featured + grid)
-  const totalPages = Math.max(1, Math.ceil(filteredDocs.length / DOC_PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredDocs.length / DOC_PAGE_SIZE),
+  );
   const currentPage = Math.min(page, totalPages);
   const pageDocs = filteredDocs.slice(
     (currentPage - 1) * DOC_PAGE_SIZE,
@@ -97,7 +118,6 @@ export default function PustakaClient({
   const featured = isVideo ? filteredVideos[0] : null;
   const gridVideos = isVideo ? filteredVideos.slice(1) : [];
 
-  // Modal player: kunci scroll + Esc
   useEffect(() => {
     if (!playing) return;
     const onKey = (e: KeyboardEvent) => {
@@ -127,13 +147,11 @@ export default function PustakaClient({
           </p>
         </div>
 
-        {/* Tab + search, satu baris ramping */}
         <div className="flex flex-col md:flex-row md:items-center gap-3 mb-8">
           <div className="inline-flex border border-[#E5E5E5] flex-shrink-0">
             <button
               onClick={() => {
                 setTab("video");
-                setCategory("Semua");
                 setPage(1);
               }}
               className={`inline-flex items-center gap-2 px-5 py-2.5 font-sans text-sm transition-colors ${
@@ -151,7 +169,6 @@ export default function PustakaClient({
             <button
               onClick={() => {
                 setTab("dokumen");
-                setCategory("Semua");
                 setPage(1);
               }}
               className={`inline-flex items-center gap-2 px-5 py-2.5 font-sans text-sm border-l border-[#E5E5E5] transition-colors ${
@@ -179,36 +196,14 @@ export default function PustakaClient({
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder={isVideo ? "Cari video..." : "Cari dokumen, penulis..."}
+              placeholder={
+                isVideo ? "Cari video..." : "Cari dokumen, penulis..."
+              }
               className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
             />
           </div>
-          {categories.length > 2 && (
-            <div className="relative flex-shrink-0">
-              <select
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setPage(1);
-                }}
-                className="w-full md:w-56 appearance-none border border-[#E5E5E5] bg-white pl-3 pr-8 py-2.5 font-sans text-sm text-[#666666] focus:outline-none focus:border-[#A42A28] cursor-pointer"
-                aria-label="Filter kategori"
-              >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat === "Semua" ? "Semua Kategori" : cat}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                size={14}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
-              />
-            </div>
-          )}
         </div>
 
-        {/* ══════════ TAB VIDEO ══════════ */}
         {isVideo && (
           <>
             {filteredVideos.length === 0 ? (
@@ -222,9 +217,6 @@ export default function PustakaClient({
               </div>
             ) : (
               <>
-                {/* Featured: video terbaru, besar.
-                    Mobile: info di bawah thumbnail (bukan overlay) + tombol play selalu terlihat.
-                    Desktop: overlay sinematik seperti semula. */}
                 {featured && (
                   <button
                     onClick={() => setPlaying(featured)}
@@ -232,18 +224,8 @@ export default function PustakaClient({
                     aria-label={`Putar video: ${featured.title}`}
                   >
                     <div className="relative w-full aspect-video sm:max-h-[480px] bg-[#1A1A1A] overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={ytThumb(featured.youtubeId, "maxres")}
-                        onError={(e) => {
-                          e.currentTarget.src = ytThumb(featured.youtubeId, "hq");
-                        }}
-                        alt={featured.title}
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      {/* Gradient + teks overlay: desktop saja */}
+                      <FeaturedThumb video={featured} />
                       <div className="hidden sm:block absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
-                      {/* Tombol play: mobile selalu terlihat (lingkaran gelap), desktop kotak merah saat hover */}
                       <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full sm:rounded-none bg-black/60 sm:bg-[#A42A28] text-white flex items-center justify-center group-hover:scale-110 transition-transform">
                         <Play size={22} className="ml-0.5 sm:ml-1" />
                       </span>
@@ -253,11 +235,6 @@ export default function PustakaClient({
                         </span>
                       )}
                       <div className="hidden sm:block absolute bottom-0 left-0 p-5 md:p-6 max-w-2xl">
-                        {featured.category && (
-                          <span className="inline-block bg-[#A42A28] text-white font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 mb-2">
-                            {featured.category}
-                          </span>
-                        )}
                         <h2 className="font-serif text-xl md:text-2xl font-bold text-white leading-snug">
                           {featured.title}
                         </h2>
@@ -266,13 +243,7 @@ export default function PustakaClient({
                         </p>
                       </div>
                     </div>
-                    {/* Info di bawah thumbnail: khusus mobile */}
                     <div className="sm:hidden mt-3">
-                      {featured.category && (
-                        <span className="inline-block bg-[#A42A28]/10 text-[#A42A28] font-sans text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 mb-1.5">
-                          {featured.category}
-                        </span>
-                      )}
                       <h2 className="font-serif text-lg font-bold text-[#111111] leading-snug group-hover:text-[#A42A28] transition-colors">
                         {featured.title}
                       </h2>
@@ -283,8 +254,6 @@ export default function PustakaClient({
                   </button>
                 )}
 
-                {/* Grid sisanya — mobile: baris horizontal (thumb kiri, teks kanan);
-                    desktop: kartu grid seperti semula */}
                 {gridVideos.length > 0 && (
                   <div className="grid grid-cols-1 gap-x-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-y-6">
                     {gridVideos.map((v) => (
@@ -295,15 +264,13 @@ export default function PustakaClient({
                         aria-label={`Putar video: ${v.title}`}
                       >
                         <div className="relative w-[38%] max-w-40 sm:w-full sm:max-w-none flex-shrink-0 aspect-video bg-[#1A1A1A] overflow-hidden">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
+                          <Image
                             src={ytThumb(v.youtubeId, "hq")}
                             alt={v.title}
-                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            loading="lazy"
+                            fill
+                            sizes="(max-width: 640px) 38vw, (max-width: 1024px) 33vw, 25vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
-                          {/* Play badge: selalu terlihat di mobile (layar sentuh tidak punya hover),
-                              di desktop muncul saat hover */}
                           <span className="absolute inset-0 flex items-center justify-center">
                             <span className="w-9 h-9 sm:w-11 sm:h-11 rounded-full sm:rounded-none bg-black/60 sm:bg-[#A42A28]/90 text-white flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 sm:group-hover:scale-110 transition-all">
                               <Play size={15} className="ml-0.5" />
@@ -316,11 +283,6 @@ export default function PustakaClient({
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          {v.category && (
-                            <span className="sm:hidden inline-block font-sans text-[10px] font-semibold tracking-wider uppercase text-[#A42A28] mb-1">
-                              {v.category}
-                            </span>
-                          )}
                           <h3 className="font-serif text-sm sm:text-base font-semibold text-[#111111] leading-snug sm:mt-3 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                             {v.title}
                           </h3>
@@ -337,7 +299,6 @@ export default function PustakaClient({
           </>
         )}
 
-        {/* ══════════ TAB DOKUMEN ══════════ */}
         {!isVideo && (
           <>
             {filteredDocs.length === 0 ? (
@@ -359,15 +320,14 @@ export default function PustakaClient({
                     rel="noopener noreferrer"
                     className="group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex gap-4 md:gap-5 p-4 md:p-5"
                   >
-                    {/* Cover dokumen: border tipis elegan, bukan fade */}
                     <div className="flex-shrink-0 w-24 sm:w-28 aspect-[3/4] bg-[#F7F7F7] border border-[#DDDDDD] overflow-hidden flex flex-col items-center justify-center">
                       {doc.thumbnail ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={doc.thumbnail}
                           alt={`Sampul ${doc.title}`}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
+                          fill
+                          sizes="(max-width: 640px) 96px, 112px"
+                          className="object-cover"
                         />
                       ) : (
                         <>
@@ -384,11 +344,6 @@ export default function PustakaClient({
                         <h2 className="font-serif text-lg md:text-xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
                           {doc.title}
                         </h2>
-                        {doc.category && (
-                          <span className="bg-[#A42A28]/10 text-[#A42A28] font-sans text-[10px] px-2 py-0.5">
-                            {doc.category}
-                          </span>
-                        )}
                       </div>
                       <p className="font-sans text-xs text-[#999999] mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                         <span className="flex items-center gap-1">
@@ -452,8 +407,6 @@ export default function PustakaClient({
         )}
       </div>
 
-      {/* MODAL PLAYER — iframe YouTube baru dimuat saat diklik (halaman tetap ringan).
-          Mobile: melebar penuh tepi layar; desktop: kotak tengah max-w-4xl. */}
       {playing && (
         <div
           className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4"

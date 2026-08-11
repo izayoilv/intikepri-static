@@ -18,7 +18,9 @@ export default function DirektoriSection({
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  const businesses = initialItems.slice(0, 3);
+  const businesses = [...initialItems]
+    .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
+    .slice(0, 3);
 
   useEffect(() => {
     if (!ref.current || businesses.length === 0) return;
@@ -95,6 +97,11 @@ export default function DirektoriSection({
                     <h3 className="font-serif text-lg md:text-xl font-semibold text-[#1A1A1A] leading-snug group-hover:text-[#A42A28] transition-colors">
                       {biz.name}
                     </h3>
+                    {(biz.sort_order ?? 999) < 999 && (
+                      <span className="bg-[#C8956C]/15 text-[#C8956C] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
+                        Unggulan
+                      </span>
+                    )}
                   </div>
                   <p className="font-sans text-xs text-[#999999] mt-1 flex items-center gap-x-2">
                     <span className="text-[#A42A28]">{biz.category}</span>
@@ -120,7 +127,7 @@ export default function DirektoriSection({
                     {biz.description}
                   </p>
                   <p className="mt-auto pt-2">
-                    {biz.website && (
+                    {biz.contacts?.website && (
                       <span className="inline-flex items-center gap-1.5 text-[#A42A28] font-sans text-xs font-semibold underline-offset-4 group-hover:underline">
                         <Globe size={13} /> Kunjungi Website{" "}
                         <ArrowRight size={12} />

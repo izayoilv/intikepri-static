@@ -1,16 +1,17 @@
 import fs from "fs";
-import path from "path";
-
 import type { Metadata } from "next";
+import path from "path";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { newsToLedeHtml } from "@/lib/news-html";
+import { newsToText } from "@/lib/news-text";
+import { SITE_URL } from "@/lib/site";
 import type { News } from "@/types";
 
 import BeritaDetailClient from "./BeritaDetailClient";
 
-// Helper untuk membaca data berita (sesuaikan dengan implementasi asli di tokomu jika berbeda)
 function getAllNews(): News[] {
   try {
     const filePath = path.join(process.cwd(), "src/data/news.json");
@@ -21,14 +22,11 @@ function getAllNews(): News[] {
   }
 }
 
-const BASE = "https://intikepri.com";
-
 function toISODate(date: string): string | undefined {
   const d = new Date(date);
   return isNaN(d.getTime()) ? undefined : d.toISOString();
 }
 
-// SEO: metadata unik per artikel (title, description, Open Graph untuk share preview)
 export async function generateMetadata({
   params,
 }: {
@@ -39,7 +37,7 @@ export async function generateMetadata({
 
   if (!news) return { title: "Berita tidak ditemukan | INTI Kepri" };
 
-  const description = news.content.replace(/\s+/g, " ").slice(0, 160);
+  const description = newsToText(news.content).slice(0, 160);
 
   return {
     title: `${news.title} | INTI Kepri`,
@@ -71,10 +69,11 @@ export default async function BeritaDetailPage({
   const items = getAllNews();
   const news = items.find((n) => n.slug === slug) || null;
 
-  // Berita lainnya: semua berita selain yang sedang dibuka, ambil 3 teratas
   const relatedNews = items.filter((n) => n.slug !== slug).slice(0, 3);
 
   const isoDate = news ? toISODate(news.date) : undefined;
+
+  const contentHtml = news ? newsToLedeHtml(news.content) : null;
 
   const articleLd = news
     ? {
@@ -85,16 +84,16 @@ export default async function BeritaDetailPage({
         author: { "@type": "Person", name: news.author },
         image: news.image?.startsWith("http")
           ? news.image
-          : `${BASE}${news.image}`,
+          : `${SITE_URL}${news.image}`,
         publisher: {
           "@type": "Organization",
           name: "INTI Kepri",
           logo: {
             "@type": "ImageObject",
-            url: `${BASE}/images/Logo-INTI.png`,
+            url: `${SITE_URL}/images/Logo-INTI.png`,
           },
         },
-        mainEntityOfPage: `${BASE}/berita/${news.slug}/`,
+        mainEntityOfPage: `${SITE_URL}/berita/${news.slug}/`,
       }
     : null;
 
@@ -112,10 +111,17 @@ export default async function BeritaDetailPage({
           items={
             news
               ? [{ label: "Berita", to: "/berita" }, { label: news.title }]
-              : [{ label: "Berita", to: "/berita" }, { label: "Tidak ditemukan" }]
+              : [
+                  { label: "Berita", to: "/berita" },
+                  { label: "Tidak ditemukan" },
+                ]
           }
         />
-        <BeritaDetailClient news={news} relatedNews={relatedNews} />
+        <BeritaDetailClient
+          news={news}
+          relatedNews={relatedNews}
+          contentHtml={contentHtml}
+        />
       </div>
       <Footer />
     </main>

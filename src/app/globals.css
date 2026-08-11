@@ -16,9 +16,6 @@ body {
   color: #1a1a1a;
 }
 
-/* ===== Hero slideshow =====
-   Total siklus 18s = 3 slide x 6 detik.
-   Kalau jumlah foto diubah, sesuaikan angka 18s dan persentase di keyframes. */
 @keyframes hero-slide {
   0% {
     opacity: 0;
@@ -67,7 +64,6 @@ body {
   transform-origin: left;
 }
 
-/* Hormati preferensi gerak minim: tampilkan foto pertama statis */
 @media (prefers-reduced-motion: reduce) {
   .hero-slide,
   .hero-progress {
@@ -79,10 +75,6 @@ body {
   }
 }
 
-/* ===== Marquee galeri (homepage) =====
-   Tempo sengaja tidak konstan: jarak antar keyframe bervariasi supaya
-   gerakan terasa organik (pelan -> cepat -> pelan), bukan conveyor kaku.
-   Track berisi 2x duplikat foto; -50% membuat loop mulus. */
 @keyframes galeri-drift {
   0% {
     transform: translateX(0);
@@ -111,6 +103,165 @@ body {
 
 .marquee-pause:hover .marquee-track {
   animation-play-state: paused;
+}
+
+.article-lede {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  font-weight: 500;
+  color: #111111;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .article-lede {
+    font-size: 1.25rem;
+  }
+}
+
+.article-body {
+  font-size: 1rem;
+  line-height: 1.875;
+  color: #1a1a1a;
+}
+
+@media (min-width: 768px) {
+  .article-body {
+    font-size: 1.05rem;
+  }
+}
+
+.article-body p {
+  margin-bottom: 1.25rem;
+}
+
+.article-body h1,
+.article-body h2,
+.article-body h3,
+.article-body h4,
+.article-body h5,
+.article-body h6 {
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  color: #111111;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.article-body ul,
+.article-body ol {
+  margin: 0 0 1.25rem 1.25rem;
+}
+
+.article-body ul {
+  list-style: disc;
+}
+
+.article-body ol {
+  list-style: decimal;
+}
+
+.article-body li {
+  margin-bottom: 0.25rem;
+}
+
+.article-body a {
+  color: #a42a28;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.article-body blockquote {
+  border-left: 4px solid #a42a28;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  margin: 1.5rem 0;
+  color: #444444;
+  font-style: italic;
+}
+
+.article-body pre {
+  background: #f5f5f5;
+  border: 1px solid #e5e5e5;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin: 0 0 1.25rem;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.article-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.875em;
+  background: #f5f5f5;
+  padding: 0.15em 0.35em;
+  border-radius: 0.25rem;
+}
+
+.article-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.article-body hr {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 2rem 0;
+}
+
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+}
+
+.article-body th,
+.article-body td {
+  border: 1px solid #e5e5e5;
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.article-body th {
+  font-weight: 700;
+  background: #fafafa;
+}
+
+.article-body iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 0;
+  border-radius: 0.5rem;
+  margin: 0 0 1.25rem;
+}
+
+.article-img-wrap {
+  margin: 1.5rem auto;
+}
+
+.article-img-wrap img {
+  width: 100%;
+  height: auto;
+}
+
+.article-img-wrap.img-m {
+  max-width: 75%;
+}
+
+.article-img-wrap.img-s {
+  max-width: 55%;
+}
+
+@media (max-width: 640px) {
+  .article-img-wrap.img-m,
+  .article-img-wrap.img-s {
+    max-width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

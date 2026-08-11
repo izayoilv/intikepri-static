@@ -22,11 +22,5 @@ yarn-error.log*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
-src/data/news.json
-# Sementara TIDAK di-ignore: sample galeri/direktori/agenda/video/dokumen di-commit sampai endpoint CMS live.
-# Setelah CMS live, hapus tanda '#' agar file data kembali tidak ikut git.
-# src/data/galeri.json
-# src/data/direktori.json
-# src/data/agenda.json
-# src/data/video.json
-# src/data/dokumen.json
+
+src/data/*

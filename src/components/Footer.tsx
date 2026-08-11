@@ -11,7 +11,7 @@ export default function Footer() {
     { to: "/agenda", label: "Agenda" },
     { to: "/galeri", label: "Galeri" },
     { to: "/direktori", label: "Direktori Bisnis" },
-  ];
+  ] as const;
 
   const socials = [
     {

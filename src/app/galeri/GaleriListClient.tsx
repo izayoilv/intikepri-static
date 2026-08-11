@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Images,
-  MapPin,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Images, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
@@ -94,15 +87,6 @@ export default function GaleriListClient({
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="absolute bottom-0 inset-x-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
-                  <p className="font-sans text-xs font-medium text-white line-clamp-1">
-                    {photo.title}
-                  </p>
-                  <p className="font-sans text-[10px] text-white/70 mt-0.5">
-                    {photo.category}
-                  </p>
-                </div>
               </button>
             ))}
           </div>
@@ -183,26 +167,8 @@ export default function GaleriListClient({
               height={900}
               className="w-full max-h-[75vh] object-contain"
             />
-            <div className="mt-4 flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <h2 className="font-serif text-lg font-semibold text-white">
-                  {items[lightbox].title}
-                </h2>
-                <p className="font-sans text-xs text-white/60 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span>{items[lightbox].category}</span>
-                  {items[lightbox].date && (
-                    <span className="flex items-center gap-1">
-                      <Calendar size={11} /> {items[lightbox].date}
-                    </span>
-                  )}
-                  {items[lightbox].location && (
-                    <span className="flex items-center gap-1">
-                      <MapPin size={11} /> {items[lightbox].location}
-                    </span>
-                  )}
-                </p>
-              </div>
-              <span className="font-sans text-xs text-white/40 flex-shrink-0">
+            <div className="mt-4 flex items-center justify-end gap-4">
+              <span className="font-sans text-xs text-white/40">
                 {lightbox + 1} / {items.length}
               </span>
             </div>
