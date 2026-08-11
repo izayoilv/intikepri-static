@@ -31,26 +31,24 @@ clone:
 steps:
   fetch-data:
     image: *alpine
-    environment:
-      CMS_API_BASE: https://api.intikepri.com
     commands:
       - apk add --no-cache curl jq
       - mkdir -p src/data
       - |
-        for f in news:news gallery:gallery business:business; do
-          out="${f%%:*}"; ep="${f##*:}"
-          if curl -fsSL "${CMS_API_BASE}/api/${ep}" -o "/tmp/${out}.raw.json" \
-             && jq -e '.data.items' "/tmp/${out}.raw.json" > "src/data/${out}.json.tmp" 2>/dev/null; then
-            mv "src/data/${out}.json.tmp" "src/data/${out}.json"
-            echo "fetched ${out}.json ($(jq length "src/data/${out}.json") items)"
-          else
-            echo "WARNING: failed to fetch ${out} from ${CMS_API_BASE}, keeping committed data"
-          fi
-        done
+        set -e
+        fetch() {
+          ep="$1"; out="$2"
+          curl -fsSL "https://api.intikepri.com/api/$ep" -o "/tmp/$out.json" || { echo "WARNING: failed to fetch $out"; return 1; }
+          jq -e '.data.items' "/tmp/$out.json" > "src/data/$out.json" || { echo "WARNING: invalid response for $out"; return 1; }
+          echo "fetched $out.json ($(jq length "src/data/$out.json") items)"
+        }
+        fetch news news
+        fetch gallery gallery
+        fetch business business
       - |
         for f in news gallery business; do
-          if [ ! -f "src/data/$f.json" ]; then
-            echo "ERROR: src/data/$f.json missing after fetch"
+          if [ ! -s "src/data/$f.json" ]; then
+            echo "ERROR: src/data/$f.json missing or empty after fetch"
             exit 1
           fi
         done
