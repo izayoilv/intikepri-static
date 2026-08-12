@@ -167,7 +167,8 @@ export default function BeritaDetailClient({
               <div className="font-sans text-sm">
                 <p className="text-[#111111] font-bold">Oleh {item.author}</p>
                 <p className="text-[#777777] text-xs mt-0.5 flex items-center gap-1.5">
-                  <Calendar size={12} /> {formatDate(item.date)}
+                  <Calendar size={12} />{" "}
+                  <time dateTime={item.date}>{formatDate(item.date)}</time>
                 </p>
               </div>
               <div className="flex items-center gap-1.5 lg:hidden">
@@ -256,7 +257,8 @@ export default function BeritaDetailClient({
                     {rel.title}
                   </h3>
                   <p className="font-sans text-xs text-[#777777] mt-2 flex items-center gap-1.5">
-                    <Calendar size={12} /> {formatDate(rel.date)}
+                    <Calendar size={12} />{" "}
+                    <time dateTime={rel.date}>{formatDate(rel.date)}</time>
                     <span aria-hidden="true">·</span>
                     <span className="truncate">{rel.author}</span>
                   </p>

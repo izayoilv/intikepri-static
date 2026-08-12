@@ -12,6 +12,8 @@ import {
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { agendaStatus, isAgendaVisible, sortAgenda } from "@/lib/agenda";
+import { useNow } from "@/lib/use-now";
 import type { AgendaEvent } from "@/types";
 
 const MONTHS_ID = [
@@ -51,64 +53,56 @@ function groupByMonth(items: AgendaEvent[]): [string, AgendaEvent[]][] {
   ]);
 }
 
-export default function AgendaListClient({
-  upcoming,
-  past,
-}: {
-  upcoming: AgendaEvent[];
-  past: AgendaEvent[];
-}) {
+export default function AgendaListClient({ items }: { items: AgendaEvent[] }) {
+  const now = useNow();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Semua");
   const [status, setStatus] = useState<
-    "Semua" | "Akan Datang" | "Sudah Berlangsung"
+    "Semua" | "Akan Datang" | "Sedang Berlangsung"
   >("Semua");
 
-  const all = useMemo(() => [...upcoming, ...past], [upcoming, past]);
+  const all = useMemo(() => sortAgenda(items), [items]);
 
-  const upcomingFuse = useMemo(
-    () =>
-      new Fuse(upcoming, {
-        keys: ["title", "venue", "location"],
-        threshold: 0.4,
-        ignoreLocation: true,
-      }),
-    [upcoming],
+  const visible = useMemo(
+    () => (now ? all.filter((e) => isAgendaVisible(e, now)) : all),
+    [all, now],
   );
 
-  const pastFuse = useMemo(
+  const fuse = useMemo(
     () =>
-      new Fuse(past, {
+      new Fuse(visible, {
         keys: ["title", "venue", "location"],
         threshold: 0.4,
         ignoreLocation: true,
       }),
-    [past],
+    [visible],
   );
 
   const categories = useMemo(() => {
     const cats = new Set(
-      all.map((e) => (e.category || "").trim()).filter(Boolean),
+      visible.map((e) => (e.category || "").trim()).filter(Boolean),
     );
     return ["Semua", ...Array.from(cats).sort((a, b) => a.localeCompare(b))];
-  }, [all]);
+  }, [visible]);
 
-  const applyFilters = (items: AgendaEvent[], fuse: Fuse<AgendaEvent>) => {
-    const base = search.trim() ? fuse.search(search).map((r) => r.item) : items;
+  const filtered = useMemo(() => {
+    const base = search.trim()
+      ? fuse.search(search).map((r) => r.item)
+      : visible;
     return base.filter((e) => {
       const matchCat = category === "Semua" || e.category === category;
-      return matchCat;
+      if (!matchCat) return false;
+      if (status === "Semua" || !now) return true;
+      return (
+        agendaStatus(e, now) ===
+        (status === "Akan Datang" ? "upcoming" : "ongoing")
+      );
     });
-  };
+  }, [fuse, search, visible, category, status, now]);
 
-  const showUpcoming =
-    status !== "Sudah Berlangsung" ? applyFilters(upcoming, upcomingFuse) : [];
-  const showPast = status !== "Akan Datang" ? applyFilters(past, pastFuse) : [];
-  const total = showUpcoming.length + showPast.length;
-
-  const renderTimeline = (items: AgendaEvent[], dimmed: boolean) => (
+  const renderTimeline = (events: AgendaEvent[]) => (
     <div className="relative border-l border-[#E5E5E5] ml-2 md:ml-4">
-      {groupByMonth(items).map(([month, events]) => (
+      {groupByMonth(events).map(([month, monthEvents]) => (
         <div key={month} className="mb-10 last:mb-0">
           <div className="relative mb-5 -ml-[7px]">
             <span className="inline-block w-3 h-3 bg-[#A42A28] rounded-full align-middle" />
@@ -117,55 +111,65 @@ export default function AgendaListClient({
             </span>
           </div>
           <div className="space-y-4 pl-6 md:pl-8">
-            {events.map((e) => (
-              <Link
-                key={e.slug}
-                href={`/agenda/${e.slug}`}
-                className={`group flex gap-4 md:gap-6 bg-white border border-[#E5E5E5] hover:border-[#A42A28]/40 hover:shadow-lg transition-all p-4 md:p-5 ${
-                  dimmed ? "opacity-60 hover:opacity-100" : ""
-                }`}
-              >
-                <div className="flex-shrink-0 w-14 text-center border-r border-[#E5E5E5] pr-4">
-                  <p className="font-serif text-2xl md:text-3xl font-bold text-[#A42A28] leading-none">
-                    {dayNum(e.date)}
-                  </p>
-                  <p className="font-sans text-[10px] tracking-widest uppercase text-[#999999] mt-1">
-                    {MONTHS_ID[Number(e.date.split("-")[1]) - 1]?.slice(0, 3)}
-                  </p>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                    {e.category && (
-                      <span className="inline-block bg-[#A42A28]/10 text-[#A42A28] text-[10px] font-sans px-2 py-0.5">
-                        {e.category}
-                      </span>
-                    )}
-                    {!dimmed && (
-                      <span className="inline-block bg-[#C8956C]/15 text-[#C8956C] text-[10px] font-sans px-2 py-0.5">
-                        Akan Datang
-                      </span>
-                    )}
-                  </div>
-                  <h2 className="font-serif text-base md:text-lg font-semibold text-[#1A1A1A] line-clamp-2 group-hover:text-[#A42A28] transition-colors">
-                    {e.title}
-                  </h2>
-                  <p className="font-sans text-xs text-[#999999] mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1">
-                    {e.time && (
+            {monthEvents.map((e) => {
+              const status = now ? agendaStatus(e, now) : null;
+              return (
+                <Link
+                  key={e.slug}
+                  href={`/agenda/${e.slug}`}
+                  className="group flex gap-4 md:gap-6 bg-white border border-[#E5E5E5] hover:border-[#A42A28]/40 hover:shadow-lg transition-all p-4 md:p-5"
+                >
+                  <time
+                    dateTime={e.date}
+                    className="flex-shrink-0 w-14 text-center border-r border-[#E5E5E5] pr-4"
+                  >
+                    <p className="font-serif text-2xl md:text-3xl font-bold text-[#A42A28] leading-none">
+                      {dayNum(e.date)}
+                    </p>
+                    <p className="font-sans text-[10px] tracking-widest uppercase text-[#999999] mt-1">
+                      {MONTHS_ID[Number(e.date.split("-")[1]) - 1]?.slice(0, 3)}
+                    </p>
+                  </time>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                      {e.category && (
+                        <span className="inline-block bg-[#A42A28]/10 text-[#A42A28] text-[10px] font-sans px-2 py-0.5">
+                          {e.category}
+                        </span>
+                      )}
+                      {status === "ongoing" && (
+                        <span className="inline-block bg-[#2E7D32]/10 text-[#2E7D32] text-[10px] font-sans px-2 py-0.5">
+                          Sedang Berlangsung
+                        </span>
+                      )}
+                      {status === "upcoming" && (
+                        <span className="inline-block bg-[#C8956C]/15 text-[#C8956C] text-[10px] font-sans px-2 py-0.5">
+                          Akan Datang
+                        </span>
+                      )}
+                    </div>
+                    <h2 className="font-serif text-base md:text-lg font-semibold text-[#1A1A1A] line-clamp-2 group-hover:text-[#A42A28] transition-colors">
+                      {e.title}
+                    </h2>
+                    <p className="font-sans text-xs text-[#999999] mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1">
+                      {e.start_time && (
+                        <span className="flex items-center gap-1">
+                          <Clock size={12} /> {e.start_time}
+                          {e.end_time ? ` – ${e.end_time}` : ""}
+                        </span>
+                      )}
                       <span className="flex items-center gap-1">
-                        <Clock size={12} /> {e.time}
+                        <MapPin size={12} /> {e.venue || e.location}
                       </span>
-                    )}
-                    <span className="flex items-center gap-1">
-                      <MapPin size={12} /> {e.venue || e.location}
-                    </span>
-                  </p>
-                </div>
-                <ChevronRight
-                  size={18}
-                  className="self-center flex-shrink-0 text-[#DDDDDD] group-hover:text-[#A42A28] transition-colors"
-                />
-              </Link>
-            ))}
+                    </p>
+                  </div>
+                  <ChevronRight
+                    size={18}
+                    className="self-center flex-shrink-0 text-[#DDDDDD] group-hover:text-[#A42A28] transition-colors"
+                  />
+                </Link>
+              );
+            })}
           </div>
         </div>
       ))}
@@ -230,7 +234,7 @@ export default function AgendaListClient({
             >
               <option value="Semua">Semua Status</option>
               <option value="Akan Datang">Akan Datang</option>
-              <option value="Sudah Berlangsung">Sudah Berlangsung</option>
+              <option value="Sedang Berlangsung">Sedang Berlangsung</option>
             </select>
             <ChevronDown
               size={14}
@@ -239,30 +243,20 @@ export default function AgendaListClient({
           </div>
         </div>
         <p className="font-sans text-xs text-[#BBBBBB] mb-10">
-          {total} agenda ditemukan
+          {filtered.length} agenda ditemukan
         </p>
 
-        {total === 0 ? (
+        {filtered.length === 0 ? (
           <div className="text-center py-20">
             <Calendar size={40} className="mx-auto text-[#E5E5E5] mb-4" />
             <p className="text-[#999999] font-sans">
-              {all.length === 0
+              {visible.length === 0
                 ? "Belum ada agenda terjadwal."
                 : "Tidak ada agenda yang cocok."}
             </p>
           </div>
         ) : (
-          <>
-            {showUpcoming.length > 0 && renderTimeline(showUpcoming, false)}
-            {showPast.length > 0 && (
-              <div className={showUpcoming.length > 0 ? "mt-16" : ""}>
-                <p className="font-sans text-xs tracking-[0.2em] uppercase text-[#BBBBBB] mb-6">
-                  Sudah Berlangsung
-                </p>
-                {renderTimeline(showPast, true)}
-              </div>
-            )}
-          </>
+          renderTimeline(filtered)
         )}
       </div>
     </section>

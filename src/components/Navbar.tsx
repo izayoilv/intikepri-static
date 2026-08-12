@@ -31,8 +31,9 @@ export default function Navbar() {
   const isActive = (p: string) => pathname === p;
 
   return (
-    <>
+    <header>
       <nav
+        aria-label="Navigasi utama"
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-sm" : isHome ? "bg-transparent" : "bg-white/95 backdrop-blur-sm shadow-sm"}`}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -106,6 +107,6 @@ export default function Navbar() {
           </div>
         )}
       </nav>
-    </>
+    </header>
   );
 }

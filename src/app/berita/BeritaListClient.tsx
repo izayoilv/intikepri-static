@@ -50,7 +50,7 @@ function Meta({ item, light = false }: { item: News; light?: boolean }) {
       }`}
     >
       <Calendar size={12} className="flex-shrink-0" />
-      {formatDate(item.date)}
+      <time dateTime={item.date}>{formatDate(item.date)}</time>
       <span aria-hidden="true">·</span>
       <span className="truncate">{item.author}</span>
     </p>

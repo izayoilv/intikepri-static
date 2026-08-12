@@ -5,7 +5,6 @@ import path from "path";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { fallbackAgenda } from "@/lib/data";
 import type { AgendaEvent } from "@/types";
 
 import AgendaListClient from "./AgendaListClient";
@@ -27,34 +26,21 @@ function getAgenda(): AgendaEvent[] {
   try {
     const filePath = path.join(process.cwd(), "src", "data", "agenda.json");
     const content = fs.readFileSync(filePath, "utf-8");
-    const parsed: AgendaEvent[] = JSON.parse(content);
-    return parsed.length > 0 ? parsed : fallbackAgenda;
+    return JSON.parse(content);
   } catch {
-    return fallbackAgenda;
+    return [];
   }
 }
 
-export function isUpcoming(e: AgendaEvent, today: string): boolean {
-  return (e.endDate || e.date) >= today;
-}
-
-export default async function AgendaPage() {
+export default function AgendaPage() {
   const items = getAgenda();
-  const today = new Date().toISOString().slice(0, 10);
-
-  const upcoming = items
-    .filter((e) => isUpcoming(e, today))
-    .sort((a, b) => a.date.localeCompare(b.date));
-  const past = items
-    .filter((e) => !isUpcoming(e, today))
-    .sort((a, b) => b.date.localeCompare(a.date));
 
   return (
     <main>
       <Navbar />
       <div className="pt-16">
         <Breadcrumb items={[{ label: "Agenda" }]} />
-        <AgendaListClient upcoming={upcoming} past={past} />
+        <AgendaListClient items={items} />
       </div>
       <Footer />
     </main>

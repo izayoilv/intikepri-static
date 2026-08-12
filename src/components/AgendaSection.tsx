@@ -4,8 +4,10 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
+import { isAgendaVisible, sortAgenda } from "@/lib/agenda";
+import { useNow } from "@/lib/use-now";
 import type { AgendaEvent } from "@/types";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -31,7 +33,14 @@ export default function AgendaSection({
   initialItems: AgendaEvent[];
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const events = initialItems.slice(0, 3);
+  const now = useNow();
+
+  const events = useMemo(() => {
+    const visible = now
+      ? sortAgenda(initialItems.filter((e) => isAgendaVisible(e, now)))
+      : sortAgenda(initialItems);
+    return visible.slice(0, 3);
+  }, [initialItems, now]);
 
   useEffect(() => {
     if (!ref.current || events.length === 0) return;
@@ -87,23 +96,27 @@ export default function AgendaSection({
               >
                 <span className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#A42A28] rounded-full ring-4 ring-[#F7F7F7] group-hover:scale-125 transition-transform" />
 
-                <div className="flex-shrink-0 w-12 bg-white border border-[#E5E5E5] group-hover:border-[#A42A28]/40 transition-colors text-center py-1.5">
+                <time
+                  dateTime={e.date}
+                  className="flex-shrink-0 w-12 bg-white border border-[#E5E5E5] group-hover:border-[#A42A28]/40 transition-colors text-center py-1.5"
+                >
                   <p className="font-serif text-lg font-bold text-[#A42A28] leading-none">
                     {Number(d)}
                   </p>
                   <p className="font-sans text-[9px] tracking-widest uppercase text-[#999999] mt-0.5">
                     {MONTHS_ID[Number(m) - 1]}
                   </p>
-                </div>
+                </time>
 
                 <div className="min-w-0 flex-1">
                   <h3 className="font-serif text-base md:text-lg font-semibold text-[#1A1A1A] truncate group-hover:text-[#A42A28] transition-colors">
                     {e.title}
                   </h3>
                   <p className="font-sans text-xs text-[#999999] mt-0.5 flex items-center gap-x-3 gap-y-0.5 truncate">
-                    {e.time && (
+                    {e.start_time && (
                       <span className="flex items-center gap-1 flex-shrink-0">
-                        <Clock size={11} /> {e.time}
+                        <Clock size={11} /> {e.start_time}
+                        {e.end_time ? ` – ${e.end_time}` : ""}
                       </span>
                     )}
                     <span className="flex items-center gap-1 truncate">

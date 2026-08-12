@@ -6,7 +6,7 @@ COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --link . .
 RUN mkdir -p src/data && \
-    touch src/data/news.json src/data/gallery.json src/data/business.json
+    touch src/data/{news,gallery,business,agenda,document,video}.json
 RUN pnpm build
 
 FROM nginx:1.31-alpine

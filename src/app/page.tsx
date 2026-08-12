@@ -46,11 +46,7 @@ function getUpcomingAgenda(): AgendaEvent[] {
     const filePath = path.join(process.cwd(), "src", "data", "agenda.json");
     const content = fs.readFileSync(filePath, "utf-8");
     const parsed: AgendaEvent[] = JSON.parse(content);
-    const today = new Date().toISOString().slice(0, 10);
-    return parsed
-      .filter((e) => (e.endDate || e.date) >= today)
-      .sort((a, b) => a.date.localeCompare(b.date))
-      .slice(0, 3);
+    return parsed.sort((a, b) => a.date.localeCompare(b.date)).slice(0, 3);
   } catch {
     return fallbackAgenda;
   }

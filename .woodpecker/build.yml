@@ -45,8 +45,11 @@ steps:
         fetch news news
         fetch gallery gallery
         fetch business business
+        fetch agenda agenda
+        fetch documents document
+        fetch video video
       - |
-        for f in news gallery business; do
+        for f in news gallery business agenda document video; do
           if [ ! -s "src/data/$f.json" ]; then
             echo "ERROR: src/data/$f.json missing or empty after fetch"
             exit 1

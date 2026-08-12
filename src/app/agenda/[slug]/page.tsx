@@ -61,16 +61,6 @@ export default async function AgendaDetailPage({
   const items = getAllAgenda();
   const event = items.find((e) => e.slug === slug) || null;
 
-  const today = new Date().toISOString().slice(0, 10);
-  const related = items
-    .filter((e) => e.slug !== slug)
-    .sort((a, b) => {
-      const aUp = (a.endDate || a.date) >= today ? 0 : 1;
-      const bUp = (b.endDate || b.date) >= today ? 0 : 1;
-      return aUp - bUp || a.date.localeCompare(b.date);
-    })
-    .slice(0, 3);
-
   const eventLd = event
     ? {
         "@context": "https://schema.org",
@@ -78,7 +68,6 @@ export default async function AgendaDetailPage({
         name: event.title,
         description: event.description.replace(/\s+/g, " ").slice(0, 300),
         startDate: event.date,
-        ...(event.endDate ? { endDate: event.endDate } : {}),
         ...(event.image ? { image: event.image } : {}),
         eventStatus: "https://schema.org/EventScheduled",
         location: {
@@ -108,7 +97,7 @@ export default async function AgendaDetailPage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(eventLd) }}
         />
       )}
-      <AgendaDetailClient event={event} related={related} />
+      <AgendaDetailClient event={event} all={items} />
     </>
   );
 }

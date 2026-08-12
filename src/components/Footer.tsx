@@ -107,18 +107,20 @@ export default function Footer() {
             <h4 className="font-serif text-sm font-semibold mb-4 text-white/80">
               Menu
             </h4>
-            <ul className="space-y-2">
-              {links.map((l) => (
-                <li key={l.to}>
-                  <Link
-                    href={l.to}
-                    className="text-white/40 hover:text-white font-sans text-sm transition-colors"
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <nav aria-label="Menu footer">
+              <ul className="space-y-2">
+                {links.map((l) => (
+                  <li key={l.to}>
+                    <Link
+                      href={l.to}
+                      className="text-white/40 hover:text-white font-sans text-sm transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
 
           <div>
@@ -145,7 +147,7 @@ export default function Footer() {
             <h4 className="font-serif text-sm font-semibold mb-4 text-white/80">
               Kontak
             </h4>
-            <div className="space-y-3">
+            <address className="not-italic space-y-3">
               <p className="text-white/40 font-sans text-sm flex items-start gap-2">
                 <MapPin
                   size={14}
@@ -159,7 +161,7 @@ export default function Footer() {
                 <Mail size={14} className="flex-shrink-0 text-[#C8956C]" />{" "}
                 perhimpunanintikepri@gmail.com
               </p>
-            </div>
+            </address>
           </div>
         </div>
 

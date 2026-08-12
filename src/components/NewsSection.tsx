@@ -87,7 +87,8 @@ export default function NewsSection({
                 </h3>
                 <p className="text-white/60 font-sans text-xs flex items-center gap-3">
                   <span className="flex items-center gap-1">
-                    <Calendar size={12} /> {featured.date}
+                    <Calendar size={12} />{" "}
+                    <time dateTime={featured.date}>{featured.date}</time>
                   </span>
                   <span className="flex items-center gap-1">
                     <User size={12} /> {featured.author}
@@ -119,7 +120,8 @@ export default function NewsSection({
                       </h3>
                     </div>
                     <p className="text-[#999999] font-sans text-xs flex items-center gap-1 mt-3">
-                      <Calendar size={12} /> {item.date}
+                      <Calendar size={12} />{" "}
+                      <time dateTime={item.date}>{item.date}</time>
                     </p>
                   </div>
                 </div>

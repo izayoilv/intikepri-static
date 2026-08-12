@@ -9,8 +9,11 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useMemo } from "react";
 
 import Breadcrumb from "@/components/Breadcrumb";
+import { agendaStatus, isAgendaVisible, sortAgenda } from "@/lib/agenda";
+import { useNow } from "@/lib/use-now";
 import type { AgendaEvent } from "@/types";
 
 const MONTHS_ID = [
@@ -33,34 +36,28 @@ function formatDate(iso: string): string {
   return `${d} ${MONTHS_ID[m - 1] ?? ""} ${y}`;
 }
 
-function resolveCta(
-  e: AgendaEvent,
-): { href: string; external: boolean } | null {
-  if (!e.ctaType || !e.ctaUrl) return null;
-  if (e.ctaType === "link") return { href: e.ctaUrl, external: true };
-  if (e.ctaType === "whatsapp") {
-    const text = encodeURIComponent(
-      `Halo, saya ingin berpartisipasi dalam agenda "${e.title}" (${e.date}).`,
-    );
-    return {
-      href: `https://wa.me/${e.ctaUrl.replace(/\D/g, "")}?text=${text}`,
-      external: true,
-    };
-  }
-  return {
-    href: `mailto:${e.ctaUrl}?subject=${encodeURIComponent(`Partisipasi: ${e.title}`)}`,
-    external: false,
-  };
-}
-
 export default function AgendaDetailClient({
   event,
-  related = [],
+  all = [],
 }: {
   event: AgendaEvent | null;
-  related?: AgendaEvent[];
+  all?: AgendaEvent[];
 }) {
-  if (!event) {
+  const now = useNow();
+
+  const related = useMemo(() => {
+    if (!event) return [];
+    const others = now
+      ? sortAgenda(
+          all.filter((e) => e.slug !== event.slug && isAgendaVisible(e, now)),
+        )
+      : sortAgenda(all.filter((e) => e.slug !== event.slug));
+    return others.slice(0, 3);
+  }, [all, event, now]);
+
+  const isPast = now && event ? agendaStatus(event, now) === "past" : false;
+
+  if (!event || isPast) {
     return (
       <div className="min-h-screen bg-[#F7F7F7] pt-24">
         <div className="max-w-4xl mx-auto px-4 md:px-8 py-12 text-center">
@@ -75,14 +72,19 @@ export default function AgendaDetailClient({
     );
   }
 
-  const cta = resolveCta(event);
-  const dateText = event.endDate
-    ? `${formatDate(event.date)} – ${formatDate(event.endDate)}`
-    : formatDate(event.date);
+  const timeText = event.end_time
+    ? `${event.start_time} – ${event.end_time}`
+    : event.start_time;
 
   const infoGrid = [
-    { Icon: Calendar, label: "Tanggal", value: dateText },
-    ...(event.time ? [{ Icon: Clock, label: "Waktu", value: event.time }] : []),
+    {
+      Icon: Calendar,
+      label: "Tanggal",
+      value: <time dateTime={event.date}>{formatDate(event.date)}</time>,
+    },
+    ...(event.start_time
+      ? [{ Icon: Clock, label: "Waktu", value: timeText }]
+      : []),
     {
       Icon: MapPin,
       label: "Tempat",
@@ -122,11 +124,12 @@ export default function AgendaDetailClient({
           </h1>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-white/50 font-sans text-sm">
             <span className="flex items-center gap-1.5">
-              <Calendar size={14} /> {dateText}
+              <Calendar size={14} />{" "}
+              <time dateTime={event.date}>{formatDate(event.date)}</time>
             </span>
-            {event.time && (
+            {event.start_time && (
               <span className="flex items-center gap-1.5">
-                <Clock size={14} /> {event.time}
+                <Clock size={14} /> {timeText}
               </span>
             )}
           </div>
@@ -152,20 +155,6 @@ export default function AgendaDetailClient({
               </div>
             ))}
           </div>
-          {cta && (
-            <div className="border-t border-[#E5E5E5] mt-6 pt-6">
-              <a
-                href={cta.href}
-                {...(cta.external
-                  ? { target: "_blank", rel: "noopener noreferrer" }
-                  : {})}
-                className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-6 py-3 font-sans text-sm font-semibold hover:bg-[#8a2320] transition-colors"
-              >
-                {event.ctaLabel || "Daftar / Partisipasi"}{" "}
-                <ArrowRight size={16} />
-              </a>
-            </div>
-          )}
         </div>
 
         <article className="bg-white border border-[#E5E5E5] overflow-hidden">
@@ -212,7 +201,7 @@ export default function AgendaDetailClient({
                   <div className="bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow h-full p-5">
                     <p className="font-sans text-xs text-[#999999] flex items-center gap-1.5 mb-3">
                       <Calendar size={12} className="text-[#C8956C]" />
-                      {formatDate(rel.date)}
+                      <time dateTime={rel.date}>{formatDate(rel.date)}</time>
                     </p>
                     <h3 className="font-serif text-base font-semibold text-[#1A1A1A] mb-2 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                       {rel.title}

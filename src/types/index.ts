@@ -97,37 +97,34 @@ export interface Business {
 }
 
 export interface AgendaEvent {
-  title: string;
   slug: string;
+  title: string;
   description: string;
   date: string;
-  endDate?: string;
-  time?: string;
+  end_date?: string | null;
+  start_time: string;
+  end_time?: string | null;
+  venue: string;
   location: string;
-  venue?: string;
-  organization?: string;
-  category?: string;
+  organization: string;
+  category: string;
   image?: string;
-  ctaLabel?: string;
-  ctaType?: "link" | "whatsapp" | "email";
-  ctaUrl?: string;
 }
 
 export interface VideoItem {
   title: string;
-  youtubeId: string;
+  youtube_id: string;
   description?: string;
   date: string;
-  duration?: string;
 }
 
 export interface DocumentItem {
   title: string;
   description?: string;
-  author: string;
+  author?: string;
   date: string;
-  fileUrl: string;
-  thumbnail?: string;
+  file_url: string;
+  file_bytes?: number;
+  cover_url?: string;
   pages?: number;
-  size?: string;
 }

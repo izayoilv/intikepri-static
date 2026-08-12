@@ -39,7 +39,7 @@ function getVideos(): VideoItem[] {
 function getDocuments(): DocumentItem[] {
   try {
     const raw = fs.readFileSync(
-      path.join(process.cwd(), "src/data/dokumen.json"),
+      path.join(process.cwd(), "src/data/document.json"),
       "utf-8",
     );
     return JSON.parse(raw) as DocumentItem[];
@@ -69,9 +69,9 @@ export default function PustakaPage() {
         "@type": "VideoObject",
         name: v.title,
         description: v.description || v.title,
-        thumbnailUrl: `https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg`,
+        thumbnailUrl: `https://img.youtube.com/vi/${v.youtube_id}/hqdefault.jpg`,
         uploadDate: v.date,
-        embedUrl: `https://www.youtube.com/embed/${v.youtubeId}`,
+        embedUrl: `https://www.youtube.com/embed/${v.youtube_id}`,
       },
     })),
   };

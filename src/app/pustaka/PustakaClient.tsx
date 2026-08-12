@@ -41,17 +41,24 @@ function formatDate(iso: string): string {
   return `${Number(d)} ${MONTHS_ID[Number(m) - 1]} ${y}`;
 }
 
+function formatBytes(bytes?: number): string | null {
+  if (!bytes || bytes <= 0) return null;
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 function ytThumb(id: string, quality: "maxres" | "hq"): string {
   return `https://img.youtube.com/vi/${id}/${quality === "maxres" ? "maxresdefault" : "hqdefault"}.jpg`;
 }
 
 function FeaturedThumb({ video }: { video: VideoItem }) {
-  const [src, setSrc] = useState(() => ytThumb(video.youtubeId, "maxres"));
+  const [src, setSrc] = useState(() => ytThumb(video.youtube_id, "maxres"));
   return (
     <Image
       src={src}
       onError={() => {
-        if (src.includes("maxres")) setSrc(ytThumb(video.youtubeId, "hq"));
+        if (src.includes("maxres")) setSrc(ytThumb(video.youtube_id, "hq"));
       }}
       alt={video.title}
       fill
@@ -229,17 +236,15 @@ export default function PustakaClient({
                       <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full sm:rounded-none bg-black/60 sm:bg-[#A42A28] text-white flex items-center justify-center group-hover:scale-110 transition-transform">
                         <Play size={22} className="ml-0.5 sm:ml-1" />
                       </span>
-                      {featured.duration && (
-                        <span className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 bg-black/70 text-white font-sans text-[10px] px-2 py-0.5">
-                          {featured.duration}
-                        </span>
-                      )}
                       <div className="hidden sm:block absolute bottom-0 left-0 p-5 md:p-6 max-w-2xl">
                         <h2 className="font-serif text-xl md:text-2xl font-bold text-white leading-snug">
                           {featured.title}
                         </h2>
                         <p className="font-sans text-xs text-white/70 mt-1.5 flex items-center gap-1">
-                          <Calendar size={12} /> {formatDate(featured.date)}
+                          <Calendar size={12} />{" "}
+                          <time dateTime={featured.date}>
+                            {formatDate(featured.date)}
+                          </time>
                         </p>
                       </div>
                     </div>
@@ -248,7 +253,10 @@ export default function PustakaClient({
                         {featured.title}
                       </h2>
                       <p className="font-sans text-xs text-[#777777] mt-1 flex items-center gap-1">
-                        <Calendar size={12} /> {formatDate(featured.date)}
+                        <Calendar size={12} />{" "}
+                        <time dateTime={featured.date}>
+                          {formatDate(featured.date)}
+                        </time>
                       </p>
                     </div>
                   </button>
@@ -258,14 +266,14 @@ export default function PustakaClient({
                   <div className="grid grid-cols-1 gap-x-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-y-6">
                     {gridVideos.map((v) => (
                       <button
-                        key={v.youtubeId}
+                        key={v.youtube_id}
                         onClick={() => setPlaying(v)}
                         className="group flex gap-3 sm:block text-left py-4 sm:py-0 border-b border-[#EEEEEE] sm:border-0 last:border-0"
                         aria-label={`Putar video: ${v.title}`}
                       >
                         <div className="relative w-[38%] max-w-40 sm:w-full sm:max-w-none flex-shrink-0 aspect-video bg-[#1A1A1A] overflow-hidden">
                           <Image
-                            src={ytThumb(v.youtubeId, "hq")}
+                            src={ytThumb(v.youtube_id, "hq")}
                             alt={v.title}
                             fill
                             sizes="(max-width: 640px) 38vw, (max-width: 1024px) 33vw, 25vw"
@@ -276,18 +284,14 @@ export default function PustakaClient({
                               <Play size={15} className="ml-0.5" />
                             </span>
                           </span>
-                          {v.duration && (
-                            <span className="absolute bottom-2 right-2 bg-black/70 text-white font-sans text-[10px] px-1.5 py-0.5">
-                              {v.duration}
-                            </span>
-                          )}
                         </div>
                         <div className="min-w-0 flex-1">
                           <h3 className="font-serif text-sm sm:text-base font-semibold text-[#111111] leading-snug sm:mt-3 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                             {v.title}
                           </h3>
                           <p className="font-sans text-xs text-[#777777] mt-1 flex items-center gap-1">
-                            <Calendar size={11} /> {formatDate(v.date)}
+                            <Calendar size={11} />{" "}
+                            <time dateTime={v.date}>{formatDate(v.date)}</time>
                           </p>
                         </div>
                       </button>
@@ -315,15 +319,15 @@ export default function PustakaClient({
                 {pageDocs.map((doc, i) => (
                   <a
                     key={`${doc.title}-${i}`}
-                    href={doc.fileUrl}
+                    href={doc.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex gap-4 md:gap-5 p-4 md:p-5"
                   >
-                    <div className="flex-shrink-0 w-24 sm:w-28 aspect-[3/4] bg-[#F7F7F7] border border-[#DDDDDD] overflow-hidden flex flex-col items-center justify-center">
-                      {doc.thumbnail ? (
+                    <div className="relative flex-shrink-0 w-24 sm:w-28 aspect-[3/4] bg-[#F7F7F7] border border-[#DDDDDD] overflow-hidden flex flex-col items-center justify-center">
+                      {doc.cover_url ? (
                         <Image
-                          src={doc.thumbnail}
+                          src={doc.cover_url}
                           alt={`Sampul ${doc.title}`}
                           fill
                           sizes="(max-width: 640px) 96px, 112px"
@@ -346,23 +350,30 @@ export default function PustakaClient({
                         </h2>
                       </div>
                       <p className="font-sans text-xs text-[#999999] mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                        {doc.author && (
+                          <>
+                            <span className="flex items-center gap-1">
+                              <User size={11} /> {doc.author}
+                            </span>
+                            <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
+                          </>
+                        )}
                         <span className="flex items-center gap-1">
-                          <User size={11} /> {doc.author}
-                        </span>
-                        <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
-                        <span className="flex items-center gap-1">
-                          <Calendar size={11} /> {formatDate(doc.date)}
+                          <Calendar size={11} />{" "}
+                          <time dateTime={doc.date}>
+                            {formatDate(doc.date)}
+                          </time>
                         </span>
                         {doc.pages && (
                           <>
                             <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
-                            <span>{doc.pages} hal.</span>
+                            <span>{doc.pages} hal</span>
                           </>
                         )}
-                        {doc.size && (
+                        {formatBytes(doc.file_bytes) && (
                           <>
                             <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
-                            <span>{doc.size}</span>
+                            <span>{formatBytes(doc.file_bytes)}</span>
                           </>
                         )}
                       </p>
@@ -433,7 +444,7 @@ export default function PustakaClient({
             </div>
             <div className="aspect-video">
               <iframe
-                src={`https://www.youtube.com/embed/${playing.youtubeId}?autoplay=1&rel=0`}
+                src={`https://www.youtube.com/embed/${playing.youtube_id}?autoplay=1&rel=0`}
                 title={playing.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
