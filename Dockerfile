@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1
 FROM node:26.7-alpine3.24 AS builder
 WORKDIR /app
-RUN npm install -g pnpm@11.21
+RUN --mount=type=cache,target=/root/.npm npm install -g pnpm@11.23
 COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --link . .
 RUN mkdir -p src/data && \
     touch src/data/{news,gallery,business,agenda,document,video}.json
-RUN pnpm build
+RUN --mount=type=cache,target=/app/.next/cache pnpm build
 
 FROM nginx:1.31-alpine
 RUN rm /etc/nginx/conf.d/default.conf
