@@ -30,7 +30,7 @@ spec:
         fsGroup: 101
       containers:
         - name: nginx
-          image: registry.kudofools.dev/intikepri/intikepri-static:build-000049-sha-b94abcda # {"$imagepolicy": "flux-system:intikepri-static"}
+          image: registry.kudofools.dev/intikepri/intikepri-static:build-000052-sha-95985b68 # {"$imagepolicy": "flux-system:intikepri-static"}
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
