@@ -1,0 +1,43 @@
+[general]
+port = 8080
+root = "/public"
+page404 = "./404.html"
+log-level = "info"
+log-format = "json"
+
+compression = false
+compression-static = true
+
+cache-control-headers = false
+etag = true
+grace-period = 30
+health = true
+
+[advanced]
+
+[[advanced.headers]]
+source = "**/*"
+[advanced.headers.headers]
+X-Frame-Options = "SAMEORIGIN"
+X-Content-Type-Options = "nosniff"
+Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[advanced.headers]]
+source = "**/*.{js,css,svg,woff,woff2,ico}"
+[advanced.headers.headers]
+Cache-Control = "public, max-age=604800, immutable"
+
+[[advanced.headers]]
+source = "/images/**"
+[advanced.headers.headers]
+Cache-Control = "public, max-age=2592000, immutable"
+
+[[advanced.headers]]
+source = "/_next/**"
+[advanced.headers.headers]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[advanced.headers]]
+source = "**/*.{html,xml,json,txt}"
+[advanced.headers.headers]
+Cache-Control = "no-cache"

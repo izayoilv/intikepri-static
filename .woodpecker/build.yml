@@ -12,7 +12,7 @@ when:
       - next.config.ts
       - tsconfig.json
       - postcss.config.mjs
-      - nginx.conf
+      - config.toml
       - Dockerfile
       - .dockerignore
       - .woodpecker/*
@@ -60,11 +60,13 @@ steps:
     image: *buildkit
     depends_on: [fetch-data]
     environment:
+      REGISTRY_USERNAME:
+        from_secret: registry_username
       REGISTRY_PASSWORD:
         from_secret: registry_password
     commands:
       - mkdir -p ~/.docker
-      - echo "{\"auths\":{\"registry.kudofools.dev\":{\"username\":\"izayoilv\",\"password\":\"$${REGISTRY_PASSWORD}\"}}}" > ~/.docker/config.json
+      - echo "{\"auths\":{\"registry.kudofools.dev\":{\"username\":\"$${REGISTRY_USERNAME}\",\"password\":\"$${REGISTRY_PASSWORD}\"}}}" > ~/.docker/config.json
       - TAG="build-$(printf '%06d' ${CI_PIPELINE_NUMBER})-sha-${CI_COMMIT_SHA:0:8}"
       - |
         for i in 1 2 3; do
