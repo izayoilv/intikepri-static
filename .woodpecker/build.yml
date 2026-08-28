@@ -69,20 +69,15 @@ steps:
       - echo "{\"auths\":{\"registry.kudofools.dev\":{\"username\":\"$${REGISTRY_USERNAME}\",\"password\":\"$${REGISTRY_PASSWORD}\"}}}" > ~/.docker/config.json
       - TAG="build-$(printf '%06d' ${CI_PIPELINE_NUMBER})-sha-${CI_COMMIT_SHA:0:8}"
       - |
-        for i in 1 2 3; do
-          buildctl --addr tcp://buildkitd-service.buildkitd.svc:1234 build \
-            --frontend dockerfile.v0 \
-            --local context=. \
-            --local dockerfile=. \
-            --output type=image,name=registry.kudofools.dev/intikepri/intikepri-static:latest,push=true \
-            --output type=image,name=registry.kudofools.dev/intikepri/intikepri-static:$TAG,push=true && break
-          if [ $i -eq 3 ]; then
-            echo "All BuildKit push attempts failed."
-            exit 1
-          fi
-          echo "BuildKit failed (attempt $i/3), retrying in 10s..."
-          sleep 10
-        done
+        echo "waiting for buildkitd..."
+        timeout 30 sh -c 'until nc -z buildkitd-service.buildkitd.svc 1234 2>/dev/null; do echo "waiting..."; sleep 2; done'
+        echo "buildkitd is ready"
+      - buildctl --addr tcp://buildkitd-service.buildkitd.svc:1234 build
+        --frontend dockerfile.v0
+        --local context=.
+        --local dockerfile=.
+        --output type=image,name=registry.kudofools.dev/intikepri/intikepri-static:latest,push=true
+        --output type=image,name=registry.kudofools.dev/intikepri/intikepri-static:$TAG,push=true
 
   verify:
     image: *alpine
