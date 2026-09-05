@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: sws
-          image: registry.kudofools.dev/intikepri/intikepri-static:build-000056-sha-97f0d809 # {"$imagepolicy": "flux-system:intikepri-static"}
+          image: registry.kudofools.dev/intikepri/intikepri-static:build-000057-sha-f5a9c54b # {"$imagepolicy": "flux-system:intikepri-static"}
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
