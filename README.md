@@ -14,8 +14,8 @@ Development: `http://localhost:3000`
 
 ## Prerequisites
 
-- Node.js 18+
-- pnpm
+- Node.js 24 LTS or 26.x
+- pnpm 12
 
 ## Quick Start
 
@@ -34,7 +34,7 @@ Reads from `src/data/news.json` at build time. Falls back to empty array if miss
 pnpm build
 ```
 
-Output in `out/`.
+Output in `dist/`.
 
 ## Deploy
 
