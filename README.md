@@ -36,6 +36,15 @@ pnpm build
 
 Output in `dist/`.
 
+## Test
+
+```bash
+pnpm exec playwright install chromium
+pnpm test:e2e
+```
+
+The suite builds the site, serves `dist/` locally, and exercises the main routes, article rendering, and the custom 404 page. Set `INTIKEPRI_BASE_URL` to run the same tests against an already-running deployment.
+
 ## Deploy
 
 Kubernetes manifests live in a separate infrastructure repository.
