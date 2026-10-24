@@ -14,8 +14,8 @@ Development: `http://localhost:3000`
 
 ## Prerequisites
 
-- Node.js 18+
-- pnpm
+- Node.js 24 LTS or 26.x
+- pnpm 12
 
 ## Quick Start
 
@@ -34,7 +34,16 @@ Reads from `src/data/news.json` at build time. Falls back to empty array if miss
 pnpm build
 ```
 
-Output in `out/`.
+Output in `dist/`.
+
+## Test
+
+```bash
+pnpm exec playwright install chromium
+pnpm test:e2e
+```
+
+The suite builds the site, serves `dist/` locally, and exercises the main routes, article rendering, and the custom 404 page. Set `INTIKEPRI_BASE_URL` to run the same tests against an already-running deployment.
 
 ## Deploy
 

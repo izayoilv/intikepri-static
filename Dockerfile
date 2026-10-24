@@ -1,14 +1,14 @@
 # syntax=docker/dockerfile:1
-FROM node:26.7-alpine3.24 AS builder
+FROM node:26.12-alpine3.24 AS builder
 WORKDIR /app
-RUN --mount=type=cache,target=/root/.npm npm install -g pnpm@11.23
+RUN --mount=type=cache,target=/root/.npm npm install -g pnpm@12.15
 COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --link . .
 RUN --mount=type=cache,target=/app/.next/cache \
     mkdir -p src/data && touch src/data/{news,gallery,business,agenda,document,video}.json && pnpm build
 
-FROM node:26.7-alpine3.24 AS compress
+FROM node:26.12-alpine3.24 AS compress
 WORKDIR /app
 RUN apk add --no-cache brotli zstd
 COPY --link --from=builder /app/dist /app/dist
