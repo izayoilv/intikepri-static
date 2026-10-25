@@ -48,15 +48,26 @@ spec:
             requests:
               memory: 32Mi
               cpu: "50m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 24
           livenessProbe:
             httpGet:
               path: /health
               port: 8080
             initialDelaySeconds: 10
-            periodSeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 3
