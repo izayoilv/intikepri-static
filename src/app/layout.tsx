@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 
+import { baseOpenGraph } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 const inter = Inter({
@@ -26,12 +27,8 @@ export const metadata: Metadata = {
   },
   description:
     "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau - Tulus memberi, ikhlas mengabdi.",
-  openGraph: {
-    type: "website",
-    locale: "id_ID",
-    siteName: "INTI Kepri",
-    images: [{ url: "/images/Logo-INTI.png", width: 1200, height: 630 }],
-  },
+  openGraph: { ...baseOpenGraph, type: "website" },
+  twitter: { card: "summary_large_image" },
   robots: {
     index: true,
     follow: true,

@@ -1,16 +1,4 @@
-import type {
-  AgendaEvent,
-  Bidang,
-  Branch,
-  Business,
-  DocumentItem,
-  GalleryPhoto,
-  Ketua,
-  News,
-  Pengurus,
-  VideoItem,
-  VisiMisi,
-} from "@/types";
+import type { Bidang, Branch, Ketua, Pengurus, VisiMisi } from "@/types";
 
 export const visiMisi: VisiMisi = {
   visi: "Menjadi organisasi yang maju, modern, bercitra internasional, berorientasi pada Kebangsaan Indonesia, menghargai hak asasi manusia, egaliter, pluralis, inklusif, demokratis, dan transparan.",
@@ -42,6 +30,8 @@ export const ketuaPeriode: Ketua[] = [
   { periode: "2002-2006", nama: "Eddy C Lummawie" },
 ];
 
+// Isi `nama` saat susunan pengurus sudah dikonfirmasi; jabatan yang kosong
+// tidak ditampilkan di halaman Tentang Kami.
 export const pengurusKSB: Pengurus[] = [
   { jabatan: "Ketua", nama: "Piter Tanjaya" },
   { jabatan: "Wakil Ketua I", nama: "" },
@@ -110,21 +100,3 @@ export const locations = [
 ];
 
 export const organizations = ["Semua", "INTI", "PINTI", "GEMA"];
-
-export const imageOptions = [
-  "/images/hero-bg.jpg",
-  "/images/news-1.jpg",
-  "/images/news-2.jpg",
-  "/images/news-3.jpg",
-];
-
-export const fallbackNews: News[] = [];
-
-export const fallbackGallery: GalleryPhoto[] = [];
-
-export const fallbackBusinesses: Business[] = [];
-
-export const fallbackAgenda: AgendaEvent[] = [];
-
-export const fallbackVideos: VideoItem[] = [];
-export const fallbackDocuments: DocumentItem[] = [];

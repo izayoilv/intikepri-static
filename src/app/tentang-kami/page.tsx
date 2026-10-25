@@ -5,13 +5,14 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import StructureSection from "@/components/StructureSection";
 import { branches, ketuaPeriode, sejarah, visiMisi } from "@/lib/data";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Tentang Kami",
-  alternates: { canonical: "/tentang-kami/" },
   description:
     "Profil, sejarah, visi misi, dan jaringan Perhimpunan INTI Provinsi Kepulauan Riau.",
-};
+  path: "/tentang-kami/",
+});
 
 export default function TentangKamiPage() {
   return (
@@ -20,7 +21,7 @@ export default function TentangKamiPage() {
       <div className="pt-16">
         <Breadcrumb items={[{ label: "Tentang Kami" }]} />
 
-        <section className="bg-[#1A1A1A] py-16 md:py-24">
+        <section className="bg-[#1A1A1A] py-16 md:py-24 mt-5">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
               Tentang Kami
@@ -36,13 +37,13 @@ export default function TentangKamiPage() {
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
-              <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+              <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
                 Sejarah
               </p>
               <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-6">
                 Sejarah INTI Kepri
               </h2>
-              <div className="space-y-4 text-[#666666] font-sans text-sm leading-relaxed">
+              <div className="space-y-4 text-[#555555] font-sans text-sm leading-relaxed">
                 {sejarah.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}
@@ -50,7 +51,7 @@ export default function TentangKamiPage() {
             </div>
 
             <div>
-              <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+              <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
                 Kepemimpinan
               </p>
               <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-6">
@@ -62,7 +63,7 @@ export default function TentangKamiPage() {
                     <span
                       className={`absolute -left-[7px] top-1 w-3 h-3 rounded-full border-2 ${i === 0 ? "bg-[#A42A28] border-[#A42A28]" : "bg-white border-[#CCCCCC]"}`}
                     />
-                    <p className="font-sans text-xs tracking-widest text-[#999999] uppercase">
+                    <p className="font-sans text-xs tracking-widest text-[#6B6B6B] uppercase">
                       {k.periode}
                     </p>
                     <p className="font-serif text-lg font-semibold text-[#1A1A1A]">
@@ -78,7 +79,10 @@ export default function TentangKamiPage() {
         <section className="py-16 md:py-24 bg-[#F7F7F7]">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="text-center mb-12">
-              <h2 className="font-serif text-sm md:text-3xl font-bold text-[#C8956C] uppercase mb-3 tracking-[0.3em]">
+              <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+                Arah Organisasi
+              </p>
+              <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A]">
                 Visi & Misi
               </h2>
             </div>
@@ -116,7 +120,7 @@ export default function TentangKamiPage() {
         <section className="py-16 md:py-24 bg-[#F7F7F7]">
           <div className="max-w-7xl mx-auto px-4 md:px-8">
             <div className="text-center mb-12">
-              <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+              <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
                 Jaringan
               </p>
               <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A]">
@@ -127,16 +131,19 @@ export default function TentangKamiPage() {
               {branches.map((b, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-4 bg-[#F7F7F7] border border-[#E5E5E5] p-5"
+                  className="flex items-center gap-4 bg-white border border-[#E5E5E5] p-5"
                 >
-                  <span className="font-serif text-2xl font-light text-[#A42A28]/40">
+                  <span
+                    className="font-serif text-2xl font-light text-[#A42A28]/60"
+                    aria-hidden="true"
+                  >
                     0{i + 1}
                   </span>
                   <div>
                     <p className="font-serif font-semibold text-[#1A1A1A]">
                       {b.name}
                     </p>
-                    <p className="font-sans text-xs text-[#999999]">
+                    <p className="font-sans text-xs text-[#6B6B6B]">
                       {b.region}
                     </p>
                   </div>

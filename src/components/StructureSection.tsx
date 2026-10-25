@@ -1,13 +1,9 @@
 "use client";
 
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
 
 import { bidangPengurus, pengurusKSB } from "@/lib/data";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useReveal } from "@/lib/use-reveal";
 
 function PortraitPlaceholder() {
   return (
@@ -25,46 +21,33 @@ function PortraitPlaceholder() {
 }
 
 export default function StructureSection() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>(".struct-reveal").forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 88%", once: true },
-            delay: (i % 6) * 0.08,
-          },
-        );
-      });
-    }, ref);
-    return () => ctx.revert();
-  }, []);
+  const ref = useReveal<HTMLElement>(".struct-reveal");
+  const filled = pengurusKSB.filter((p) => p.nama.trim() !== "");
+  const hasVacancies = filled.length < pengurusKSB.length;
 
   return (
     <section ref={ref} className="py-20 md:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="text-center mb-12 struct-reveal">
-          <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+          <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
             Pengurus
           </p>
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">
             Susunan Pengurus
           </h2>
-          <p className="text-[#999999] font-sans max-w-2xl mx-auto">
+          <p className="text-[#6B6B6B] font-sans max-w-2xl mx-auto">
             Perhimpunan INTI Provinsi Kepulauan Riau — Periode 2026–2030.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
-          {pengurusKSB.map((p, i) => (
+        <div
+          className={
+            filled.length < 3
+              ? "grid grid-cols-1 gap-4 max-w-md mx-auto"
+              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          }
+        >
+          {filled.map((p, i) => (
             <div
               key={i}
               className="struct-reveal flex items-center gap-4 bg-[#F7F7F7] border border-[#E5E5E5] p-4 hover:border-[#A42A28]/30 transition-colors"
@@ -86,21 +69,25 @@ export default function StructureSection() {
                 <p className="font-sans text-[11px] tracking-[0.15em] uppercase text-[#A42A28] font-medium">
                   {p.jabatan}
                 </p>
-                <p
-                  className={`font-serif text-base font-semibold text-[#1A1A1A] mt-0.5 truncate ${p.nama ? "" : "text-[#BBBBBB] font-normal italic"}`}
-                >
-                  {p.nama || "—"}
+                <p className="font-serif text-base font-semibold text-[#1A1A1A] mt-0.5 truncate">
+                  {p.nama}
                 </p>
               </div>
             </div>
           ))}
         </div>
+        {hasVacancies && (
+          <p className="struct-reveal text-center font-sans text-sm text-[#6B6B6B] mt-6">
+            Susunan pengurus lengkap periode 2026–2030 akan segera diperbarui.
+          </p>
+        )}
+        <div className="mb-16" />
 
         <div className="text-center mb-10 struct-reveal">
           <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-3">
             Bidang-Bidang
           </h3>
-          <p className="text-[#999999] font-sans max-w-2xl mx-auto text-sm">
+          <p className="text-[#6B6B6B] font-sans max-w-2xl mx-auto text-sm">
             Delapan bidang yang menangani program-program organisasi.
           </p>
         </div>
@@ -117,7 +104,7 @@ export default function StructureSection() {
               <h4 className="font-serif text-lg font-semibold text-[#1A1A1A] mt-3 mb-2">
                 {b.name}
               </h4>
-              <p className="text-[#999999] font-sans text-sm">{b.desc}</p>
+              <p className="text-[#6B6B6B] font-sans text-sm">{b.desc}</p>
             </div>
           ))}
         </div>

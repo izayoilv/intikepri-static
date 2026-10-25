@@ -16,30 +16,11 @@ import {
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
+import { formatDateID as formatDate } from "@/lib/format";
+import { useDialogFocus } from "@/lib/use-dialog-focus";
 import type { DocumentItem, VideoItem } from "@/types";
 
 const DOC_PAGE_SIZE = 8;
-
-const MONTHS_ID = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
-
-function formatDate(iso: string): string {
-  const [y, m, d] = iso.split("-");
-  if (!y || !m || !d) return iso;
-  return `${Number(d)} ${MONTHS_ID[Number(m) - 1]} ${y}`;
-}
 
 function formatBytes(bytes?: number): string | null {
   if (!bytes || bytes <= 0) return null;
@@ -79,6 +60,7 @@ export default function PustakaClient({
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [playing, setPlaying] = useState<VideoItem | null>(null);
+  const dialogRef = useDialogFocus<HTMLDivElement>(playing !== null);
 
   const videoFuse = useMemo(
     () =>
@@ -142,13 +124,13 @@ export default function PustakaClient({
     <section className="py-16 md:py-24 bg-white min-h-[60vh]">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="mb-10">
-          <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+          <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
             Pustaka
           </p>
           <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1A1A1A]">
             Pustaka & Media
           </h1>
-          <p className="font-sans text-sm text-[#999999] mt-3 max-w-2xl">
+          <p className="font-sans text-sm text-[#6B6B6B] mt-3 max-w-2xl">
             Rekaman kegiatan dan dokumen resmi INTI Kepulauan Riau: makalah,
             laporan, dan publikasi yang bisa diakses publik.
           </p>
@@ -169,7 +151,7 @@ export default function PustakaClient({
               aria-pressed={isVideo}
             >
               <Play size={14} /> Video
-              <span className={isVideo ? "text-white/60" : "text-[#BBBBBB]"}>
+              <span className={isVideo ? "text-white/60" : "text-[#767676]"}>
                 ({videos.length})
               </span>
             </button>
@@ -186,7 +168,7 @@ export default function PustakaClient({
               aria-pressed={!isVideo}
             >
               <FileText size={14} /> Dokumen
-              <span className={!isVideo ? "text-white/60" : "text-[#BBBBBB]"}>
+              <span className={!isVideo ? "text-white/60" : "text-[#767676]"}>
                 ({documents.length})
               </span>
             </button>
@@ -194,7 +176,7 @@ export default function PustakaClient({
           <div className="relative flex-1">
             <Search
               size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B6B]"
             />
             <input
               type="text"
@@ -206,7 +188,7 @@ export default function PustakaClient({
               placeholder={
                 isVideo ? "Cari video..." : "Cari dokumen, penulis..."
               }
-              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
+              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:border-[#A42A28]"
             />
           </div>
         </div>
@@ -216,7 +198,7 @@ export default function PustakaClient({
             {filteredVideos.length === 0 ? (
               <div className="text-center py-20">
                 <Play size={40} className="mx-auto text-[#E5E5E5] mb-4" />
-                <p className="text-[#999999] font-sans">
+                <p className="text-[#6B6B6B] font-sans">
                   {videos.length === 0
                     ? "Belum ada video yang dipublikasikan."
                     : "Tidak ada video yang cocok."}
@@ -252,7 +234,7 @@ export default function PustakaClient({
                       <h2 className="font-serif text-lg font-bold text-[#111111] leading-snug group-hover:text-[#A42A28] transition-colors">
                         {featured.title}
                       </h2>
-                      <p className="font-sans text-xs text-[#777777] mt-1 flex items-center gap-1">
+                      <p className="font-sans text-xs text-[#6B6B6B] mt-1 flex items-center gap-1">
                         <Calendar size={12} />{" "}
                         <time dateTime={featured.date}>
                           {formatDate(featured.date)}
@@ -289,7 +271,7 @@ export default function PustakaClient({
                           <h3 className="font-serif text-sm sm:text-base font-semibold text-[#111111] leading-snug sm:mt-3 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                             {v.title}
                           </h3>
-                          <p className="font-sans text-xs text-[#777777] mt-1 flex items-center gap-1">
+                          <p className="font-sans text-xs text-[#6B6B6B] mt-1 flex items-center gap-1">
                             <Calendar size={11} />{" "}
                             <time dateTime={v.date}>{formatDate(v.date)}</time>
                           </p>
@@ -308,7 +290,7 @@ export default function PustakaClient({
             {filteredDocs.length === 0 ? (
               <div className="text-center py-20">
                 <BookOpen size={40} className="mx-auto text-[#E5E5E5] mb-4" />
-                <p className="text-[#999999] font-sans">
+                <p className="text-[#6B6B6B] font-sans">
                   {documents.length === 0
                     ? "Belum ada dokumen yang dipublikasikan."
                     : "Tidak ada dokumen yang cocok."}
@@ -335,8 +317,8 @@ export default function PustakaClient({
                         />
                       ) : (
                         <>
-                          <FileText size={28} className="text-[#C8956C]" />
-                          <span className="font-sans text-[9px] tracking-widest uppercase text-[#BBBBBB] mt-1">
+                          <FileText size={28} className="text-[#8F6440]" />
+                          <span className="font-sans text-[9px] tracking-widest uppercase text-[#767676] mt-1">
                             PDF
                           </span>
                         </>
@@ -349,7 +331,7 @@ export default function PustakaClient({
                           {doc.title}
                         </h2>
                       </div>
-                      <p className="font-sans text-xs text-[#999999] mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                      <p className="font-sans text-xs text-[#6B6B6B] mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                         {doc.author && (
                           <>
                             <span className="flex items-center gap-1">
@@ -420,6 +402,7 @@ export default function PustakaClient({
 
       {playing && (
         <div
+          ref={dialogRef}
           className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4"
           role="dialog"
           aria-modal="true"
@@ -444,7 +427,7 @@ export default function PustakaClient({
             </div>
             <div className="aspect-video">
               <iframe
-                src={`https://www.youtube.com/embed/${playing.youtube_id}?autoplay=1&rel=0`}
+                src={`https://www.youtube-nocookie.com/embed/${playing.youtube_id}?autoplay=1&rel=0`}
                 title={playing.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

@@ -9,6 +9,9 @@ export interface News {
   date: string;
 }
 
+/** News without its body, as sent to list pages. */
+export type NewsSummary = Omit<News, "content"> & { excerpt: string };
+
 export interface NewsListResponse {
   items: News[];
   total: number;

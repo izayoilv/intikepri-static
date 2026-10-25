@@ -1,101 +1,96 @@
 "use client";
 
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { type MouseEvent, useState } from "react";
 
-import { bidangPengurus, branches, visiMisi } from "@/lib/data";
+import SectionHeading from "@/components/SectionHeading";
+import { visiMisi } from "@/lib/data";
+import { useReveal } from "@/lib/use-reveal";
 
-gsap.registerPlugin(ScrollTrigger);
+const FLAT = "rotateX(0deg) rotateY(0deg)";
 
 export default function IntroSection() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useReveal<HTMLElement>(".intro-reveal");
+  const [tilt, setTilt] = useState(FLAT);
 
-  useEffect(() => {
-    if (!ref.current) return;
-    const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>(".intro-reveal").forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 88%", once: true },
-            delay: i * 0.1,
-          },
-        );
-      });
-    }, ref);
-    return () => ctx.revert();
-  }, []);
+  function onMove(e: MouseEvent<HTMLDivElement>) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    setTilt(
+      `rotateX(${(-y * 8).toFixed(2)}deg) rotateY(${(x * 10).toFixed(2)}deg)`,
+    );
+  }
 
   return (
-    <section ref={ref} className="py-20 md:py-32 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="intro-reveal">
-            <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
-              Tentang Kami
-            </p>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-6 leading-tight">
-              Membangun Masyarakat Kepri yang Lebih Baik
-            </h2>
-            <div className="space-y-4 text-[#666666] font-sans text-sm leading-relaxed">
-              <p>{visiMisi.visi}</p>
-              <p>{visiMisi.misi}</p>
-            </div>
+    <section
+      ref={ref}
+      id="tentang"
+      className="bg-[#FAF6EF] px-4 md:px-8 py-20 md:py-32"
+    >
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div className="intro-reveal min-w-0">
+          <SectionHeading
+            index="01"
+            label="Tentang Kami"
+            title={
+              <>
+                Membangun masyarakat Kepri yang{" "}
+                <span className="italic text-[#A42A28]">lebih baik</span>,
+                bersama.
+              </>
+            }
+          />
+          <p className="mt-7 font-sans text-[17px] leading-[1.75] text-[#4A423C] max-w-xl">
+            {visiMisi.visi}
+          </p>
+          <p className="mt-4 font-sans text-[15.5px] leading-[1.75] text-[#5A524B] max-w-xl">
+            Sejak 2004, INTI Kepri menjadi wadah masyarakat Tionghoa di
+            Kepulauan Riau untuk berkarya di bidang sosial, kemanusiaan,
+            pendidikan, ekonomi, dan kebudayaan.
+          </p>
+          <Link
+            href="/tentang-kami"
+            className="mt-9 inline-flex items-center gap-2.5 border-b border-[#A42A28] pb-1 font-sans text-[15px] font-semibold text-[#A42A28] hover:gap-3.5 hover:text-[#7E1F1D] transition-all"
+          >
+            Selengkapnya tentang kami
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
 
-            <p className="mt-8 pt-6 border-t border-[#E5E5E5] font-sans text-xs tracking-wide text-[#999999] flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span>
-                Berdiri <span className="text-[#1A1A1A] font-medium">2004</span>
-              </span>
-              <span className="w-1 h-1 bg-[#A42A28] rounded-full" />
-              <span>
-                <span className="text-[#1A1A1A] font-medium">
-                  {branches.length} cabang
-                </span>{" "}
-                se-Kepri
-              </span>
-              <span className="w-1 h-1 bg-[#A42A28] rounded-full" />
-              <span>
-                <span className="text-[#1A1A1A] font-medium">
-                  {bidangPengurus.length} bidang
-                </span>{" "}
-                pengurus
-              </span>
-            </p>
-
-            <Link
-              href="/tentang-kami"
-              className="inline-flex items-center gap-2 text-[#A42A28] font-sans text-sm font-medium mt-6 hover:gap-3 transition-all"
-            >
-              Pelajari Lebih Lanjut <ArrowRight size={16} />
-            </Link>
-          </div>
-
-          <div className="intro-reveal relative mt-10 lg:mt-0 mb-12 md:mb-14 lg:mb-0">
-            <div className="aspect-[4/3] bg-[#E5E5E5] overflow-hidden">
-              <div
-                className="w-full h-full bg-cover bg-center"
-                style={{ backgroundImage: "url('/images/hero-bg-2.jpeg')" }}
+        <div className="intro-reveal min-w-0 [perspective:1200px] pt-8 pb-12 lg:py-0">
+          <div
+            onMouseMove={onMove}
+            onMouseLeave={() => setTilt(FLAT)}
+            className="relative [transform-style:preserve-3d] transition-transform duration-300 ease-out motion-reduce:transition-none"
+            style={{ transform: tilt }}
+          >
+            <div className="relative aspect-[4/3.2] overflow-hidden shadow-[0_40px_80px_-40px_rgba(20,13,12,0.55)]">
+              <Image
+                src="/images/hero-bg-2.jpeg"
+                alt="Pertemuan akbar anggota INTI Kepri"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
               />
             </div>
-            <div className="absolute -bottom-8 -left-3 md:-bottom-10 md:-left-10 w-36 md:w-56 aspect-[4/3] border-4 md:border-8 border-[#F9F3EA] bg-[#E5E5E5] overflow-hidden shadow-lg">
-              <div
-                className="w-full h-full bg-cover bg-center"
-                style={{ backgroundImage: "url('/images/hero-bg-3.jpeg')" }}
+            <div className="absolute -left-2 sm:-left-6 -bottom-9 w-[44%] aspect-[4/3] overflow-hidden border-[6px] sm:border-8 border-[#FAF6EF] shadow-[0_30px_60px_-30px_rgba(20,13,12,0.6)] [transform:translateZ(60px)]">
+              <Image
+                src="/images/hero-bg-3.jpeg"
+                alt="Pengurus INTI Kepri dalam acara resmi"
+                fill
+                sizes="(max-width: 1024px) 44vw, 22vw"
+                className="object-cover"
               />
             </div>
-            <div className="absolute -top-5 -right-2 md:-top-6 md:-right-6 bg-[#F9F3EA] border-l-2 border-[#A42A28] shadow-lg px-4 py-3 md:px-6 md:py-5 max-w-[180px] md:max-w-[240px]">
-              <p className="font-serif italic text-sm md:text-base text-[#1A1A1A] leading-snug">
-                &ldquo;{visiMisi.motto}&rdquo;
+            <div className="absolute -right-2 sm:-right-4 -top-7 bg-[#120D0C] text-white px-5 py-4 sm:px-6 sm:py-5 max-w-[200px] sm:max-w-[240px] shadow-[0_30px_60px_-30px_rgba(20,13,12,0.7)] [transform:translateZ(90px)]">
+              <p className="font-serif italic text-base sm:text-[19px] leading-snug">
+                &ldquo;Tulus memberi, ikhlas mengabdi.&rdquo;
               </p>
-              <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mt-2">
+              <p className="mt-2.5 font-sans text-[10.5px] tracking-[0.22em] uppercase text-[#D9A56F]">
                 Motto INTI
               </p>
             </div>

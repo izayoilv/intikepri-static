@@ -13,32 +13,9 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { agendaStatus, isAgendaVisible, sortAgenda } from "@/lib/agenda";
+import { dayMonthShortID, formatMonthYearID } from "@/lib/format";
 import { useNow } from "@/lib/use-now";
 import type { AgendaEvent } from "@/types";
-
-const MONTHS_ID = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
-
-function monthLabel(iso: string): string {
-  const [y, m] = iso.split("-");
-  return `${MONTHS_ID[Number(m) - 1] ?? ""} ${y}`;
-}
-
-function dayNum(iso: string): string {
-  return String(Number(iso.split("-")[2] || 0));
-}
 
 function groupByMonth(items: AgendaEvent[]): [string, AgendaEvent[]][] {
   const map = new Map<string, AgendaEvent[]>();
@@ -48,7 +25,7 @@ function groupByMonth(items: AgendaEvent[]): [string, AgendaEvent[]][] {
     map.get(key)!.push(e);
   });
   return Array.from(map.entries()).map(([key, events]) => [
-    monthLabel(`${key}-01`),
+    formatMonthYearID(`${key}-01`),
     events,
   ]);
 }
@@ -106,7 +83,7 @@ export default function AgendaListClient({ items }: { items: AgendaEvent[] }) {
         <div key={month} className="mb-10 last:mb-0">
           <div className="relative mb-5 -ml-[7px]">
             <span className="inline-block w-3 h-3 bg-[#A42A28] rounded-full align-middle" />
-            <span className="ml-3 font-sans text-xs tracking-[0.2em] uppercase text-[#999999]">
+            <span className="ml-3 font-sans text-xs tracking-[0.2em] uppercase text-[#6B6B6B]">
               {month}
             </span>
           </div>
@@ -124,10 +101,10 @@ export default function AgendaListClient({ items }: { items: AgendaEvent[] }) {
                     className="flex-shrink-0 w-14 text-center border-r border-[#E5E5E5] pr-4"
                   >
                     <p className="font-serif text-2xl md:text-3xl font-bold text-[#A42A28] leading-none">
-                      {dayNum(e.date)}
+                      {dayMonthShortID(e.date).day}
                     </p>
-                    <p className="font-sans text-[10px] tracking-widest uppercase text-[#999999] mt-1">
-                      {MONTHS_ID[Number(e.date.split("-")[1]) - 1]?.slice(0, 3)}
+                    <p className="font-sans text-[10px] tracking-widest uppercase text-[#6B6B6B] mt-1">
+                      {dayMonthShortID(e.date).month}
                     </p>
                   </time>
                   <div className="min-w-0 flex-1">
@@ -143,7 +120,7 @@ export default function AgendaListClient({ items }: { items: AgendaEvent[] }) {
                         </span>
                       )}
                       {status === "upcoming" && (
-                        <span className="inline-block bg-[#C8956C]/15 text-[#C8956C] text-[10px] font-sans px-2 py-0.5">
+                        <span className="inline-block bg-[#C8956C]/15 text-[#8F6440] text-[10px] font-sans px-2 py-0.5">
                           Akan Datang
                         </span>
                       )}
@@ -151,7 +128,7 @@ export default function AgendaListClient({ items }: { items: AgendaEvent[] }) {
                     <h2 className="font-serif text-base md:text-lg font-semibold text-[#1A1A1A] line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                       {e.title}
                     </h2>
-                    <p className="font-sans text-xs text-[#999999] mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <p className="font-sans text-xs text-[#6B6B6B] mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1">
                       {e.start_time && (
                         <span className="flex items-center gap-1">
                           <Clock size={12} /> {e.start_time}
@@ -180,13 +157,13 @@ export default function AgendaListClient({ items }: { items: AgendaEvent[] }) {
     <section className="py-16 md:py-24 bg-white min-h-[60vh]">
       <div className="max-w-4xl mx-auto px-4 md:px-8">
         <div className="mb-10">
-          <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+          <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
             Agenda
           </p>
           <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1A1A1A]">
             Agenda Kegiatan
           </h1>
-          <p className="font-sans text-sm text-[#999999] mt-3 max-w-2xl">
+          <p className="font-sans text-sm text-[#6B6B6B] mt-3 max-w-2xl">
             Jadwal kegiatan INTI Kepulauan Riau. Ikuti dan berpartisipasilah.
           </p>
         </div>
@@ -195,14 +172,15 @@ export default function AgendaListClient({ items }: { items: AgendaEvent[] }) {
           <div className="relative flex-1">
             <Search
               size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B6B]"
             />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari agenda atau tempat..."
-              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
+              aria-label="Cari agenda"
+              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:border-[#A42A28]"
             />
           </div>
           {categories.length > 2 && (
@@ -221,7 +199,7 @@ export default function AgendaListClient({ items }: { items: AgendaEvent[] }) {
               </select>
               <ChevronDown
                 size={14}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6B6B6B] pointer-events-none"
               />
             </div>
           )}
@@ -238,18 +216,21 @@ export default function AgendaListClient({ items }: { items: AgendaEvent[] }) {
             </select>
             <ChevronDown
               size={14}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6B6B6B] pointer-events-none"
             />
           </div>
         </div>
-        <p className="font-sans text-xs text-[#BBBBBB] mb-10">
+        <p
+          className="font-sans text-xs text-[#6B6B6B] mb-10"
+          aria-live="polite"
+        >
           {filtered.length} agenda ditemukan
         </p>
 
         {filtered.length === 0 ? (
           <div className="text-center py-20">
             <Calendar size={40} className="mx-auto text-[#E5E5E5] mb-4" />
-            <p className="text-[#999999] font-sans">
+            <p className="text-[#6B6B6B] font-sans">
               {visible.length === 0
                 ? "Belum ada agenda terjadwal."
                 : "Tidak ada agenda yang cocok."}

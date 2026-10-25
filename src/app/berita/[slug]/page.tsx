@@ -1,26 +1,19 @@
-import fs from "fs";
 import type { Metadata } from "next";
-import path from "path";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import Navbar from "@/components/Navbar";
+import { getNews, toNewsSummary } from "@/lib/content";
 import { newsToLedeHtml } from "@/lib/news-html";
 import { newsToText } from "@/lib/news-text";
+import { pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
-import type { News } from "@/types";
+import { absoluteUrl } from "@/lib/url";
 
-import BeritaDetailClient from "./BeritaDetailClient";
+import BeritaDetail from "./BeritaDetail";
 
-function getAllNews(): News[] {
-  try {
-    const filePath = path.join(process.cwd(), "src/data/news.json");
-    const fileData = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(fileData);
-  } catch {
-    return [];
-  }
-}
+type Params = Promise<{ slug: string }>;
 
 function toISODate(date: string): string | undefined {
   const d = new Date(date);
@@ -30,49 +23,48 @@ function toISODate(date: string): string | undefined {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Params;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const news = getAllNews().find((n) => n.slug === slug);
+  const news = getNews().find((n) => n.slug === slug);
 
-  if (!news) return { title: "Berita tidak ditemukan | INTI Kepri" };
+  if (!news) {
+    return { title: "Berita tidak ditemukan", robots: { index: false } };
+  }
 
-  const description = newsToText(news.content).slice(0, 160);
+  const text = newsToText(news.content);
+  const description =
+    text.length > 160 ? `${text.slice(0, 157).trimEnd()}…` : text;
 
-  return {
-    title: `${news.title} | INTI Kepri`,
+  return pageMetadata({
+    title: news.title,
     description,
-    alternates: { canonical: `/berita/${news.slug}/` },
-    openGraph: {
-      title: news.title,
-      description,
-      type: "article",
-      images: [{ url: news.image, width: 1200, height: 630 }],
-    },
-  };
+    path: `/berita/${news.slug}/`,
+    image: news.image || null,
+    type: "article",
+    publishedTime: toISODate(news.date),
+  });
 }
 
 export async function generateStaticParams() {
-  const items = getAllNews();
+  const items = getNews();
   if (items.length === 0) return [{ slug: "belum-ada-berita" }];
   return items.map((n) => ({ slug: n.slug }));
 }
 
 export const dynamicParams = false;
 
-export default async function BeritaDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function BeritaDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const items = getAllNews();
+  const items = getNews();
   const news = items.find((n) => n.slug === slug) || null;
 
-  const relatedNews = items.filter((n) => n.slug !== slug).slice(0, 3);
+  const relatedNews = items
+    .filter((n) => n.slug !== slug)
+    .slice(0, 3)
+    .map((n) => toNewsSummary(n));
 
   const isoDate = news ? toISODate(news.date) : undefined;
-
   const contentHtml = news ? newsToLedeHtml(news.content) : null;
 
   const articleLd = news
@@ -82,15 +74,13 @@ export default async function BeritaDetailPage({
         headline: news.title,
         ...(isoDate ? { datePublished: isoDate, dateModified: isoDate } : {}),
         author: { "@type": "Person", name: news.author },
-        image: news.image?.startsWith("http")
-          ? news.image
-          : `${SITE_URL}${news.image}`,
+        ...(news.image ? { image: absoluteUrl(SITE_URL, news.image) } : {}),
         publisher: {
           "@type": "Organization",
           name: "INTI Kepri",
           logo: {
             "@type": "ImageObject",
-            url: `${SITE_URL}/images/Logo-INTI.png`,
+            url: `${SITE_URL}/images/Logo-INTI-512.png`,
           },
         },
         mainEntityOfPage: `${SITE_URL}/berita/${news.slug}/`,
@@ -99,15 +89,11 @@ export default async function BeritaDetailPage({
 
   return (
     <main>
-      {articleLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
-        />
-      )}
+      {articleLd && <JsonLd data={articleLd} />}
       <Navbar />
-      <div className="pt-24">
+      <div className="pt-16">
         <Breadcrumb
+          width="max-w-4xl"
           items={
             news
               ? [{ label: "Berita", to: "/berita" }, { label: news.title }]
@@ -117,7 +103,7 @@ export default async function BeritaDetailPage({
                 ]
           }
         />
-        <BeritaDetailClient
+        <BeritaDetail
           news={news}
           relatedNews={relatedNews}
           contentHtml={contentHtml}

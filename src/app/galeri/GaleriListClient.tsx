@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Images, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
+import { useDialogFocus } from "@/lib/use-dialog-focus";
 import type { GalleryPhoto } from "@/types";
 
 const PAGE_SIZE = 12;
@@ -23,6 +24,7 @@ export default function GaleriListClient({
     currentPage * PAGE_SIZE,
   );
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(lightbox !== null);
   const closeLightbox = useCallback(() => setLightbox(null), []);
   const stepLightbox = useCallback(
     (dir: 1 | -1) => {
@@ -52,13 +54,13 @@ export default function GaleriListClient({
     <section className="py-16 md:py-24 bg-white min-h-[60vh]">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="mb-12">
-          <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+          <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
             Galeri
           </p>
           <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1A1A1A]">
             Galeri & Dokumentasi
           </h1>
-          <p className="font-sans text-sm text-[#999999] mt-3 max-w-2xl">
+          <p className="font-sans text-sm text-[#6B6B6B] mt-3 max-w-2xl">
             Dokumentasi kegiatan INTI Kepulauan Riau: bakti sosial, pertemuan,
             perayaan budaya, dan momen kebersamaan komunitas.
           </p>
@@ -67,7 +69,7 @@ export default function GaleriListClient({
         {items.length === 0 ? (
           <div className="text-center py-20">
             <Images size={40} className="mx-auto text-[#E5E5E5] mb-4" />
-            <p className="text-[#999999] font-sans">
+            <p className="text-[#6B6B6B] font-sans">
               Belum ada dokumentasi yang dipublikasikan.
             </p>
           </div>
@@ -119,6 +121,7 @@ export default function GaleriListClient({
 
       {lightbox !== null && items[lightbox] && (
         <div
+          ref={dialogRef}
           className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
@@ -167,8 +170,11 @@ export default function GaleriListClient({
               height={900}
               className="w-full max-h-[75vh] object-contain"
             />
-            <div className="mt-4 flex items-center justify-end gap-4">
-              <span className="font-sans text-xs text-white/40">
+            <div className="mt-4 flex items-start justify-between gap-4">
+              <p className="font-sans text-sm text-white/85 leading-snug">
+                {items[lightbox].title}
+              </p>
+              <span className="font-sans text-xs text-white/60 whitespace-nowrap">
                 {lightbox + 1} / {items.length}
               </span>
             </div>

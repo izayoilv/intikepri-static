@@ -1,5 +1,7 @@
 when:
-  event: [push, manual]
+  # "cron": add a schedule in Woodpecker (Repo settings → Cron) to rebuild
+  # regularly so CMS edits go live without a code push.
+  event: [push, manual, cron]
   branch: main
   path:
     include:
@@ -84,8 +86,9 @@ steps:
     depends_on: [build-and-push]
     commands:
       - apk add --no-cache curl
+      - TAG="build-$(printf '%06d' ${CI_PIPELINE_NUMBER})-sha-${CI_COMMIT_SHA:0:8}"
       - |
-        STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://registry.kudofools.dev/v2/intikepri/intikepri-static/manifests/latest" -H "Accept: application/vnd.oci.image.manifest.v1+json")
+        STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://registry.kudofools.dev/v2/intikepri/intikepri-static/manifests/$TAG" -H "Accept: application/vnd.oci.image.manifest.v1+json")
         echo "HTTP status = $STATUS"
         if [ "$STATUS" != "200" ]; then echo "FAIL"; exit 1; fi
         echo "OK"

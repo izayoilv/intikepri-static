@@ -7,6 +7,7 @@ const MAIN_ROUTES = [
   "/galeri/",
   "/direktori/",
   "/pustaka/",
+  "/bergabung/",
 ];
 
 function collectPageErrors(page: Page): string[] {
@@ -23,7 +24,10 @@ test.describe("intikepri-static", () => {
     expect(response?.status()).toBe(200);
     await expect(page).toHaveTitle(/INTI Kepri/);
     await expect(
-      page.getByRole("heading", { level: 1, name: /PROVINSI/i }),
+      page.getByRole("heading", {
+        level: 1,
+        name: /Perhimpunan Indonesia Tionghoa/i,
+      }),
     ).toBeVisible();
     await expect(
       page.getByRole("navigation", { name: "Navigasi utama" }),
@@ -53,6 +57,12 @@ test.describe("intikepri-static", () => {
     await expect(article).toBeVisible();
     expect((await article.innerText()).trim().length).toBeGreaterThan(0);
 
+    // Title template adds the site name exactly once.
+    expect((await page.title()).match(/INTI Kepri/g)?.length).toBe(1);
+    await expect(
+      page.getByRole("navigation", { name: "Breadcrumb" }),
+    ).toBeVisible();
+
     expect(await page.locator("article script").count()).toBe(0);
     expect(await page.locator('article a[href^="javascript:"]').count()).toBe(
       0,
@@ -68,11 +78,49 @@ test.describe("intikepri-static", () => {
         page.getByRole("navigation", { name: "Navigasi utama" }),
         route,
       ).toBeVisible();
+      // The section's own menu item is marked as the current page.
+      expect(
+        await page
+          .getByRole("navigation", { name: "Navigasi utama" })
+          .locator('a[aria-current="page"]')
+          .count(),
+        route,
+      ).toBeLessThanOrEqual(1);
       expect(
         (await page.locator("main").innerText()).length,
         route,
       ).toBeGreaterThan(100);
     }
+  });
+
+  test("structured data is valid JSON and pages share a social image", async ({
+    page,
+  }) => {
+    for (const route of ["/", "/berita/", "/agenda/", "/bergabung/"]) {
+      await page.goto(route);
+      const blocks = await page
+        .locator('script[type="application/ld+json"]')
+        .allTextContents();
+      for (const block of blocks) {
+        expect(() => JSON.parse(block), route).not.toThrow();
+      }
+      await expect(
+        page.locator('meta[property="og:image"]').first(),
+        route,
+      ).toHaveAttribute("content", /\/images\/og-image\.jpg$/);
+    }
+  });
+
+  test("mobile menu is labelled and toggles", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/");
+    const toggle = page.getByRole("button", { name: "Buka menu" });
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await toggle.click();
+    await expect(
+      page.getByRole("button", { name: "Tutup menu" }),
+    ).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator("#menu-mobile")).toBeVisible();
   });
 
   test("unknown path serves the custom 404 page", async ({ page }) => {

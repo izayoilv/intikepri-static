@@ -1,35 +1,23 @@
-import fs from "fs";
 import type { Metadata } from "next";
-import path from "path";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { fallbackNews, locations, organizations } from "@/lib/data";
-import type { News } from "@/types";
+import { getNews, toNewsSummary } from "@/lib/content";
+import { locations, organizations } from "@/lib/data";
+import { pageMetadata } from "@/lib/seo";
 
 import BeritaListClient from "./BeritaListClient";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Berita & Kegiatan",
   description:
     "Berita terbaru seputar kegiatan INTI Kepulauan Riau: bakti sosial, pertemuan, dan program kemasyarakatan.",
-  alternates: { canonical: "/berita/" },
-};
+  path: "/berita/",
+});
 
-function getNews(): News[] {
-  try {
-    const filePath = path.join(process.cwd(), "src", "data", "news.json");
-    const content = fs.readFileSync(filePath, "utf-8");
-    const parsed: News[] = JSON.parse(content);
-    return parsed.length > 0 ? parsed : fallbackNews;
-  } catch {
-    return fallbackNews;
-  }
-}
-
-export default async function BeritaPage() {
-  const items = getNews();
+export default function BeritaPage() {
+  const items = getNews().map((n) => toNewsSummary(n));
 
   return (
     <main>

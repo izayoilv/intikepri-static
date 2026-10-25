@@ -21,6 +21,9 @@ source = "**/*"
 X-Frame-Options = "SAMEORIGIN"
 X-Content-Type-Options = "nosniff"
 Referrer-Policy = "strict-origin-when-cross-origin"
+Strict-Transport-Security = "max-age=31536000"
+Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+Content-Security-Policy = "object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
 
 [[advanced.headers]]
 source = "**/*.{js,css,svg,woff,woff2,ico}"

@@ -1,119 +1,119 @@
 import { SiFacebook, SiInstagram } from "@icons-pack/react-simple-icons";
-import { ChevronRight, Mail, MapPin } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Footer() {
-  const links = [
-    { to: "/", label: "Beranda" },
-    { to: "/tentang-kami", label: "Tentang Kami" },
-    { to: "/berita", label: "Berita" },
-    { to: "/agenda", label: "Agenda" },
-    { to: "/galeri", label: "Galeri" },
-    { to: "/direktori", label: "Direktori Bisnis" },
-  ] as const;
+import { CONTACT } from "@/lib/site";
 
-  const socials = [
-    {
-      label: "Facebook INTI Kepri",
-      href: "https://www.facebook.com/groups/perhimpunanintikepri/",
-      Icon: SiFacebook,
-    },
-    {
-      label: "Instagram INTI Kepri",
-      href: "https://www.instagram.com/inti.kepri/",
-      Icon: SiInstagram,
-    },
-  ];
+const LINKS = [
+  { to: "/tentang-kami", label: "Tentang Kami" },
+  { to: "/berita", label: "Berita" },
+  { to: "/agenda", label: "Agenda" },
+  { to: "/galeri", label: "Galeri" },
+  { to: "/direktori", label: "Direktori" },
+  { to: "/pustaka", label: "Pustaka" },
+  { to: "/bergabung", label: "Cara Bergabung" },
+] as const;
 
+const SOCIALS = [
+  { label: "Facebook INTI Kepri", href: CONTACT.facebook, Icon: SiFacebook },
+  { label: "Instagram INTI Kepri", href: CONTACT.instagram, Icon: SiInstagram },
+];
+
+export default function Footer({ showCta = true }: { showCta?: boolean }) {
   return (
-    <footer className="bg-[#0F0F0F] text-white">
-      <div
-        className="relative py-16 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/images/footer-bg.jpeg')" }}
-      >
-        <div className="absolute inset-0 bg-[#A42A28]/40" />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 text-center">
-          <h3 className="font-serif text-2xl md:text-3xl font-bold text-white mb-3 drop-shadow-md">
-            Bergabung Bersama INTI Kepri
-          </h3>
-          <p className="text-white/90 font-sans max-w-xl mx-auto mb-6 drop-shadow">
-            Mari bersama-sama membangun masyarakat Kepulauan Riau yang lebih
-            baik.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="mailto:perhimpunanintikepri@gmail.com?subject=Bergabung%20dengan%20INTI%20Kepri&body=Halo%2C%20saya%20ingin%20mengetahui%20cara%20bergabung%20dengan%20INTI%20Kepri."
-              className="inline-flex items-center gap-2 bg-white text-[#A42A28] px-6 py-3 font-sans text-sm font-semibold hover:bg-white/90 transition-colors shadow-lg"
-            >
-              Hubungi untuk Bergabung <ChevronRight size={16} />
-            </a>
-            <Link
-              href="/tentang-kami"
-              className="inline-flex items-center gap-2 border border-white/60 text-white px-6 py-3 font-sans text-sm font-medium hover:bg-white/10 transition-colors"
-            >
-              Kenali Kami Lebih Dulu
-            </Link>
+    <>
+      {showCta && (
+        <section
+          id="bergabung"
+          className="relative overflow-hidden bg-[#A42A28] text-white"
+        >
+          <Image
+            src="/images/footer-bg.jpeg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover opacity-35 mix-blend-luminosity"
+          />
+          <div className="relative max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-32 flex flex-wrap items-end justify-between gap-10">
+            <div className="flex-[1_1_560px] min-w-0">
+              <p className="mb-4 font-sans text-xs font-semibold tracking-[0.24em] uppercase text-[#FFE2C2]">
+                Mari berkarya bersama
+              </p>
+              <h2 className="font-serif text-[2.6rem] leading-none sm:text-6xl lg:text-[4.6rem] font-extrabold tracking-[-0.02em] text-balance">
+                Bergabung bersama{" "}
+                <span className="italic font-semibold">INTI Kepri</span>
+              </h2>
+              <p className="mt-5 font-sans text-[17px] leading-[1.7] text-white/90 max-w-xl">
+                Ikut membangun masyarakat Kepulauan Riau yang rukun, maju, dan
+                saling percaya melalui kegiatan sosial, budaya, pendidikan, dan
+                ekonomi.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3.5">
+              <Link
+                href="/bergabung"
+                className="inline-flex items-center gap-2.5 bg-white text-[#A42A28] px-7 py-4 font-sans text-[15px] font-bold hover:bg-white/90 transition-colors"
+              >
+                Cara Bergabung <ArrowRight size={16} aria-hidden="true" />
+              </Link>
+              <Link
+                href="/tentang-kami"
+                className="inline-flex items-center border border-white/60 px-7 py-4 font-sans text-[15px] font-medium hover:bg-white/10 transition-colors"
+              >
+                Kenali kami dulu
+              </Link>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
+      )}
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-[#A42A28] flex items-center justify-center">
+      <footer className="bg-[#0D0908] text-white px-4 md:px-8 pt-16 md:pt-[72px] pb-9">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_1.2fr] gap-12">
+            <div className="max-w-sm">
+              <div className="flex items-center gap-3">
                 <Image
                   src="/images/Logo-INTI.png"
-                  alt="Logo INTI Kepri"
-                  width={40}
-                  height={40}
-                  className="object-contain"
+                  alt=""
+                  width={44}
+                  height={44}
                 />
-              </div>
-              <div>
-                <span className="font-serif font-bold text-sm tracking-wider">
+                <span className="font-serif text-lg font-extrabold tracking-[0.06em]">
                   INTI KEPRI
                 </span>
-                <span className="block text-[9px] text-white/40 font-sans -mt-0.5">
-                  PROVINSI KEPULAUAN RIAU
-                </span>
+              </div>
+              <p className="mt-4 font-sans text-sm leading-[1.7] text-white/70">
+                Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau — tulus
+                memberi, ikhlas mengabdi.
+              </p>
+              <div className="mt-5 flex items-center gap-2">
+                {SOCIALS.map(({ label, href, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    title={label}
+                    className="w-10 h-10 flex items-center justify-center border border-white/20 text-white/75 hover:bg-[#A42A28] hover:border-[#A42A28] hover:text-white transition-colors"
+                  >
+                    <Icon size={16} />
+                  </a>
+                ))}
               </div>
             </div>
-            <p className="text-white/40 font-sans text-sm leading-relaxed">
-              Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau — TULUS
-              MEMBERI IKHLAS MENGABDI.
-            </p>
 
-            <div className="flex items-center gap-2 mt-5">
-              {socials.map(({ label, href, Icon: SocialIcon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  title={label}
-                  className="w-9 h-9 flex items-center justify-center border border-white/15 text-white/50 hover:bg-[#A42A28] hover:border-[#A42A28] hover:text-white transition-colors"
-                >
-                  <SocialIcon size={16} />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-serif text-sm font-semibold mb-4 text-white/80">
-              Menu
-            </h4>
             <nav aria-label="Menu footer">
-              <ul className="space-y-2">
-                {links.map((l) => (
+              <h2 className="mb-4 font-sans text-[11px] font-semibold tracking-[0.22em] uppercase text-[#D9A56F]">
+                Menu
+              </h2>
+              <ul className="flex flex-col gap-2.5">
+                {LINKS.map((l) => (
                   <li key={l.to}>
                     <Link
                       href={l.to}
-                      className="text-white/40 hover:text-white font-sans text-sm transition-colors"
+                      className="font-sans text-sm text-white/75 hover:text-white transition-colors"
                     >
                       {l.label}
                     </Link>
@@ -121,60 +121,34 @@ export default function Footer() {
                 ))}
               </ul>
             </nav>
+
+            <div className="max-w-sm">
+              <h2 className="mb-4 font-sans text-[11px] font-semibold tracking-[0.22em] uppercase text-[#D9A56F]">
+                Sekretariat
+              </h2>
+              <address className="not-italic font-sans text-sm leading-[1.7] text-white/75">
+                {CONTACT.address}
+              </address>
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="inline-block mt-3 font-sans text-sm text-white/75 hover:text-white transition-colors break-all"
+              >
+                {CONTACT.email}
+              </a>
+            </div>
           </div>
 
-          <div>
-            <h4 className="font-serif text-sm font-semibold mb-4 text-white/80">
-              Jaringan Kepri
-            </h4>
-            <ul className="space-y-2">
-              {[
-                "Kota Batam",
-                "Kab. Karimun",
-                "Kota Tanjungpinang & Kab. Bintan",
-                "Kab. Lingga",
-                "Kab. Anambas",
-                "Kab. Natuna",
-              ].map((loc) => (
-                <li key={loc} className="text-white/40 font-sans text-sm">
-                  {loc}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-serif text-sm font-semibold mb-4 text-white/80">
-              Kontak
-            </h4>
-            <address className="not-italic space-y-3">
-              <p className="text-white/40 font-sans text-sm flex items-start gap-2">
-                <MapPin
-                  size={14}
-                  className="mt-0.5 flex-shrink-0 text-[#C8956C]"
-                />{" "}
-                Ruko The Capitol Blok B No. 42, Superblok Imperium, Jl. Jend.
-                Sudirman, Kel. Taman Baloi, Kec. Batam Kota, Kota Batam,
-                Kepulauan Riau, Indonesia.
-              </p>
-              <p className="text-white/40 font-sans text-sm flex items-center gap-2">
-                <Mail size={14} className="flex-shrink-0 text-[#C8956C]" />{" "}
-                perhimpunanintikepri@gmail.com
-              </p>
-            </address>
+          <div className="mt-14 pt-6 border-t border-white/10 flex flex-wrap justify-between gap-3 font-sans text-[12.5px] text-white/60">
+            <p>
+              &copy; {new Date().getFullYear()} Perhimpunan Indonesia Tionghoa
+              Provinsi Kepulauan Riau
+            </p>
+            <p lang="zh" className="font-zh tracking-[0.12em]">
+              以诚相予 · 以心相奉
+            </p>
           </div>
         </div>
-
-        <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-white/20 font-sans text-xs">
-            &copy; {new Date().getFullYear()} Perhimpunan Indonesia Tionghoa
-            Provinsi Kepri. All Rights Reserved.
-          </p>
-          <p className="text-white/20 font-sans text-xs">
-            TULUS MEMBERI IKHLAS MENGABDI
-          </p>
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 }

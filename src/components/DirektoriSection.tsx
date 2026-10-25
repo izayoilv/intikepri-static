@@ -1,56 +1,31 @@
 "use client";
 
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, Globe, MapPin, Store, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
 
+import { useReveal } from "@/lib/use-reveal";
 import type { Business } from "@/types";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function DirektoriSection({
   initialItems,
 }: {
   initialItems: Business[];
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
   const businesses = [...initialItems]
     .sort((a, b) => (a.sort_order ?? 999) - (b.sort_order ?? 999))
     .slice(0, 3);
 
-  useEffect(() => {
-    if (!ref.current || businesses.length === 0) return;
-    const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>(".direktori-reveal").forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 88%", once: true },
-            delay: i * 0.1,
-          },
-        );
-      });
-    }, ref);
-    return () => ctx.revert();
-  }, [businesses.length]);
+  const ref = useReveal<HTMLElement>(".direktori-reveal", businesses.length);
 
   if (businesses.length === 0) return null;
 
   return (
-    <section ref={ref} className="py-20 md:py-32 bg-[#F7F7F7]">
+    <section ref={ref} className="py-20 md:py-32 bg-[#FAF6EF]">
       <div className="max-w-5xl mx-auto px-4 md:px-8">
         <div className="flex items-end justify-between mb-12 direktori-reveal">
           <div>
-            <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+            <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
               Direktori Bisnis
             </p>
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1A1A1A]">
@@ -98,18 +73,18 @@ export default function DirektoriSection({
                       {biz.name}
                     </h3>
                     {(biz.sort_order ?? 999) < 999 && (
-                      <span className="bg-[#C8956C]/15 text-[#C8956C] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
+                      <span className="bg-[#C8956C]/15 text-[#8F6440] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
                         Unggulan
                       </span>
                     )}
                   </div>
-                  <p className="font-sans text-xs text-[#999999] mt-1 flex items-center gap-x-2">
+                  <p className="font-sans text-xs text-[#6B6B6B] mt-1 flex items-center gap-x-2">
                     <span className="text-[#A42A28]">{biz.category}</span>
                     {biz.location && (
                       <>
                         <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
                         <span className="flex items-center gap-1">
-                          <MapPin size={11} className="text-[#C8956C]" />{" "}
+                          <MapPin size={11} className="text-[#8F6440]" />{" "}
                           {biz.location}
                         </span>
                       </>

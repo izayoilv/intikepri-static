@@ -123,7 +123,66 @@ const ALLOWED_ATTR = [
   "width",
 ];
 
+const IFRAME_HOSTS = new Set([
+  "www.youtube.com",
+  "youtube.com",
+  "www.youtube-nocookie.com",
+  "youtube-nocookie.com",
+]);
+
+function isAllowedEmbed(src: string | null): boolean {
+  if (!src) return false;
+  try {
+    const url = new URL(src);
+    return (
+      url.protocol === "https:" &&
+      IFRAME_HOSTS.has(url.hostname) &&
+      url.pathname.startsWith("/embed/")
+    );
+  } catch {
+    return false;
+  }
+}
+
+let hooksInstalled = false;
+
+function installHooks(): void {
+  if (hooksInstalled) return;
+  hooksInstalled = true;
+
+  // Keep only text alignment from inline styles (written by the editor's
+  // TextAlign extension); anything else could restyle or overlay the page.
+  DOMPurify.addHook("uponSanitizeAttribute", (_node, data) => {
+    if (data.attrName !== "style") return;
+    const match = /text-align\s*:\s*(left|right|center|justify)/i.exec(
+      data.attrValue,
+    );
+    if (match) {
+      data.attrValue = `text-align: ${match[1].toLowerCase()}`;
+    } else {
+      data.keepAttr = false;
+    }
+  });
+
+  DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+    const el = node as Element;
+    if (el.nodeType !== 1) return;
+    const tag = el.nodeName.toLowerCase();
+
+    // Embeds are limited to YouTube players.
+    if (tag === "iframe" && !isAllowedEmbed(el.getAttribute("src"))) {
+      el.removeAttribute("src");
+      el.setAttribute("srcdoc", "");
+    }
+
+    if (tag === "a" && el.getAttribute("target") === "_blank") {
+      el.setAttribute("rel", "noopener noreferrer");
+    }
+  });
+}
+
 function sanitizeHtml(html: string): string {
+  installHooks();
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS,
     ALLOWED_ATTR,

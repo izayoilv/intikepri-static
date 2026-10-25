@@ -1,79 +1,45 @@
-import fs from "fs";
 import type { Metadata } from "next";
-import path from "path";
 
 import AgendaSection from "@/components/AgendaSection";
+import BidangSection from "@/components/BidangSection";
 import DirektoriSection from "@/components/DirektoriSection";
 import Footer from "@/components/Footer";
 import GaleriSection from "@/components/GaleriSection";
 import HeroSection from "@/components/HeroSection";
 import IntroSection from "@/components/IntroSection";
+import JaringanSection from "@/components/JaringanSection";
+import JsonLd from "@/components/JsonLd";
+import MottoBand from "@/components/MottoBand";
 import Navbar from "@/components/Navbar";
 import NewsSection from "@/components/NewsSection";
 import {
-  fallbackAgenda,
-  fallbackBusinesses,
-  fallbackGallery,
-  fallbackNews,
-} from "@/lib/data";
-import { SITE_URL } from "@/lib/site";
-import type { AgendaEvent, Business, GalleryPhoto, News } from "@/types";
-
-function getLatestGallery(): GalleryPhoto[] {
-  try {
-    const filePath = path.join(process.cwd(), "src", "data", "gallery.json");
-    const content = fs.readFileSync(filePath, "utf-8");
-    const parsed: GalleryPhoto[] = JSON.parse(content);
-    return parsed.length > 0 ? parsed.slice(0, 8) : fallbackGallery;
-  } catch {
-    return fallbackGallery;
-  }
-}
-
-function getLatestBusinesses(): Business[] {
-  try {
-    const filePath = path.join(process.cwd(), "src", "data", "business.json");
-    const content = fs.readFileSync(filePath, "utf-8");
-    const parsed: Business[] = JSON.parse(content);
-    return parsed.length > 0 ? parsed.slice(0, 3) : fallbackBusinesses;
-  } catch {
-    return fallbackBusinesses;
-  }
-}
-
-function getUpcomingAgenda(): AgendaEvent[] {
-  try {
-    const filePath = path.join(process.cwd(), "src", "data", "agenda.json");
-    const content = fs.readFileSync(filePath, "utf-8");
-    const parsed: AgendaEvent[] = JSON.parse(content);
-    return parsed.sort((a, b) => a.date.localeCompare(b.date)).slice(0, 3);
-  } catch {
-    return fallbackAgenda;
-  }
-}
-
-function getLatestNews(): News[] {
-  try {
-    const filePath = path.join(process.cwd(), "src", "data", "news.json");
-    const content = fs.readFileSync(filePath, "utf-8");
-    const parsed: News[] = JSON.parse(content);
-    return parsed.length > 0 ? parsed.slice(0, 3) : fallbackNews;
-  } catch {
-    return fallbackNews;
-  }
-}
+  getBusinesses,
+  getGallery,
+  getNews,
+  getUpcomingAgenda,
+  toNewsSummary,
+} from "@/lib/content";
+import { pageMetadata } from "@/lib/seo";
+import { CONTACT, ORG_NAME, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/" },
+  ...pageMetadata({
+    title: `INTI Kepri | ${ORG_NAME}`,
+    description:
+      "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau - Tulus memberi, ikhlas mengabdi.",
+    path: "/",
+  }),
+  title: { absolute: `INTI Kepri | ${ORG_NAME}` },
 };
 
 const organizationLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Perhimpunan Indonesia Tionghoa Provinsi Kepulauan Riau",
+  name: ORG_NAME,
   alternateName: "INTI Kepri",
   url: `${SITE_URL}/`,
   logo: `${SITE_URL}/images/Logo-INTI-512.png`,
+  email: CONTACT.email,
   description:
     "Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau - Tulus memberi, ikhlas mengabdi.",
   address: {
@@ -86,30 +52,29 @@ const organizationLd = {
     addressCountry: "ID",
   },
   areaServed: "Kepulauan Riau",
-  sameAs: [
-    "https://www.facebook.com/groups/perhimpunanintikepri/",
-    "https://www.instagram.com/inti.kepri/",
-  ],
+  sameAs: [CONTACT.facebook, CONTACT.instagram],
 };
 
-export default async function HomePage() {
-  const latestNews = getLatestNews();
-  const latestGallery = getLatestGallery();
-  const latestBusinesses = getLatestBusinesses();
+export default function HomePage() {
+  const latestNews = getNews()
+    .slice(0, 4)
+    .map((n) => toNewsSummary(n));
+  const gallery = getGallery();
+  const latestBusinesses = getBusinesses();
   const upcomingAgenda = getUpcomingAgenda();
 
   return (
     <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
-      />
+      <JsonLd data={organizationLd} />
       <Navbar />
-      <HeroSection />
+      <HeroSection latest={latestNews[0] ?? null} />
+      <MottoBand />
       <IntroSection />
       <AgendaSection initialItems={upcomingAgenda} />
       <NewsSection initialItems={latestNews} />
-      <GaleriSection initialItems={latestGallery} />
+      <BidangSection photos={gallery.map((g) => g.image)} />
+      <JaringanSection />
+      <GaleriSection initialItems={gallery.slice(0, 8)} />
       <DirektoriSection initialItems={latestBusinesses} />
       <Footer />
     </main>

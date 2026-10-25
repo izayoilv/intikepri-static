@@ -30,7 +30,14 @@ import {
 import Image from "next/image";
 import { type ComponentType, useEffect, useMemo, useState } from "react";
 
+import { safeHttpUrl } from "@/lib/url";
+import { useDialogFocus } from "@/lib/use-dialog-focus";
 import type { Business, BusinessContacts } from "@/types";
+
+/** Handle-style values (usernames) may only contain safe characters. */
+function handle(v: string): string {
+  return encodeURIComponent(v.trim().replace(/^@/, ""));
+}
 
 const PAGE_SIZE = 6;
 
@@ -38,73 +45,96 @@ const CONTACT_PLATFORMS: {
   key: keyof BusinessContacts;
   label: string;
   icon: ComponentType<{ size?: number }>;
-  href: (value: string) => string;
+  /** Returns null when the stored value can't be turned into a safe link. */
+  href: (value: string) => string | null;
 }[] = [
   {
     key: "phone",
     label: "Phone",
     icon: Phone,
-    href: (v) => `tel:${v.replace(/\s/g, "")}`,
+    href: (v) => {
+      const tel = v.replace(/[^\d+]/g, "");
+      return tel ? `tel:${tel}` : null;
+    },
   },
   {
     key: "whatsapp",
     label: "WhatsApp",
     icon: SiWhatsapp,
-    href: (v) => `https://wa.me/${v.replace(/\D/g, "")}`,
+    href: (v) => {
+      // wa.me needs the country code: "0812…" → "62812…".
+      const digits = v.replace(/\D/g, "").replace(/^0/, "62");
+      return digits ? `https://wa.me/${digits}` : null;
+    },
   },
   {
     key: "telegram",
     label: "Telegram",
     icon: SiTelegram,
-    href: (v) => `https://t.me/${v}`,
+    href: (v) => safeHttpUrl(v) ?? `https://t.me/${handle(v)}`,
   },
-  { key: "email", label: "Email", icon: Mail, href: (v) => `mailto:${v}` },
-  { key: "website", label: "Website", icon: Globe, href: (v) => v },
+  {
+    key: "email",
+    label: "Email",
+    icon: Mail,
+    href: (v) =>
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? `mailto:${v.trim()}` : null,
+  },
+  {
+    key: "website",
+    label: "Website",
+    icon: Globe,
+    href: (v) => safeHttpUrl(v),
+  },
   {
     key: "instagram",
     label: "Instagram",
     icon: SiInstagram,
-    href: (v) => `https://instagram.com/${v.replace(/^@/, "")}`,
+    href: (v) => safeHttpUrl(v) ?? `https://instagram.com/${handle(v)}`,
   },
   {
     key: "facebook",
     label: "Facebook",
     icon: SiFacebook,
-    href: (v) => `https://facebook.com/${v.replace(/^@/, "")}`,
+    href: (v) => safeHttpUrl(v) ?? `https://facebook.com/${handle(v)}`,
   },
   {
     key: "tiktok",
     label: "TikTok",
     icon: SiTiktok,
-    href: (v) => `https://tiktok.com/${v.startsWith("@") ? v : `@${v}`}`,
+    href: (v) => safeHttpUrl(v) ?? `https://tiktok.com/@${handle(v)}`,
   },
   {
     key: "x",
     label: "X (Twitter)",
     icon: SiX,
-    href: (v) => `https://x.com/${v.replace(/^@/, "")}`,
+    href: (v) => safeHttpUrl(v) ?? `https://x.com/${handle(v)}`,
   },
   {
     key: "threads",
     label: "Threads",
     icon: SiThreads,
-    href: (v) => `https://threads.net/${v.startsWith("@") ? v : `@${v}`}`,
+    href: (v) => safeHttpUrl(v) ?? `https://threads.net/@${handle(v)}`,
   },
-  { key: "shopee", label: "Shopee", icon: SiShopee, href: (v) => v },
+  {
+    key: "shopee",
+    label: "Shopee",
+    icon: SiShopee,
+    href: (v) => safeHttpUrl(v),
+  },
   {
     key: "line",
     label: "LINE",
     icon: SiLine,
-    href: (v) => `https://line.me/R/ti/p/${v}`,
+    href: (v) => safeHttpUrl(v) ?? `https://line.me/R/ti/p/${handle(v)}`,
   },
   {
     key: "googlemaps",
     label: "Google Maps",
     icon: SiGooglemaps,
     href: (v) =>
-      v.startsWith("http")
-        ? v
-        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v)}`,
+      safeHttpUrl(v) ??
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(v)}`,
   },
 ];
 
@@ -198,6 +228,7 @@ export default function DirektoriListClient({
   );
 
   const heroPhoto = selected ? selected.banner || selected.image : null;
+  const dialogRef = useDialogFocus<HTMLDivElement>(selected !== null);
 
   useEffect(() => {
     if (!selected) return;
@@ -217,13 +248,13 @@ export default function DirektoriListClient({
       <div className="max-w-5xl mx-auto px-4 md:px-8">
         <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
-            <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-3">
+            <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
               Direktori
             </p>
             <h1 className="font-serif text-3xl md:text-4xl font-bold text-[#1A1A1A]">
               Direktori Bisnis
             </h1>
-            <p className="font-sans text-sm text-[#999999] mt-3 max-w-2xl">
+            <p className="font-sans text-sm text-[#6B6B6B] mt-3 max-w-2xl">
               Usaha dan UMKM dari anggota serta komunitas INTI Kepulauan Riau.
               Dukung bisnis sesama anggota komunitas.
             </p>
@@ -240,7 +271,7 @@ export default function DirektoriListClient({
           <div className="relative flex-1">
             <Search
               size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999999]"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B6B]"
             />
             <input
               type="text"
@@ -250,7 +281,8 @@ export default function DirektoriListClient({
                 setPage(1);
               }}
               placeholder="Cari bisnis..."
-              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#BBBBBB] focus:outline-none focus:border-[#A42A28]"
+              aria-label="Cari bisnis"
+              className="w-full border border-[#E5E5E5] bg-white pl-9 pr-4 py-2.5 font-sans text-sm text-[#1A1A1A] placeholder:text-[#8A8A8A] focus:outline-none focus:border-[#A42A28]"
             />
           </div>
           {categories.length > 2 && (
@@ -272,7 +304,7 @@ export default function DirektoriListClient({
               </select>
               <ChevronDown
                 size={14}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6B6B6B] pointer-events-none"
               />
             </div>
           )}
@@ -295,19 +327,19 @@ export default function DirektoriListClient({
               </select>
               <ChevronDown
                 size={14}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#999999] pointer-events-none"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6B6B6B] pointer-events-none"
               />
             </div>
           )}
         </div>
-        <p className="font-sans text-xs text-[#BBBBBB] mb-8">
+        <p className="font-sans text-xs text-[#6B6B6B] mb-8" aria-live="polite">
           {filtered.length} bisnis ditemukan
         </p>
 
         {items.length === 0 ? (
           <div className="text-center py-20">
             <Store size={40} className="mx-auto text-[#E5E5E5] mb-4" />
-            <p className="text-[#999999] font-sans mb-6">
+            <p className="text-[#6B6B6B] font-sans mb-6">
               {initialItems.length === 0
                 ? "Belum ada bisnis terdaftar. Jadilah yang pertama!"
                 : "Tidak ada bisnis yang cocok."}
@@ -332,7 +364,10 @@ export default function DirektoriListClient({
                   tabIndex={0}
                   onClick={() => setSelected(biz)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") setSelected(biz);
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelected(biz);
+                    }
                   }}
                   className="group bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow flex flex-col sm:flex-row cursor-pointer overflow-hidden"
                   aria-label={`Lihat detail ${biz.name}`}
@@ -361,18 +396,18 @@ export default function DirektoriListClient({
                         {biz.name}
                       </h2>
                       {isFeatured(biz) && (
-                        <span className="bg-[#C8956C]/15 text-[#C8956C] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
+                        <span className="bg-[#C8956C]/15 text-[#8F6440] font-sans text-[10px] tracking-wider uppercase px-2 py-0.5 font-medium">
                           Unggulan
                         </span>
                       )}
                     </div>
-                    <p className="font-sans text-xs text-[#999999] mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <p className="font-sans text-xs text-[#6B6B6B] mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                       <span className="text-[#A42A28]">{biz.category}</span>
                       {biz.location && (
                         <>
                           <span className="w-1 h-1 bg-[#DDDDDD] rounded-full" />
                           <span className="flex items-center gap-1">
-                            <MapPin size={11} className="text-[#C8956C]" />{" "}
+                            <MapPin size={11} className="text-[#8F6440]" />{" "}
                             {biz.location}
                           </span>
                         </>
@@ -390,9 +425,9 @@ export default function DirektoriListClient({
                       {biz.description}
                     </p>
                     <div className="mt-auto pt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                      {biz.contacts?.website && (
+                      {safeHttpUrl(biz.contacts?.website) && (
                         <a
-                          href={biz.contacts.website}
+                          href={safeHttpUrl(biz.contacts?.website) ?? undefined}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
@@ -403,8 +438,8 @@ export default function DirektoriListClient({
                         </a>
                       )}
                       {biz.address && (
-                        <span className="hidden md:inline-flex font-sans text-[11px] text-[#BBBBBB] truncate items-center gap-1">
-                          <MapPin size={11} className="text-[#C8956C]" />{" "}
+                        <span className="hidden md:inline-flex font-sans text-[11px] text-[#767676] truncate items-center gap-1">
+                          <MapPin size={11} className="text-[#8F6440]" />{" "}
                           {biz.address}
                         </span>
                       )}
@@ -443,6 +478,7 @@ export default function DirektoriListClient({
 
       {selected && (
         <div
+          ref={dialogRef}
           className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
@@ -482,7 +518,7 @@ export default function DirektoriListClient({
                   </span>
                   {selected.location && (
                     <span className="text-white/80 flex items-center gap-1">
-                      <MapPin size={11} className="text-[#C8956C]" />
+                      <MapPin size={11} className="text-[#8F6440]" />
                       {selected.location}
                     </span>
                   )}
@@ -531,7 +567,7 @@ export default function DirektoriListClient({
                 <p className="font-sans text-sm text-[#666666] flex items-start gap-2 mb-6">
                   <MapPin
                     size={14}
-                    className="mt-0.5 flex-shrink-0 text-[#C8956C]"
+                    className="mt-0.5 flex-shrink-0 text-[#8F6440]"
                   />
                   {selected.address}
                 </p>
@@ -541,11 +577,13 @@ export default function DirektoriListClient({
                 {CONTACT_PLATFORMS.map((p) => {
                   const value = selected.contacts?.[p.key];
                   if (!value) return null;
+                  const href = p.href(value);
+                  if (!href) return null;
                   const Icon = p.icon;
                   return p.key === "website" ? (
                     <a
                       key={p.key}
-                      href={p.href(value)}
+                      href={href}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 bg-[#A42A28] text-white px-4 py-2.5 font-sans text-xs font-medium hover:bg-[#8a2320] transition-colors"
@@ -555,7 +593,7 @@ export default function DirektoriListClient({
                   ) : (
                     <a
                       key={p.key}
-                      href={p.href(value)}
+                      href={href}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 border border-[#E5E5E5] text-[#666666] px-4 py-2.5 font-sans text-xs font-medium hover:border-[#A42A28]/40 hover:text-[#A42A28] transition-colors"

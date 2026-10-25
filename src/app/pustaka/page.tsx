@@ -1,56 +1,29 @@
-import fs from "fs";
 import type { Metadata } from "next";
-import path from "path";
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/JsonLd";
 import Navbar from "@/components/Navbar";
-import { fallbackDocuments, fallbackVideos } from "@/lib/data";
+import { getDocuments, getVideos } from "@/lib/content";
+import { pageMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
-import type { DocumentItem, VideoItem } from "@/types";
+import { safeHttpUrl } from "@/lib/url";
 
 import PustakaClient from "./PustakaClient";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Pustaka & Media",
   description:
-    "Rekaman kegiatan dan dokumen resmi Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau : makalah, laporan, dan publikasi.",
-  alternates: { canonical: `${SITE_URL}/pustaka/` },
-  openGraph: {
-    title: "Pustaka & Media | INTI Kepri",
-    description:
-      "Rekaman kegiatan dan dokumen resmi INTI Kepulauan Riau : makalah, laporan, dan publikasi.",
-    url: `${SITE_URL}/pustaka/`,
-  },
-};
-
-function getVideos(): VideoItem[] {
-  try {
-    const raw = fs.readFileSync(
-      path.join(process.cwd(), "src/data/video.json"),
-      "utf-8",
-    );
-    return JSON.parse(raw) as VideoItem[];
-  } catch {
-    return fallbackVideos;
-  }
-}
-
-function getDocuments(): DocumentItem[] {
-  try {
-    const raw = fs.readFileSync(
-      path.join(process.cwd(), "src/data/document.json"),
-      "utf-8",
-    );
-    return JSON.parse(raw) as DocumentItem[];
-  } catch {
-    return fallbackDocuments;
-  }
-}
+    "Rekaman kegiatan dan dokumen resmi Perhimpunan Indonesia Tionghoa (INTI) Provinsi Kepulauan Riau: makalah, laporan, dan publikasi.",
+  path: "/pustaka/",
+});
 
 export default function PustakaPage() {
   const videos = getVideos();
-  const documents = getDocuments();
+  // Only documents with an absolute http(s) or site-relative link are listed.
+  const documents = getDocuments().filter(
+    (d) => d.file_url?.startsWith("/") || safeHttpUrl(d.file_url),
+  );
 
   const collectionLd = {
     "@context": "https://schema.org",
@@ -77,23 +50,15 @@ export default function PustakaPage() {
   };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionLd) }}
-      />
-      {videos.length > 0 && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(videoLd) }}
-        />
-      )}
+    <main>
+      <JsonLd data={collectionLd} />
+      {videos.length > 0 && <JsonLd data={videoLd} />}
       <Navbar />
-      <main className="pt-16">
+      <div className="pt-16">
         <Breadcrumb items={[{ label: "Pustaka" }]} />
         <PustakaClient videos={videos} documents={documents} />
-      </main>
+      </div>
       <Footer />
-    </>
+    </main>
   );
 }

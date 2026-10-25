@@ -1,13 +1,12 @@
-"use client";
-
 import { SiFacebook, SiWhatsapp, SiX } from "@icons-pack/react-simple-icons";
 import parse, { Element } from "html-react-parser";
 import { ArrowRight, Calendar, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { formatDateID } from "@/lib/format";
 import { SITE_URL } from "@/lib/site";
-import type { News } from "@/types";
+import type { News, NewsSummary } from "@/types";
 
 const IMG_SIZES = "(max-width: 896px) 100vw, 672px";
 
@@ -44,32 +43,13 @@ function ArticleContent({ html }: { html: string }) {
 
 interface Props {
   news: News | null;
-  relatedNews?: News[];
+  relatedNews?: NewsSummary[];
   contentHtml?: { lede: string; body: string } | null;
 }
 
-const MONTHS_ID = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
+const formatDate = formatDateID;
 
-function formatDate(raw: string): string {
-  const [y, m, d] = (raw || "").split("-");
-  if (!y || !m || !d || !MONTHS_ID[Number(m) - 1]) return raw;
-  return `${Number(d)} ${MONTHS_ID[Number(m) - 1]} ${y}`;
-}
-
-export default function BeritaDetailClient({
+export default function BeritaDetail({
   news,
   relatedNews = [],
   contentHtml = null,
@@ -91,7 +71,7 @@ export default function BeritaDetailClient({
     );
   }
 
-  const articleUrl = `${SITE_URL}/berita/${item.slug}`;
+  const articleUrl = `${SITE_URL}/berita/${item.slug}/`;
   const encodedUrl = encodeURIComponent(articleUrl);
   const encodedTitle = encodeURIComponent(item.title);
 
@@ -124,11 +104,11 @@ export default function BeritaDetailClient({
 
   return (
     <div className="bg-white pb-16">
-      <div className="max-w-4xl mx-auto px-4 md:px-8 pt-8 md:pt-12">
+      <div className="max-w-4xl mx-auto px-4 md:px-8 pt-6 md:pt-10">
         <div className="lg:flex lg:gap-10">
           <aside className="hidden lg:block flex-shrink-0 w-11">
             <div className="sticky top-28 flex flex-col items-center gap-2">
-              <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999] mb-1 [writing-mode:vertical-rl]">
+              <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#6B6B6B] mb-1 [writing-mode:vertical-rl]">
                 Bagikan
               </span>
               {shareLinks.map(({ label, href, Icon, color }) => (
@@ -153,7 +133,7 @@ export default function BeritaDetailClient({
                 {item.location}
               </span>
               {item.organization && (
-                <span className="font-sans text-xs tracking-[0.18em] uppercase text-[#999999]">
+                <span className="font-sans text-xs tracking-[0.18em] uppercase text-[#6B6B6B]">
                   {item.organization}
                 </span>
               )}
@@ -166,7 +146,7 @@ export default function BeritaDetailClient({
             <div className="border-y border-[#E5E5E5] py-3.5 mb-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
               <div className="font-sans text-sm">
                 <p className="text-[#111111] font-bold">Oleh {item.author}</p>
-                <p className="text-[#777777] text-xs mt-0.5 flex items-center gap-1.5">
+                <p className="text-[#6B6B6B] text-xs mt-0.5 flex items-center gap-1.5">
                   <Calendar size={12} />{" "}
                   <time dateTime={item.date}>{formatDate(item.date)}</time>
                 </p>
@@ -194,11 +174,12 @@ export default function BeritaDetailClient({
                   src={item.image}
                   alt={item.title}
                   fill
+                  sizes="(max-width: 896px) 100vw, 800px"
                   className="object-cover"
                   priority
                 />
               </div>
-              <figcaption className="font-sans text-xs text-[#888888] leading-relaxed mt-2.5">
+              <figcaption className="font-sans text-xs text-[#6B6B6B] leading-relaxed mt-2.5">
                 {item.title}. (Dok. INTI Kepri)
               </figcaption>
             </figure>
@@ -244,8 +225,9 @@ export default function BeritaDetailClient({
                 <div className="relative w-[38%] max-w-44 md:w-full md:max-w-none flex-shrink-0 aspect-[16/10] overflow-hidden bg-[#EEEEEE]">
                   <Image
                     src={rel.image}
-                    alt={rel.title}
+                    alt=""
                     fill
+                    sizes="(max-width: 768px) 38vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
@@ -256,11 +238,11 @@ export default function BeritaDetailClient({
                   <h3 className="font-serif text-base md:text-lg font-bold text-[#111111] leading-snug line-clamp-3 md:line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                     {rel.title}
                   </h3>
-                  <p className="font-sans text-xs text-[#777777] mt-2 flex items-center gap-1.5">
-                    <Calendar size={12} />{" "}
-                    <time dateTime={rel.date}>{formatDate(rel.date)}</time>
-                    <span aria-hidden="true">·</span>
-                    <span className="truncate">{rel.author}</span>
+                  <p className="font-sans text-xs text-[#6B6B6B] mt-2 flex items-center gap-1.5">
+                    <Calendar size={12} aria-hidden="true" />
+                    <time dateTime={rel.date} className="whitespace-nowrap">
+                      {formatDate(rel.date)}
+                    </time>
                   </p>
                 </div>
               </Link>

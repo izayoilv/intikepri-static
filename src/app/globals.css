@@ -64,14 +64,89 @@ body {
   transform-origin: left;
 }
 
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes motto-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.motto-track {
+  animation: motto-scroll 48s linear infinite;
+}
+
+/* Chinese text: Noto Serif SC where installed, then system CJK serifs. */
+.font-zh {
+  font-family:
+    "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+}
+
+@keyframes hero-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+}
+
+.hero-cue {
+  animation: hero-cue 2.2s ease-in-out infinite;
+}
+
+/* Runs from first paint, so the hero text never flashes visible-then-hidden. */
+.hero-content {
+  animation: hero-in 1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+/* Scroll reveal (see src/lib/use-reveal.ts). Only elements below the fold get
+   .reveal-pending, and only after JavaScript runs. */
+.reveal-pending {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-pending.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-slide,
-  .hero-progress {
+  .hero-progress,
+  .hero-content,
+  .hero-cue,
+  .motto-track {
     animation: none;
   }
 
   .hero-slide:first-child {
     opacity: 1;
+  }
+
+  .reveal-pending {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

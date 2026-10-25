@@ -8,33 +8,14 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import Breadcrumb from "@/components/Breadcrumb";
 import { agendaStatus, isAgendaVisible, sortAgenda } from "@/lib/agenda";
+import { formatDateID as formatDate } from "@/lib/format";
 import { useNow } from "@/lib/use-now";
 import type { AgendaEvent } from "@/types";
-
-const MONTHS_ID = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
-
-function formatDate(iso: string): string {
-  const [y, m, d] = iso.split("-").map(Number);
-  return `${d} ${MONTHS_ID[m - 1] ?? ""} ${y}`;
-}
 
 export default function AgendaDetailClient({
   event,
@@ -55,12 +36,12 @@ export default function AgendaDetailClient({
     return others.slice(0, 3);
   }, [all, event, now]);
 
-  const isPast = now && event ? agendaStatus(event, now) === "past" : false;
+  const status = now && event ? agendaStatus(event, now) : null;
 
-  if (!event || isPast) {
+  if (!event) {
     return (
-      <div className="min-h-screen bg-[#F7F7F7] pt-24">
-        <div className="max-w-4xl mx-auto px-4 md:px-8 py-12 text-center">
+      <div className="min-h-[60vh] bg-[#F7F7F7]">
+        <div className="max-w-4xl mx-auto px-4 md:px-8 py-20 text-center">
           <h1 className="font-serif text-2xl font-bold text-[#1A1A1A] mb-4">
             Agenda tidak ditemukan
           </h1>
@@ -96,12 +77,8 @@ export default function AgendaDetailClient({
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7]">
-      <Breadcrumb
-        items={[{ label: "Agenda", to: "/agenda" }, { label: event.title }]}
-      />
-
-      <div className="bg-[#1A1A1A] py-16 md:py-24">
+    <div className="bg-[#F7F7F7]">
+      <div className="bg-[#1A1A1A] py-14 md:py-20 mt-5">
         <div className="max-w-4xl mx-auto px-4 md:px-8">
           <Link
             href="/agenda"
@@ -110,6 +87,16 @@ export default function AgendaDetailClient({
             <ArrowLeft size={16} /> Kembali ke Agenda
           </Link>
           <div className="flex flex-wrap items-center gap-2 mb-4">
+            {status === "past" && (
+              <span className="inline-block bg-white/15 text-white text-xs font-sans px-3 py-1">
+                Sudah berlangsung
+              </span>
+            )}
+            {status === "ongoing" && (
+              <span className="inline-block bg-[#2E7D32] text-white text-xs font-sans px-3 py-1">
+                Sedang berlangsung
+              </span>
+            )}
             {event.category && (
               <span className="inline-block bg-[#A42A28] text-white text-xs font-sans px-3 py-1">
                 {event.category}
@@ -122,7 +109,7 @@ export default function AgendaDetailClient({
           <h1 className="font-serif text-2xl md:text-4xl font-bold text-white mb-5 leading-tight">
             {event.title}
           </h1>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-white/50 font-sans text-sm">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-white/70 font-sans text-sm">
             <span className="flex items-center gap-1.5">
               <Calendar size={14} />{" "}
               <time dateTime={event.date}>{formatDate(event.date)}</time>
@@ -145,7 +132,7 @@ export default function AgendaDetailClient({
                   <Icon size={16} className="text-[#A42A28]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#999999]">
+                  <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#6B6B6B]">
                     {label}
                   </p>
                   <p className="font-sans text-sm text-[#1A1A1A] font-medium mt-0.5">
@@ -159,12 +146,15 @@ export default function AgendaDetailClient({
 
         <article className="bg-white border border-[#E5E5E5] overflow-hidden">
           {event.image && (
-            <div
-              className="aspect-[16/9] bg-cover bg-center"
-              style={{ backgroundImage: `url(${event.image})` }}
-              role="img"
-              aria-label={`Foto ${event.title}`}
-            />
+            <div className="relative aspect-[16/9] bg-[#EEEEEE]">
+              <Image
+                src={event.image}
+                alt={`Foto ${event.title}`}
+                fill
+                sizes="(max-width: 896px) 100vw, 832px"
+                className="object-cover"
+              />
+            </div>
           )}
           <div className="p-6 md:p-10">
             <div className="prose prose-sm max-w-none text-[#444444] font-sans leading-loose whitespace-pre-line">
@@ -177,7 +167,7 @@ export default function AgendaDetailClient({
           <section className="mt-16">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <p className="text-[#C8956C] font-sans text-xs tracking-[0.3em] uppercase mb-2">
+                <p className="text-[#8F6440] font-sans text-xs tracking-[0.3em] uppercase mb-2">
                   Jangan Lewatkan
                 </p>
                 <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A]">
@@ -199,14 +189,14 @@ export default function AgendaDetailClient({
                   className="group"
                 >
                   <div className="bg-white border border-[#E5E5E5] hover:shadow-lg transition-shadow h-full p-5">
-                    <p className="font-sans text-xs text-[#999999] flex items-center gap-1.5 mb-3">
-                      <Calendar size={12} className="text-[#C8956C]" />
+                    <p className="font-sans text-xs text-[#6B6B6B] flex items-center gap-1.5 mb-3">
+                      <Calendar size={12} className="text-[#8F6440]" />
                       <time dateTime={rel.date}>{formatDate(rel.date)}</time>
                     </p>
                     <h3 className="font-serif text-base font-semibold text-[#1A1A1A] mb-2 line-clamp-2 group-hover:text-[#A42A28] transition-colors">
                       {rel.title}
                     </h3>
-                    <p className="font-sans text-xs text-[#999999] flex items-center gap-1">
+                    <p className="font-sans text-xs text-[#6B6B6B] flex items-center gap-1">
                       <MapPin size={12} /> {rel.venue || rel.location}
                     </p>
                   </div>

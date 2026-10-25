@@ -26,7 +26,17 @@ pnpm dev
 
 ## Data
 
-Reads from `src/data/news.json` at build time. Falls back to empty array if missing. News content is managed via a separate CMS backend.
+Content is managed in a separate CMS (`api.intikepri.com`). At build time the CI pipeline downloads it into `src/data/` (git-ignored):
+
+| File                          | Used by                  |
+| ----------------------------- | ------------------------ |
+| `news.json`                   | Beranda, Berita, sitemap |
+| `agenda.json`                 | Beranda, Agenda, sitemap |
+| `gallery.json`                | Beranda, Galeri          |
+| `business.json`               | Beranda, Direktori       |
+| `document.json`, `video.json` | Pustaka                  |
+
+All files are read through `src/lib/content.ts`. A missing or empty file is treated as an empty list, so the site builds without CMS data (pages show their empty states). Static content (visi & misi, branches, committee, history) lives in `src/lib/data.ts`; contact details, including the optional WhatsApp number, live in `src/lib/site.ts`.
 
 ## Build
 
@@ -47,4 +57,4 @@ The suite builds the site, serves `dist/` locally, and exercises the main routes
 
 ## Deploy
 
-Kubernetes manifests live in a separate infrastructure repository.
+Woodpecker (`.woodpecker/build.yml`) builds the image on every push to `main` (and on a Woodpecker cron, if configured) and pushes it to `registry.kudofools.dev`. Flux updates the image tag in `deploy/deployment.yaml`; the Kubernetes manifests for the app live in `deploy/`. Response headers and caching are configured in `config.toml` (static-web-server).

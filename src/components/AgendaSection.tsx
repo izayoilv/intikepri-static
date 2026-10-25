@@ -1,38 +1,20 @@
 "use client";
 
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 import { isAgendaVisible, sortAgenda } from "@/lib/agenda";
+import { dayMonthShortID } from "@/lib/format";
 import { useNow } from "@/lib/use-now";
+import { useReveal } from "@/lib/use-reveal";
 import type { AgendaEvent } from "@/types";
-
-gsap.registerPlugin(ScrollTrigger);
-
-const MONTHS_ID = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "Mei",
-  "Jun",
-  "Jul",
-  "Agu",
-  "Sep",
-  "Okt",
-  "Nov",
-  "Des",
-];
 
 export default function AgendaSection({
   initialItems,
 }: {
   initialItems: AgendaEvent[];
 }) {
-  const ref = useRef<HTMLDivElement>(null);
   const now = useNow();
 
   const events = useMemo(() => {
@@ -42,35 +24,16 @@ export default function AgendaSection({
     return visible.slice(0, 3);
   }, [initialItems, now]);
 
-  useEffect(() => {
-    if (!ref.current || events.length === 0) return;
-    const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>(".agenda-reveal").forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 88%", once: true },
-            delay: i * 0.1,
-          },
-        );
-      });
-    }, ref);
-    return () => ctx.revert();
-  }, [events.length]);
+  const ref = useReveal<HTMLElement>(".agenda-reveal", events.length);
 
   if (events.length === 0) return null;
 
   return (
-    <section ref={ref} className="py-14 md:py-20 bg-[#F7F7F7]">
+    <section ref={ref} className="py-14 md:py-20 bg-[#FAF6EF]">
       <div className="max-w-4xl mx-auto px-4 md:px-8">
         <div className="agenda-reveal flex items-end justify-between mb-8">
           <div>
-            <p className="text-[#C8956C] font-sans text-sm tracking-[0.3em] uppercase mb-2">
+            <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-2">
               Agenda
             </p>
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A]">
@@ -87,24 +50,24 @@ export default function AgendaSection({
 
         <div className="relative border-l border-[#DDDDDD] ml-1.5">
           {events.map((e) => {
-            const [, m, d] = e.date.split("-");
+            const { day, month } = dayMonthShortID(e.date);
             return (
               <Link
                 key={e.slug}
                 href={`/agenda/${e.slug}`}
                 className="agenda-reveal group relative flex items-center gap-4 md:gap-5 pl-5 md:pl-6 py-3.5"
               >
-                <span className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#A42A28] rounded-full ring-4 ring-[#F7F7F7] group-hover:scale-125 transition-transform" />
+                <span className="absolute -left-[5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#A42A28] rounded-full ring-4 ring-[#FAF6EF] group-hover:scale-125 transition-transform" />
 
                 <time
                   dateTime={e.date}
                   className="flex-shrink-0 w-12 bg-white border border-[#E5E5E5] group-hover:border-[#A42A28]/40 transition-colors text-center py-1.5"
                 >
                   <p className="font-serif text-lg font-bold text-[#A42A28] leading-none">
-                    {Number(d)}
+                    {day}
                   </p>
-                  <p className="font-sans text-[9px] tracking-widest uppercase text-[#999999] mt-0.5">
-                    {MONTHS_ID[Number(m) - 1]}
+                  <p className="font-sans text-[9px] tracking-widest uppercase text-[#6B6B6B] mt-0.5">
+                    {month}
                   </p>
                 </time>
 
@@ -112,7 +75,7 @@ export default function AgendaSection({
                   <h3 className="font-serif text-base md:text-lg font-semibold text-[#1A1A1A] truncate group-hover:text-[#A42A28] transition-colors">
                     {e.title}
                   </h3>
-                  <p className="font-sans text-xs text-[#999999] mt-0.5 flex items-center gap-x-3 gap-y-0.5 truncate">
+                  <p className="font-sans text-xs text-[#6B6B6B] mt-0.5 flex items-center gap-x-3 gap-y-0.5 truncate">
                     {e.start_time && (
                       <span className="flex items-center gap-1 flex-shrink-0">
                         <Clock size={11} /> {e.start_time}
