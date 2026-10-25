@@ -67,7 +67,7 @@ export default function HomePage() {
     <main>
       <JsonLd data={organizationLd} />
       <Navbar />
-      <HeroSection latest={latestNews[0] ?? null} />
+      <HeroSection photos={gallery.map((g) => g.image)} />
       <MottoBand />
       <IntroSection />
       <AgendaSection initialItems={upcomingAgenda} />

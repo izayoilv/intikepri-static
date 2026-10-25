@@ -35,7 +35,7 @@ export default function Footer({ showCta = true }: { showCta?: boolean }) {
             sizes="100vw"
             className="object-cover opacity-35 mix-blend-luminosity"
           />
-          <div className="relative max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-32 flex flex-wrap items-end justify-between gap-10">
+          <div className="relative max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-32 flex flex-wrap items-end justify-between gap-8 md:gap-10">
             <div className="flex-[1_1_560px] min-w-0">
               <p className="mb-4 font-sans text-xs font-semibold tracking-[0.24em] uppercase text-[#FFE2C2]">
                 Mari berkarya bersama
@@ -50,16 +50,16 @@ export default function Footer({ showCta = true }: { showCta?: boolean }) {
                 ekonomi.
               </p>
             </div>
-            <div className="flex flex-wrap gap-3.5">
+            <div className="w-full sm:w-auto grid grid-cols-1 sm:flex gap-3">
               <Link
                 href="/bergabung"
-                className="inline-flex items-center gap-2.5 bg-white text-[#A42A28] px-7 py-4 font-sans text-[15px] font-bold hover:bg-white/90 transition-colors"
+                className="justify-center inline-flex items-center gap-2.5 bg-white text-[#A42A28] px-7 py-4 font-sans text-[15px] font-bold hover:bg-white/90 transition-colors"
               >
                 Cara Bergabung <ArrowRight size={16} aria-hidden="true" />
               </Link>
               <Link
                 href="/tentang-kami"
-                className="inline-flex items-center border border-white/60 px-7 py-4 font-sans text-[15px] font-medium hover:bg-white/10 transition-colors"
+                className="justify-center inline-flex items-center border border-white/60 px-7 py-4 font-sans text-[15px] font-medium hover:bg-white/10 transition-colors"
               >
                 Kenali kami dulu
               </Link>
@@ -70,7 +70,7 @@ export default function Footer({ showCta = true }: { showCta?: boolean }) {
 
       <footer className="bg-[#0D0908] text-white px-4 md:px-8 pt-16 md:pt-[72px] pb-9">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_1.2fr] gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_1.2fr] gap-10 md:gap-12">
             <div className="max-w-sm">
               <div className="flex items-center gap-3">
                 <Image
@@ -108,7 +108,7 @@ export default function Footer({ showCta = true }: { showCta?: boolean }) {
               <h2 className="mb-4 font-sans text-[11px] font-semibold tracking-[0.22em] uppercase text-[#D9A56F]">
                 Menu
               </h2>
-              <ul className="flex flex-col gap-2.5">
+              <ul className="grid grid-cols-2 sm:grid-cols-1 gap-x-6 gap-y-2.5">
                 {LINKS.map((l) => (
                   <li key={l.to}>
                     <Link

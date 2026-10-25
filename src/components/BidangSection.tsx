@@ -47,7 +47,7 @@ export default function BidangSection({ photos = [] }: { photos?: string[] }) {
   return (
     <section
       id="bidang"
-      className="relative overflow-hidden bg-[#120D0C] text-white px-4 md:px-8 py-20 md:py-32"
+      className="relative overflow-hidden bg-[#120D0C] text-white px-4 md:px-8 py-16 md:py-32"
     >
       <div
         aria-hidden="true"
@@ -58,7 +58,7 @@ export default function BidangSection({ photos = [] }: { photos?: string[] }) {
           index="03"
           label="Bidang Kegiatan"
           tone="dark"
-          className="max-w-3xl mb-12 md:mb-14"
+          className="max-w-3xl mb-8 md:mb-14"
           title={
             <>
               Delapan bidang, satu semangat{" "}
@@ -67,12 +67,12 @@ export default function BidangSection({ photos = [] }: { photos?: string[] }) {
           }
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-8 lg:gap-16 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-5 lg:gap-16 items-stretch">
           <div
             role="tablist"
             aria-label="Bidang kegiatan"
             aria-orientation="vertical"
-            className="flex flex-col border-t border-white/12"
+            className="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-col gap-2 lg:gap-0 lg:border-t lg:border-white/12"
           >
             {bidangPengurus.map((b, i) => {
               const on = i === active;
@@ -91,13 +91,14 @@ export default function BidangSection({ photos = [] }: { photos?: string[] }) {
                   onClick={() => setActive(i)}
                   onMouseEnter={() => setActive(i)}
                   onKeyDown={(e) => onKey(e, i)}
-                  className={`flex items-baseline gap-4 w-full text-left border-b border-white/12 py-4 transition-all duration-300 ${on ? "bg-[#A42A28]/90 px-5 text-white" : "px-1 text-white/70 hover:text-white"}`}
+                  className={`min-w-0 lg:w-full flex items-baseline gap-2 lg:gap-4 text-left border lg:border-0 lg:border-b lg:border-white/12 px-3 py-2.5 lg:py-4 transition-all duration-300 ${on ? "bg-[#A42A28] border-[#A42A28] text-white lg:bg-[#A42A28]/90 lg:px-5" : "border-white/20 text-white/75 lg:px-1 hover:text-white"}`}
                 >
-                  <span className="font-serif italic text-sm text-[#D9A56F] w-6 flex-shrink-0">
+                  <span className="font-serif italic text-xs lg:text-sm text-[#D9A56F] lg:w-6 flex-shrink-0">
                     {pad2(i + 1)}
                   </span>
-                  <span className="font-serif text-[19px] md:text-[23px] font-semibold">
-                    {b.name}
+                  <span className="font-serif text-[14px] leading-tight lg:leading-normal lg:text-[23px] font-semibold">
+                    <span className="hidden lg:inline">Bidang </span>
+                    {b.name.replace(/^Bidang\s+/, "")}
                   </span>
                 </button>
               );
@@ -108,7 +109,7 @@ export default function BidangSection({ photos = [] }: { photos?: string[] }) {
             role="tabpanel"
             id={`${baseId}-panel`}
             aria-labelledby={`${baseId}-tab-${active}`}
-            className="relative min-h-[380px] md:min-h-[460px] overflow-hidden bg-[#1E1715]"
+            className="relative min-h-[320px] md:min-h-[460px] overflow-hidden bg-[#1E1715]"
           >
             {pool.map((src, i) => (
               <Image

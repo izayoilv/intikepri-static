@@ -38,7 +38,7 @@ export default function GaleriSection({
   return (
     <section
       id="galeri"
-      className="bg-[#120D0C] text-white py-20 md:py-32 overflow-hidden"
+      className="bg-[#120D0C] text-white py-16 md:py-32 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-wrap items-end justify-between gap-5">
         <SectionHeading
@@ -74,7 +74,7 @@ export default function GaleriSection({
       </div>
 
       <div
-        className="relative mt-12 md:mt-14 h-[260px] sm:h-[38vw] sm:max-h-[480px] sm:min-h-[300px] [perspective:1400px] touch-pan-y select-none"
+        className="relative mt-9 md:mt-14 h-[300px] sm:h-[38vw] sm:max-h-[480px] sm:min-h-[300px] [perspective:1400px] touch-pan-y select-none"
         onPointerDown={onDown}
         onPointerUp={onUp}
         aria-roledescription="carousel"
@@ -98,7 +98,7 @@ export default function GaleriSection({
               }
               aria-hidden={hidden || undefined}
               tabIndex={hidden ? -1 : 0}
-              className="absolute left-1/2 top-0 h-full w-[72vw] sm:w-[34vw] max-w-[560px] -ml-[36vw] sm:-ml-[17vw] lg:-ml-[min(17vw,280px)] overflow-hidden bg-[#1E1715] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.8)] transition-[transform,opacity,filter] duration-700 ease-[cubic-bezier(.22,1,.36,1)] motion-reduce:transition-none"
+              className="absolute left-1/2 top-0 h-full w-[76vw] sm:w-[34vw] max-w-[560px] -ml-[38vw] sm:-ml-[17vw] lg:-ml-[min(17vw,280px)] overflow-hidden bg-[#1E1715] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.8)] transition-[transform,opacity,filter] duration-700 ease-[cubic-bezier(.22,1,.36,1)] motion-reduce:transition-none"
               style={{
                 transform: `translateX(${off * 62}%) translateZ(${-a * 180}px) rotateY(${-off * 32}deg)`,
                 zIndex: 20 - a,

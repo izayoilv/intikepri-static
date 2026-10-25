@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 
+import SectionHeading from "@/components/SectionHeading";
 import { bidangPengurus, pengurusKSB } from "@/lib/data";
 import { useReveal } from "@/lib/use-reveal";
+
+const pad2 = (n: number) => String(n).padStart(2, "0");
 
 function PortraitPlaceholder() {
   return (
@@ -20,45 +23,46 @@ function PortraitPlaceholder() {
   );
 }
 
-export default function StructureSection() {
+/** Current committee (filled positions only) and the eight working fields. */
+export default function StructureSection({ index }: { index?: string }) {
   const ref = useReveal<HTMLElement>(".struct-reveal");
   const filled = pengurusKSB.filter((p) => p.nama.trim() !== "");
   const hasVacancies = filled.length < pengurusKSB.length;
 
   return (
-    <section ref={ref} className="py-20 md:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="text-center mb-12 struct-reveal">
-          <p className="text-[#8F6440] font-sans text-sm tracking-[0.3em] uppercase mb-3">
-            Pengurus
-          </p>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">
-            Susunan Pengurus
-          </h2>
-          <p className="text-[#6B6B6B] font-sans max-w-2xl mx-auto">
-            Perhimpunan INTI Provinsi Kepulauan Riau — Periode 2026–2030.
-          </p>
+    <section ref={ref} className="bg-white px-4 md:px-8 py-16 md:py-28">
+      <div className="max-w-7xl mx-auto">
+        <div className="struct-reveal flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+          <SectionHeading
+            index={index}
+            label="Pengurus"
+            title={
+              <>
+                Susunan pengurus{" "}
+                <span className="italic text-[#A42A28]">2026–2030</span>.
+              </>
+            }
+          />
+          {hasVacancies && (
+            <p className="max-w-sm font-sans text-sm leading-relaxed text-[#6B6B6B]">
+              Susunan pengurus lengkap periode 2026–2030 akan segera diperbarui.
+            </p>
+          )}
         </div>
 
-        <div
-          className={
-            filled.length < 3
-              ? "grid grid-cols-1 gap-4 max-w-md mx-auto"
-              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          }
-        >
-          {filled.map((p, i) => (
-            <div
-              key={i}
-              className="struct-reveal flex items-center gap-4 bg-[#F7F7F7] border border-[#E5E5E5] p-4 hover:border-[#A42A28]/30 transition-colors"
+        <ul className="mt-10 md:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filled.map((p) => (
+            <li
+              key={p.jabatan}
+              className="struct-reveal flex items-center gap-4 bg-[#FAF6EF] border border-[#E5DBCD] p-4"
             >
-              <div className="relative w-14 h-14 flex-shrink-0 overflow-hidden bg-[#F0E6DC]">
+              <div className="relative w-16 h-16 flex-shrink-0 overflow-hidden bg-[#F0E6DC]">
                 {p.foto ? (
                   <Image
                     src={p.foto}
-                    alt={p.jabatan}
+                    alt={p.nama}
                     fill
-                    sizes="56px"
+                    sizes="64px"
                     className="object-cover"
                   />
                 ) : (
@@ -66,48 +70,38 @@ export default function StructureSection() {
                 )}
               </div>
               <div className="min-w-0">
-                <p className="font-sans text-[11px] tracking-[0.15em] uppercase text-[#A42A28] font-medium">
+                <p className="font-sans text-[11px] font-semibold tracking-[0.16em] uppercase text-[#A42A28]">
                   {p.jabatan}
                 </p>
-                <p className="font-serif text-base font-semibold text-[#1A1A1A] mt-0.5 truncate">
+                <p className="mt-1 font-serif text-lg font-bold text-[#1C1714] truncate">
                   {p.nama}
                 </p>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
-        {hasVacancies && (
-          <p className="struct-reveal text-center font-sans text-sm text-[#6B6B6B] mt-6">
-            Susunan pengurus lengkap periode 2026–2030 akan segera diperbarui.
-          </p>
-        )}
-        <div className="mb-16" />
+        </ul>
 
-        <div className="text-center mb-10 struct-reveal">
-          <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-3">
-            Bidang-Bidang
-          </h3>
-          <p className="text-[#6B6B6B] font-sans max-w-2xl mx-auto text-sm">
-            Delapan bidang yang menangani program-program organisasi.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <h3 className="struct-reveal mt-16 md:mt-24 font-serif text-2xl md:text-[2rem] font-bold text-[#1C1714]">
+          {bidangPengurus.length} bidang kerja
+        </h3>
+        <ol className="mt-6 md:mt-8 grid grid-cols-2 lg:grid-cols-4 border-t border-l border-[#E5DBCD]">
           {bidangPengurus.map((b, i) => (
-            <div
-              key={i}
-              className="struct-reveal bg-[#F7F7F7] p-6 border border-[#E5E5E5] hover:border-[#A42A28]/30 transition-colors group"
+            <li
+              key={b.name}
+              className="struct-reveal p-4 md:p-6 border-r border-b border-[#E5DBCD] hover:bg-[#FAF6EF] transition-colors"
             >
-              <span className="font-serif text-3xl font-light text-[#A42A28]/30 group-hover:text-[#A42A28]/50 transition-colors">
-                0{i + 1}
+              <span className="font-serif italic text-[15px] text-[#8F6440]">
+                {pad2(i + 1)}
               </span>
-              <h4 className="font-serif text-lg font-semibold text-[#1A1A1A] mt-3 mb-2">
-                {b.name}
+              <h4 className="mt-2 md:mt-3 font-serif text-base md:text-lg leading-snug font-bold text-[#1C1714]">
+                {b.name.replace(/^Bidang\s+/, "")}
               </h4>
-              <p className="text-[#6B6B6B] font-sans text-sm">{b.desc}</p>
-            </div>
+              <p className="mt-1.5 font-sans text-[13px] md:text-sm leading-relaxed text-[#6B6B6B]">
+                {b.desc}
+              </p>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );

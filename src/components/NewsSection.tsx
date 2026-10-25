@@ -25,9 +25,9 @@ export default function NewsSection({
   if (!featured) return null;
 
   return (
-    <section ref={ref} className="bg-white px-4 md:px-8 py-20 md:py-32">
+    <section ref={ref} className="bg-white px-4 md:px-8 py-16 md:py-32">
       <div className="max-w-7xl mx-auto">
-        <div className="news-reveal flex flex-wrap items-end justify-between gap-5 mb-10 md:mb-12 pb-6 border-b border-[#1C1714]">
+        <div className="news-reveal flex flex-wrap items-end justify-between gap-4 mb-8 md:mb-12 pb-5 md:pb-6 border-b border-[#1C1714]">
           <SectionHeading
             index="02"
             label="Berita Terbaru"
@@ -60,7 +60,7 @@ export default function NewsSection({
                 </span>
               )}
             </div>
-            <h3 className="mt-6 font-serif text-[1.65rem] md:text-[2.15rem] leading-[1.15] font-bold text-[#1C1714] group-hover:text-[#A42A28] transition-colors text-balance">
+            <h3 className="mt-5 md:mt-6 font-serif text-[1.5rem] md:text-[2.15rem] leading-[1.15] font-bold text-[#1C1714] group-hover:text-[#A42A28] transition-colors text-balance">
               {featured.title}
             </h3>
             {featured.excerpt && (
