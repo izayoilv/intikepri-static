@@ -72,8 +72,8 @@ export const bidangPengurus: Bidang[] = [
     desc: "Advokasi hukum, konsolidasi, dan kaderisasi organisasi",
   },
   {
-    name: "Bidang Pemuda & Olah Raga",
-    desc: "Pembinaan generasi muda dan kegiatan olahraga",
+    name: "Bidang Pemuda & Kreativitas",
+    desc: "Pembinaan generasi muda dan pengembangan kreativitas",
   },
   {
     name: "Bidang Lain-Lain",
